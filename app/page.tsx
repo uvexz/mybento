@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
 import { getHomepageCards } from '@/lib/data';
 import BentoGrid from '@/components/bento/BentoGrid';
 import { Metadata } from 'next';
+import { RiGithubFill } from '@remixicon/react';
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'mybento',
@@ -42,6 +42,22 @@ export default async function Home() {
                 </Link>
               </>
             )}
+          </div>
+
+          {/* Open Source Info */}
+          <div className="mt-16 pt-8 border-t border-gray-200">
+            <p className="text-sm text-gray-500">
+              Open Source Project
+            </p>
+            <a 
+              href="https://github.com/uvexz/mybento" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm text-gray-700 hover:text-gray-900 transition-colors inline-flex items-center gap-1 mt-1"
+            >
+              <span className="font-medium">mybento</span>
+              <RiGithubFill className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </div>

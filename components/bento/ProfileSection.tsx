@@ -165,6 +165,19 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 </Button>
             )}
 
+            {/* Copyright Info */}
+            <div className="mt-8 pt-6 border-t border-gray-200 w-full text-center lg:text-left">
+                <p className="text-sm text-gray-900 text-center">
+                    © {new Date().getFullYear()}{' '}
+                    <a 
+                        href={process.env.NEXT_PUBLIC_SITE_URL || '/'} 
+                        className="hover:text-gray-700 transition-colors"
+                    >
+                        {process.env.NEXT_PUBLIC_SITE_NAME || 'mybento'}
+                    </a>
+                </p>
+            </div>
+
             {/* QR Code Modal */}
             <QRCodeModal
                 isOpen={showQRCode}
