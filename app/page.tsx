@@ -38,7 +38,7 @@ export default async function Home() {
                   <Button variant="outline" size="lg" className="text-lg px-8 py-6">Login</Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="lg" className="text-lg px-8 py-6">Get Started</Button>
+                  <Button size="lg" className="text-lg px-8 py-6">Get Yours</Button>
                 </Link>
               </>
             )}
@@ -47,9 +47,9 @@ export default async function Home() {
       </div>
 
       {/* Right Side: Bento Grid (Admin's Cards) */}
-      <div className="w-full lg:w-[60%] relative bg-gray-50 overflow-y-auto max-h-screen">
+      <div className="w-full relative bg-gray-50 overflow-y-auto max-h-screen">
         {homepageData ? (
-          <div className="p-8 lg:p-16 transform scale-90 origin-top-left lg:origin-top-center w-full">
+          <div className="transform origin-top-left lg:origin-top-center w-full">
             <BentoGrid
               initialCards={homepageData.cards}
               initialProfile={homepageData.profile}
