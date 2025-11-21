@@ -27,6 +27,9 @@ export const cards = pgTable('cards', {
     order: integer('order').default(0),
     clicks: integer('clicks').default(0),
     buttonText: text('button_text'),
+    githubData: text('github_data'), // JSON string for GitHub user/repo data
+    contactInfo: text('contact_info'), // Base64 encoded contact info for privacy
+    mastodonData: text('mastodon_data'), // JSON string for Mastodon profile data
     createdAt: timestamp('created_at').defaultNow(),
 });
 

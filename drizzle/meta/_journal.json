@@ -29,6 +29,27 @@
       "when": 1763727409708,
       "tag": "0003_minor_phalanx",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763728849927,
+      "tag": "0004_legal_shaman",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1763732050662,
+      "tag": "0005_certain_junta",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763735057633,
+      "tag": "0006_simple_robin_chapel",
+      "breakpoints": true
     }
   ]
 }

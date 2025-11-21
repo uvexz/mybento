@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Link as LinkIcon, Copy, Trash2, Plus, ExternalLink } from 'lucide-react';
+import { RiLinksFill, RiFileCopyLine, RiDeleteBinLine, RiAddLine, RiExternalLinkLine } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -103,11 +103,11 @@ export default function ShortLinkManager() {
             <CardHeader>
                 <div className="flex justify-between items-center">
                     <CardTitle className="flex items-center gap-2">
-                        <LinkIcon className="w-5 h-5" />
+                        <RiLinksFill className="w-5 h-5" />
                         Short Links
                     </CardTitle>
                     <Button size="sm" onClick={() => setShowForm(!showForm)}>
-                        <Plus className="w-4 h-4 mr-2" />
+                        <RiAddLine className="w-4 h-4 mr-2" />
                         New Link
                     </Button>
                 </div>
@@ -172,7 +172,7 @@ export default function ShortLinkManager() {
                                             className="text-blue-600 text-sm hover:underline flex items-center gap-1"
                                         >
                                             {siteUrl}/s/{link.shortCode}
-                                            <ExternalLink className="w-3 h-3" />
+                                            <RiExternalLinkLine className="w-3 h-3" />
                                         </a>
                                         <p className="text-xs text-gray-500 truncate mt-1">
                                             → {link.originalUrl}
@@ -184,14 +184,14 @@ export default function ShortLinkManager() {
                                             variant="ghost"
                                             onClick={() => copyToClipboard(`${siteUrl}/s/${link.shortCode}`)}
                                         >
-                                            <Copy className="w-4 h-4" />
+                                            <RiFileCopyLine className="w-4 h-4" />
                                         </Button>
                                         <Button
                                             size="sm"
                                             variant="ghost"
                                             onClick={() => handleDelete(link.id)}
                                         >
-                                            <Trash2 className="w-4 h-4" />
+                                            <RiDeleteBinLine className="w-4 h-4" />
                                         </Button>
                                     </div>
                                 </div>

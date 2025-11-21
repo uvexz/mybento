@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, Loader2, X } from 'lucide-react';
+import { RiUploadLine, RiLoader4Line, RiCloseLine } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -69,9 +69,9 @@ export default function ImageUpload({ value, onChange, folder = 'cards', placeho
                     className="flex-shrink-0"
                 >
                     {isUploading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <RiLoader4Line className="w-4 h-4 animate-spin" />
                     ) : (
-                        <Upload className="w-4 h-4" />
+                        <RiUploadLine className="w-4 h-4" />
                     )}
                 </Button>
                 {value && (
@@ -81,7 +81,7 @@ export default function ImageUpload({ value, onChange, folder = 'cards', placeho
                         onClick={() => onChange('')}
                         className="flex-shrink-0"
                     >
-                        <X className="w-4 h-4" />
+                        <RiCloseLine className="w-4 h-4" />
                     </Button>
                 )}
             </div>

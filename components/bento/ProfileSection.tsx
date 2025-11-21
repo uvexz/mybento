@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserProfile } from '@/lib/types';
-import { Pencil, Save, X, QrCode } from 'lucide-react';
+import { RiPencilFill, RiSaveLine, RiCloseLine, RiQrCodeLine, RiLoader4Line } from '@remixicon/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -108,11 +108,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                     </div>
                     <div className="flex gap-2 pt-2">
                         <Button onClick={handleSave} disabled={isSaving}>
-                            {isSaving ? <Save className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                            {isSaving ? <RiLoader4Line className="w-4 h-4 mr-2 animate-spin" /> : <RiSaveLine className="w-4 h-4 mr-2" />}
                             Save
                         </Button>
                         <Button variant="outline" onClick={() => setIsEditing(false)} disabled={isSaving}>
-                            <X className="w-4 h-4 mr-2" />
+                            <RiCloseLine className="w-4 h-4 mr-2" />
                             Cancel
                         </Button>
                     </div>
@@ -138,7 +138,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                         className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all opacity-0 group-hover:opacity-100"
                         title="Edit Profile"
                     >
-                        <Pencil className="w-4 h-4 text-gray-600" />
+                        <RiPencilFill className="w-4 h-4 text-gray-600" />
                     </button>
                 )}
             </div>
@@ -159,7 +159,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                     onClick={() => setShowQRCode(true)}
                     className="mt-4"
                 >
-                    <QrCode className="w-4 h-4 mr-2" />
+                    <RiQrCodeLine className="w-4 h-4 mr-2" />
                     Show QR Code
                 </Button>
             )}
@@ -170,6 +170,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 onClose={() => setShowQRCode(false)}
                 url={profileUrl}
                 title={profile.name}
+                username={username}
             />
         </div>
     );

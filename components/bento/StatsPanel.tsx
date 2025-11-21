@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BarChart3, TrendingUp, Eye } from 'lucide-react';
+import { RiBarChartFill, RiLineChartLine, RiEyeLine } from '@remixicon/react';
 
 interface CardStat {
     id: string;
@@ -46,14 +46,14 @@ export default function StatsPanel({ userId }: StatsPanelProps) {
         <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <Eye className="w-8 h-8 text-blue-600" />
+                        <RiEyeLine className="w-8 h-8 text-blue-600" />
                         <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400">Total Clicks</p>
                             <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalClicks}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                        <TrendingUp className="w-8 h-8 text-green-600" />
+                        <RiLineChartLine className="w-8 h-8 text-green-600" />
                         <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400">Active Cards</p>
                             <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.length}</p>

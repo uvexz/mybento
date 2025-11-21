@@ -14,7 +14,7 @@ export async function getUserProfile(username: string) {
     const profile: UserProfile = {
         name: user.name || user.username,
         bio: user.bio || '',
-        avatarUrl: user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`,
+        avatarUrl: user.image || `https://i.sevencdn.com/avatar/${user.username}`,
         backgroundImage: user.backgroundImage || undefined,
         profileColor: user.profileColor || undefined,
     };
@@ -28,8 +28,11 @@ export async function getUserProfile(username: string) {
         icon: c.icon || undefined,
         colorClass: c.colorClass || 'bg-gray-100',
         size: c.size as CardSize,
-        buttonText: c.buttonText || 'Visit',
+        buttonText: c.buttonText || undefined,
         imageUrl: c.url && (c.type === 'image' || c.type === 'image-link') ? c.url : undefined,
+        githubData: c.githubData ? JSON.parse(c.githubData) : undefined,
+        contactInfo: c.contactInfo || undefined,
+        mastodonData: c.mastodonData ? JSON.parse(c.mastodonData) : undefined,
     }));
 
     return { profile, cards: mappedCards, user };

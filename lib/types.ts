@@ -7,6 +7,12 @@ export enum CardSize {
     Large = 'large', // 2x2
 }
 
+export interface BlogPost {
+    title: string;
+    link: string;
+    pubDate?: string;
+}
+
 export type CardType = 
     | 'link' 
     | 'social-x' 
@@ -21,8 +27,56 @@ export type CardType =
     | 'video-vimeo'
     | 'music-spotify'
     | 'music-soundcloud'
-    | 'email-form'
-    | 'calendar';
+    | 'blog-rss'
+    | 'contact-email'
+    | 'contact-phone'
+    | 'contact-qq'
+    | 'contact-wechat'
+    | 'contact-telegram';
+
+export interface GitHubUserData {
+    type: 'user';
+    login: string;
+    name: string;
+    bio: string;
+    avatar: string;
+    followers: number;
+    following: number;
+    publicRepos: number;
+    url: string;
+}
+
+export interface GitHubRepoData {
+    type: 'repo';
+    name: string;
+    fullName: string;
+    description: string;
+    stars: number;
+    forks: number;
+    language: string;
+    url: string;
+    owner: {
+        login: string;
+        avatar: string;
+    };
+}
+
+export type GitHubData = GitHubUserData | GitHubRepoData;
+
+export interface MastodonData {
+    name: string;
+    description: string;
+    profileUrl: string;
+    avatarUrl: string;
+    rssUrl: string;
+    latestPost: {
+        content: string;
+        link: string;
+        pubDate: string;
+        mediaUrl?: string;
+        mediaType?: string;
+    } | null;
+}
 
 export interface BentoCardProps {
     id: string;
@@ -35,6 +89,10 @@ export interface BentoCardProps {
     type: CardType;
     url?: string;
     imageUrl?: string;
+    githubData?: GitHubData; // GitHub user or repo data
+    blogPosts?: BlogPost[]; // Blog RSS posts
+    contactInfo?: string; // Encoded contact info (email, phone, qq, wechat, telegram)
+    mastodonData?: MastodonData; // Mastodon profile and latest post
     // Optional custom component for the complex initial mockups (like Graphs), 
     // usually undefined for new user-created cards
     customComponent?: ReactNode;

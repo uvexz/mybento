@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, BarChart3, Download, Upload, X } from 'lucide-react';
+import { RiAddLine, RiBarChartFill, RiDownloadLine, RiUploadLine, RiCloseLine, RiInformationFill } from '@remixicon/react';
 import StatsPanel from './StatsPanel';
 import ExportImportButtons from './ExportImportButtons';
 
@@ -26,7 +26,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                             className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform text-gray-800 dark:text-white group"
                             title="Analytics"
                         >
-                            <BarChart3 size={24} className="group-hover:scale-110 transition-transform" />
+                            <RiBarChartFill size={24} className="group-hover:scale-110 transition-transform" />
                         </button>
                     )}
 
@@ -36,7 +36,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         className="bg-blue-600 p-4 rounded-2xl shadow-2xl hover:scale-105 transition-transform text-white group"
                         title="Add New Card"
                     >
-                        <Plus size={24} className="group-hover:rotate-90 transition-transform" />
+                        <RiAddLine size={24} className="group-hover:rotate-90 transition-transform" />
                     </button>
 
                     {/* Export/Import Button */}
@@ -45,7 +45,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform text-gray-800 dark:text-white group"
                         title="Export/Import"
                     >
-                        <Download size={24} className="group-hover:scale-110 transition-transform" />
+                        <RiDownloadLine size={24} className="group-hover:scale-110 transition-transform" />
                     </button>
                 </div>
             </div>
@@ -57,14 +57,14 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                     <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
                         <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center z-10">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <BarChart3 size={20} />
+                                <RiBarChartFill size={20} />
                                 Analytics
                             </h2>
                             <button
                                 onClick={() => setShowStats(false)}
                                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
                             >
-                                <X size={20} />
+                                <RiCloseLine size={20} />
                             </button>
                         </div>
                         <div className="p-6">
@@ -81,14 +81,14 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                     <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl">
                         <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Upload size={20} />
+                                <RiUploadLine size={20} />
                                 Data Management
                             </h2>
                             <button
                                 onClick={() => setShowExportImport(false)}
                                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
                             >
-                                <X size={20} />
+                                <RiCloseLine size={20} />
                             </button>
                         </div>
                         <div className="p-6">
@@ -101,8 +101,9 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                                     <ExportImportButtons />
                                 </div>
                                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        💡 Tip: Export regularly to backup your data. You can import the JSON file later to restore.
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-start gap-1.5">
+                                        <RiInformationFill size={14} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                                        <span>Tip: Export regularly to backup your data. You can import the JSON file later to restore.</span>
                                     </p>
                                 </div>
                             </div>

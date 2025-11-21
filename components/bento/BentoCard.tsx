@@ -1,50 +1,375 @@
 import React from 'react';
 import { BentoCardProps, CardSize, CardType } from '@/lib/types';
+import BlogCard from './BlogCard';
+import ContactCard from './ContactCard';
+import MastodonCard from './MastodonCard';
 import {
-    Twitter,
-    Instagram,
-    Github,
-    Link as LinkIcon,
-    Image as ImageIcon,
-    Youtube,
-    Coffee,
-    BookOpen,
-    Figma,
-    Smile,
-    Edit2,
-    Anchor,
-    Hash,
-    ArrowLeft,
-    ArrowRight,
-    Music,
-    MapPin,
-    Mail,
-    Linkedin
-} from 'lucide-react';
+    RiTwitterXFill,
+    RiInstagramFill,
+    RiGithubFill,
+    RiLinksFill,
+    RiImageFill,
+    RiYoutubeFill,
+    RiCupFill,
+    RiBookOpenFill,
+    RiFigmaFill,
+    RiMusicFill,
+    RiMapPinFill,
+    RiMailFill,
+    RiLinkedinBoxFill,
+    RiCalendarFill,
+    RiVideoFill,
+    RiEmotionHappyFill,
+    RiAnchorFill,
+    RiHashtag,
+    RiArrowLeftLine,
+    RiArrowRightLine,
+    RiEdit2Fill,
+    RiSoundcloudFill,
+    RiSpotifyFill,
+    RiVimeoFill,
+    RiMastodonFill,
+    RiGroupLine,
+    RiArchiveLine,
+    RiStarLine,
+    RiGitForkLine,
+    RiCodeLine,
+    RiArticleLine,
+    RiDiscordFill,
+    RiTwitchFill,
+    RiTiktokFill,
+    RiPinterestFill,
+    RiSlackFill,
+    RiDribbbleFill,
+    RiBehanceFill,
+    RiMediumFill,
+    RiRedditFill,
+    RiWhatsappFill,
+    RiTelegramFill,
+    RiWechatFill,
+    RiQqFill,
+    RiWeiboFill,
+    RiSnapchatFill,
+    RiPatreonFill,
+    RiProductHuntFill,
+    RiStackOverflowFill,
+    RiNpmjsFill,
+    RiAppleFill,
+    RiAndroidFill,
+    RiWindowsFill,
+    RiChromeFill,
+    RiFirefoxFill,
+    RiSafariFill,
+    RiEdgeFill,
+    RiOperaFill,
+} from '@remixicon/react';
 import { cn } from '@/lib/utils';
 
-// Icon mapping for dynamic rendering
-import { Calendar, Video } from 'lucide-react';
+import {
+    RiHomeFill,
+    RiBriefcaseFill,
+    RiShoppingBagFill,
+    RiGamepadFill,
+    RiCameraFill,
+    RiPaletteFill,
+    RiCodeBoxFill,
+    RiRocketFill,
+    RiHeartFill,
+    RiStarFill,
+    RiFireFill,
+    RiThunderstormsFill,
+    RiSunFill,
+    RiMoonFill,
+    RiLeafFill,
+    RiFlowerFill,
+    RiBugFill,
+    RiGiftFill,
+    RiTrophyFill,
+    RiMedalFill,
+    RiLightbulbFill,
+    RiCompassFill,
+    RiGlobalFill,
+    RiShieldFill,
+    RiToolsFill,
+    RiSettings3Fill,
+    RiNotificationFill,
+    RiQuestionFill,
+    RiInformationFill,
+    RiAlertFill,
+    RiCheckboxCircleFill,
+    RiCloseCircleFill,
+    RiAddCircleFill,
+    RiSubtractFill,
+    RiTimeFill,
+    RiAlarmFill,
+    RiDownloadCloudFill,
+    RiUploadCloudFill,
+    RiDatabaseFill,
+    RiServerFill,
+    RiTerminalBoxFill,
+    RiSmartphoneFill,
+    RiComputerFill,
+    RiHeadphoneFill,
+    RiMicFill,
+    RiVolumeUpFill,
+    RiMovieFill,
+    RiFilmFill,
+    RiGalleryFill,
+    RiPriceTag3Fill,
+    RiCoupon3Fill,
+    RiWalletFill,
+    RiBankCardFill,
+    RiShoppingCartFill,
+    RiStore2Fill,
+    RiUserFill,
+    RiTeamFill,
+    RiUserHeartFill,
+    RiUserStarFill,
+    RiMessageFill,
+    RiChatSmileFill,
+    RiFeedbackFill,
+    RiQuestionAnswerFill,
+    RiPencilFill,
+    RiDraftFill,
+    RiFileTextFill,
+    RiFilePaperFill,
+    RiFolderFill,
+    RiArchiveDrawerFill,
+    RiInboxFill,
+    RiSendPlaneFill,
+    RiShareFill,
+    RiExternalLinkFill,
+    RiAttachmentFill,
+    RiPushpinFill,
+    RiBookmarkFill,
+    RiFlagFill,
+    RiEyeFill,
+    RiEyeOffFill,
+    RiSearchFill,
+    RiZoomInFill,
+    RiFilterFill,
+    RiSortAsc,
+    RiLayoutGridFill,
+    RiLayoutMasonryFill,
+    RiSideBarFill,
+    RiMenuFill,
+    RiMoreFill,
+    RiRefreshFill,
+    RiLoopLeftFill,
+    RiRepeatFill,
+    RiShuffleFill,
+    RiPlayFill,
+    RiPauseFill,
+    RiStopFill,
+    RiSkipForwardFill,
+    RiSkipBackFill,
+    RiVolumeDownFill,
+    RiVolumeMuteFill,
+    RiFullscreenFill,
+    RiPictureInPictureFill,
+    RiLockFill,
+    RiLockUnlockFill,
+    RiKeyFill,
+    RiShieldCheckFill,
+    RiEyeCloseFill,
+    RiFingerprint2Fill,
+    RiUserAddFill,
+    RiUserFollowFill,
+    RiUserUnfollowFill,
+    RiLogoutBoxFill,
+    RiLoginBoxFill,
+} from '@remixicon/react';
 
+// Icon mapping for dynamic rendering
 export const ICON_MAP: Record<string, React.ElementType> = {
-    'twitter': Twitter,
-    'instagram': Instagram,
-    'github': Github,
-    'youtube': Youtube,
-    'linkedin': Linkedin,
-    'coffee': Coffee,
-    'book': BookOpen,
-    'figma': Figma,
-    'music': Music,
-    'map': MapPin,
-    'mail': Mail,
-    'link': LinkIcon,
-    'image': ImageIcon,
-    'smile': Smile,
-    'anchor': Anchor,
-    'hash': Hash,
-    'calendar': Calendar,
-    'video': Video,
+    // Social Media
+    'twitter': RiTwitterXFill,
+    'instagram': RiInstagramFill,
+    'github': RiGithubFill,
+    'youtube': RiYoutubeFill,
+    'linkedin': RiLinkedinBoxFill,
+    'mastodon': RiMastodonFill,
+    'spotify': RiSpotifyFill,
+    'soundcloud': RiSoundcloudFill,
+    'vimeo': RiVimeoFill,
+    'discord': RiDiscordFill,
+    'twitch': RiTwitchFill,
+    'tiktok': RiTiktokFill,
+    'pinterest': RiPinterestFill,
+    'slack': RiSlackFill,
+    'dribbble': RiDribbbleFill,
+    'behance': RiBehanceFill,
+    'medium': RiMediumFill,
+    'reddit': RiRedditFill,
+    'whatsapp': RiWhatsappFill,
+    'telegram': RiTelegramFill,
+    'wechat': RiWechatFill,
+    'qq': RiQqFill,
+    'weibo': RiWeiboFill,
+    'snapchat': RiSnapchatFill,
+    'patreon': RiPatreonFill,
+    'producthunt': RiProductHuntFill,
+    'stackoverflow': RiStackOverflowFill,
+    'npm': RiNpmjsFill,
+    
+    // Platforms & Browsers
+    'apple': RiAppleFill,
+    'android': RiAndroidFill,
+    'windows': RiWindowsFill,
+    'chrome': RiChromeFill,
+    'firefox': RiFirefoxFill,
+    'safari': RiSafariFill,
+    'edge': RiEdgeFill,
+    'opera': RiOperaFill,
+    
+    // Common
+    'home': RiHomeFill,
+    'link': RiLinksFill,
+    'mail': RiMailFill,
+    'phone': RiSmartphoneFill,
+    'message': RiMessageFill,
+    'chat': RiChatSmileFill,
+    'feedback': RiFeedbackFill,
+    'question-answer': RiQuestionAnswerFill,
+    'user': RiUserFill,
+    'team': RiTeamFill,
+    'user-heart': RiUserHeartFill,
+    'user-star': RiUserStarFill,
+    'user-add': RiUserAddFill,
+    'user-follow': RiUserFollowFill,
+    'user-unfollow': RiUserUnfollowFill,
+    'heart': RiHeartFill,
+    'star': RiStarFill,
+    'bookmark': RiBookmarkFill,
+    'flag': RiFlagFill,
+    'eye': RiEyeFill,
+    'eye-off': RiEyeOffFill,
+    'eye-close': RiEyeCloseFill,
+    
+    // Content & Files
+    'book': RiBookOpenFill,
+    'article': RiArticleLine,
+    'blog': RiArticleLine,
+    'pencil': RiPencilFill,
+    'draft': RiDraftFill,
+    'file': RiFileTextFill,
+    'file-paper': RiFilePaperFill,
+    'folder': RiFolderFill,
+    'archive': RiArchiveDrawerFill,
+    'inbox': RiInboxFill,
+    'send': RiSendPlaneFill,
+    'share': RiShareFill,
+    'external-link': RiExternalLinkFill,
+    'attachment': RiAttachmentFill,
+    'pushpin': RiPushpinFill,
+    
+    // Media
+    'image': RiImageFill,
+    'gallery': RiGalleryFill,
+    'camera': RiCameraFill,
+    'video': RiVideoFill,
+    'movie': RiMovieFill,
+    'film': RiFilmFill,
+    'music': RiMusicFill,
+    'headphone': RiHeadphoneFill,
+    'mic': RiMicFill,
+    'volume': RiVolumeUpFill,
+    'volume-down': RiVolumeDownFill,
+    'volume-mute': RiVolumeMuteFill,
+    'play': RiPlayFill,
+    'pause': RiPauseFill,
+    'stop': RiStopFill,
+    'skip-forward': RiSkipForwardFill,
+    'skip-back': RiSkipBackFill,
+    'fullscreen': RiFullscreenFill,
+    'picture-in-picture': RiPictureInPictureFill,
+    
+    // Work & Business
+    'briefcase': RiBriefcaseFill,
+    'shopping': RiShoppingBagFill,
+    'cart': RiShoppingCartFill,
+    'store': RiStore2Fill,
+    'wallet': RiWalletFill,
+    'card': RiBankCardFill,
+    'tag': RiPriceTag3Fill,
+    'coupon': RiCoupon3Fill,
+    'gift': RiGiftFill,
+    
+    // Tech & Development
+    'code': RiCodeBoxFill,
+    'terminal': RiTerminalBoxFill,
+    'database': RiDatabaseFill,
+    'server': RiServerFill,
+    'computer': RiComputerFill,
+    'smartphone': RiSmartphoneFill,
+    'tools': RiToolsFill,
+    'settings': RiSettings3Fill,
+    'download': RiDownloadCloudFill,
+    'upload': RiUploadCloudFill,
+    
+    // Nature & Objects
+    'coffee': RiCupFill,
+    'fire': RiFireFill,
+    'sun': RiSunFill,
+    'moon': RiMoonFill,
+    'leaf': RiLeafFill,
+    'flower': RiFlowerFill,
+    'bug': RiBugFill,
+    'rocket': RiRocketFill,
+    'trophy': RiTrophyFill,
+    'medal': RiMedalFill,
+    'lightbulb': RiLightbulbFill,
+    'compass': RiCompassFill,
+    'globe': RiGlobalFill,
+    'shield': RiShieldFill,
+    'shield-check': RiShieldCheckFill,
+    'lock': RiLockFill,
+    'lock-unlock': RiLockUnlockFill,
+    'key': RiKeyFill,
+    'fingerprint': RiFingerprint2Fill,
+    
+    // UI Elements
+    'smile': RiEmotionHappyFill,
+    'anchor': RiAnchorFill,
+    'hash': RiHashtag,
+    'calendar': RiCalendarFill,
+    'time': RiTimeFill,
+    'alarm': RiAlarmFill,
+    'notification': RiNotificationFill,
+    'question': RiQuestionFill,
+    'info': RiInformationFill,
+    'alert': RiAlertFill,
+    'check': RiCheckboxCircleFill,
+    'close': RiCloseCircleFill,
+    'add': RiAddCircleFill,
+    'subtract': RiSubtractFill,
+    'search': RiSearchFill,
+    'zoom-in': RiZoomInFill,
+    'filter': RiFilterFill,
+    'sort': RiSortAsc,
+    'layout-grid': RiLayoutGridFill,
+    'layout-masonry': RiLayoutMasonryFill,
+    'sidebar': RiSideBarFill,
+    'menu': RiMenuFill,
+    'more': RiMoreFill,
+    'refresh': RiRefreshFill,
+    'loop': RiLoopLeftFill,
+    'repeat': RiRepeatFill,
+    'shuffle': RiShuffleFill,
+    'logout': RiLogoutBoxFill,
+    'login': RiLoginBoxFill,
+    
+    // Location & Map
+    'map': RiMapPinFill,
+    'location': RiMapPinFill,
+    
+    // Design
+    'figma': RiFigmaFill,
+    'palette': RiPaletteFill,
+    'paint': RiPaletteFill,
+    
+    // Games
+    'game': RiGamepadFill,
 };
 
 const BentoCard: React.FC<BentoCardProps> = ({
@@ -58,6 +383,9 @@ const BentoCard: React.FC<BentoCardProps> = ({
     type,
     url,
     imageUrl,
+    githubData,
+    contactInfo,
+    mastodonData,
     customComponent,
     onEdit,
     onMove,
@@ -65,6 +393,17 @@ const BentoCard: React.FC<BentoCardProps> = ({
     isLast,
     className = ''
 }) => {
+    // GitHub card specific rendering
+    const isGitHubCard = type === 'social-github' && githubData;
+    
+    // Blog card specific rendering
+    const isBlogCard = type === 'blog-rss';
+    
+    // Contact card specific rendering
+    const isContactCard = type.startsWith('contact-') && contactInfo;
+    
+    // Mastodon card specific rendering
+    const isMastodonCard = type === 'social-mastodon';
     // Determine column span based on size
     const spanClasses = {
         [CardSize.Small]: 'sm:col-span-1 sm:row-span-1',
@@ -74,7 +413,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
     }[size];
 
     // Adjust height logic
-    const heightClass = (size === CardSize.Large || size === CardSize.Tall) ? 'h-[23rem]' : 'h-44';
+    const heightClass = (size === CardSize.Large || size === CardSize.Tall) ? 'h-[27rem]' : 'h-52';
 
     // Render Icon Helper
     const IconComponent = icon && ICON_MAP[icon] ? ICON_MAP[icon] : null;
@@ -178,7 +517,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         className="action-btn p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white text-gray-700 transition-colors"
                         title="Move Previous"
                     >
-                        <ArrowLeft size={14} />
+                        <RiArrowLeftLine size={14} />
                     </button>
                 )}
 
@@ -189,7 +528,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         className="action-btn p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white text-gray-700 transition-colors"
                         title="Move Next"
                     >
-                        <ArrowRight size={14} />
+                        <RiArrowRightLine size={14} />
                     </button>
                 )}
 
@@ -200,7 +539,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         className="action-btn p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white text-gray-700 transition-colors"
                         title="Edit Card"
                     >
-                        <Edit2 size={14} />
+                        <RiEdit2Fill size={14} />
                     </button>
                 )}
             </div>
@@ -229,62 +568,138 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 </div>
             )}
 
-            {/* Email Form */}
-            {type === 'email-form' && (
-                <div className="absolute inset-0 z-10 p-6 flex flex-col justify-center">
-                    <form onSubmit={(e) => { e.preventDefault(); alert('Email subscription feature coming soon!'); }} className="space-y-3">
-                        <h3 className="font-bold text-xl text-gray-900">{title}</h3>
-                        {subtitle && <p className="text-sm text-gray-600">{subtitle}</p>}
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        <button
-                            type="submit"
-                            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                        >
-                            {buttonText || 'Subscribe'}
-                        </button>
-                    </form>
-                </div>
-            )}
-
             {/* Icon - Fixed at top right */}
-            {IconComponent && !isImageCard && (
+            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && (
                 <div className="absolute top-4 right-4 z-20">
-                    <div className={cn(`${type === 'social-github' ? 'text-gray-900' : 'text-gray-800'} opacity-80`)}>
-                        <IconComponent size={28} />
-                    </div>
+                    <IconComponent 
+                        size={28} 
+                        className={cn(`${type === 'social-github' ? 'text-gray-900' : 'text-gray-800'} opacity-80`)}
+                    />
                 </div>
             )}
 
             {/* Content Layer */}
-            <div className={cn("relative z-10 flex flex-col h-full p-6", isEmbedCard && 'opacity-0 hover:opacity-100 transition-opacity bg-black/50')}>
+            <div className={cn(
+                "relative z-10 flex flex-col h-full",
+                // Embed cards have special hover effect
+                isEmbedCard && 'opacity-0 hover:opacity-100 transition-opacity bg-black/50',
+                // Apply padding to all cards except BlogCard, ContactCard, and MastodonCard
+                (isBlogCard || isContactCard || isMastodonCard) ? 'p-0' : 'p-6'
+            )}>
 
-                {/* Header: Titles */}
-                <div className="flex justify-between items-start mb-auto">
-                    <div className="flex flex-col gap-1 w-full pr-8">
-                        {(title || subtitle) && (
-                            <div className={isImageCard ? 'mt-auto text-white' : ''}>
-                                {title && (
-                                    <h3 className={cn(`font-bold text-xl leading-tight ${isImageCard ? 'text-white text-shadow-sm' : 'text-gray-900'}`)}>
-                                        {title}
-                                    </h3>
+                {/* Mastodon Card Special Layout */}
+                {isMastodonCard ? (
+                    <MastodonCard 
+                        data={mastodonData}
+                        title={title}
+                    />
+                ) : isContactCard ? (
+                    <ContactCard 
+                        type={type}
+                        title={title}
+                        subtitle={subtitle}
+                        encodedInfo={contactInfo}
+                        colorClass={colorClass}
+                    />
+                ) : isBlogCard ? (
+                    <BlogCard 
+                        rssUrl={url || ''} 
+                        title={title}
+                        colorClass={colorClass}
+                        isImageCard={isImageCard}
+                    />
+                ) : isGitHubCard ? (
+                    <div className="flex flex-col h-full">
+                        {githubData.type === 'user' ? (
+                            <>
+                                <div className="flex items-start gap-3 mb-auto">
+                                    <img 
+                                        src={githubData.avatar} 
+                                        alt={githubData.login}
+                                        className="w-12 h-12 rounded-full border-2 border-white/20"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-bold text-lg text-white truncate">
+                                            {githubData.name || githubData.login}
+                                        </h3>
+                                        <p className="text-sm text-white/80">@{githubData.login}</p>
+                                    </div>
+                                </div>
+                                {githubData.bio && (
+                                    <p className="text-sm text-white/90 mb-3 line-clamp-2">{githubData.bio}</p>
                                 )}
-                                {subtitle && (
-                                    <p className={cn(`text-sm font-medium mt-1 ${isImageCard ? 'text-white/90' : 'text-gray-600'}`)}>
-                                        {subtitle}
-                                    </p>
+                                <div className="flex gap-4 text-xs text-white/80 mt-auto">
+                                    <span className="flex items-center gap-1">
+                                        <RiGroupLine size={14} />
+                                        {githubData.followers} followers
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <RiArchiveLine size={14} />
+                                        {githubData.publicRepos} repos
+                                    </span>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="flex items-start gap-3 mb-3">
+                                    <img 
+                                        src={githubData.owner.avatar} 
+                                        alt={githubData.owner.login}
+                                        className="w-10 h-10 rounded-full border-2 border-white/20"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-bold text-lg text-white truncate">
+                                            {githubData.name}
+                                        </h3>
+                                        <p className="text-xs text-white/70">{githubData.owner.login}</p>
+                                    </div>
+                                </div>
+                                {githubData.description && (
+                                    <p className="text-sm text-white/90 mb-3 line-clamp-2">{githubData.description}</p>
                                 )}
-                            </div>
+                                <div className="flex gap-3 text-xs text-white/80 mt-auto">
+                                    <span className="flex items-center gap-1">
+                                        <RiStarLine size={14} />
+                                        {githubData.stars}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <RiGitForkLine size={14} />
+                                        {githubData.forks}
+                                    </span>
+                                    {githubData.language && (
+                                        <span className="flex items-center gap-1">
+                                            <RiCodeLine size={14} />
+                                            {githubData.language}
+                                        </span>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </div>
-                </div>
+                ) : (
+                    /* Regular Card Layout */
+                    <div className="flex justify-between items-start mb-auto">
+                        <div className="flex flex-col gap-1 w-full pr-8">
+                            {(title || subtitle) && (
+                                <div className={isImageCard ? 'mt-auto text-white' : ''}>
+                                    {title && (
+                                        <h3 className={cn(`font-bold text-xl leading-tight ${isImageCard ? 'text-white text-shadow-sm' : 'text-gray-900'}`)}>
+                                            {title}
+                                        </h3>
+                                    )}
+                                    {subtitle && (
+                                        <p className={cn(`text-sm font-medium mt-1 ${isImageCard ? 'text-white/90' : 'text-gray-600'}`)}>
+                                            {subtitle}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 {/* Footer: Action Button */}
-                {buttonText && !customComponent && (
+                {buttonText && buttonText.trim() && !customComponent && !isGitHubCard && !isContactCard && !isMastodonCard && (
                     <div className="mt-4">
                         <button className={cn(`
                py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors

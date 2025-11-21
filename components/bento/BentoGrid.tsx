@@ -89,7 +89,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
 
     return (
         <div
-            className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 sm:p-8 pb-32 overflow-x-hidden font-sans transition-all duration-500"
+            className="min-h-screen bg-gray-50 flex flex-col items-center justify-center sm:p-20 lg:p-40 overflow-x-hidden font-sans transition-all duration-500"
             style={profile.backgroundImage ? {
                 backgroundImage: `url(${profile.backgroundImage})`,
                 backgroundSize: 'cover',
@@ -115,7 +115,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                             profile={profile}
                             setProfile={isEditable ? setProfile : undefined}
                             isEditable={isEditable}
-                            username={userId ? profile.name : undefined}
+                            username={username}
                         />
                         
                     </div>

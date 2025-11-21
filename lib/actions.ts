@@ -129,6 +129,9 @@ export async function saveCard(card: any) {
                 colorClass: card.colorClass,
                 size: card.size,
                 buttonText: card.buttonText,
+                githubData: card.githubData ? JSON.stringify(card.githubData) : null,
+                contactInfo: card.contactInfo || null,
+                mastodonData: card.mastodonData ? JSON.stringify(card.mastodonData) : null,
             }).where(eq(cards.id, card.id));
         } else {
             // Get max order
@@ -147,6 +150,9 @@ export async function saveCard(card: any) {
                 size: card.size,
                 order: newOrder,
                 buttonText: card.buttonText,
+                githubData: card.githubData ? JSON.stringify(card.githubData) : null,
+                contactInfo: card.contactInfo || null,
+                mastodonData: card.mastodonData ? JSON.stringify(card.mastodonData) : null,
             });
         }
         return { success: true };

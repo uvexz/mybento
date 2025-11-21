@@ -1,0 +1,1 @@
+ALTER TABLE "cards" ADD COLUMN "contact_info" text;

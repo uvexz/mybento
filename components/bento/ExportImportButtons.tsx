@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Download, Upload, Loader2 } from 'lucide-react';
+import { RiDownloadLine, RiUploadLine, RiLoader4Line } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
@@ -74,9 +74,9 @@ export default function ExportImportButtons() {
                 disabled={isExporting}
             >
                 {isExporting ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <RiLoader4Line className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                    <Download className="w-4 h-4 mr-2" />
+                    <RiDownloadLine className="w-4 h-4 mr-2" />
                 )}
                 Export
             </Button>
@@ -88,9 +88,9 @@ export default function ExportImportButtons() {
                 disabled={isImporting}
             >
                 {isImporting ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <RiLoader4Line className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                    <Upload className="w-4 h-4 mr-2" />
+                    <RiUploadLine className="w-4 h-4 mr-2" />
                 )}
                 Import
             </Button>

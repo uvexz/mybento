@@ -1,6 +1,6 @@
 'use client';
 
-import { Moon, Sun } from 'lucide-react';
+import { RiMoonFill, RiSunFill } from '@remixicon/react';
 import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
@@ -30,9 +30,9 @@ export default function ThemeToggle() {
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
         >
             {theme === 'light' ? (
-                <Moon className="w-5 h-5 text-gray-700" />
+                <RiMoonFill className="w-5 h-5 text-gray-700" />
             ) : (
-                <Sun className="w-5 h-5 text-yellow-400" />
+                <RiSunFill className="w-5 h-5 text-yellow-400" />
             )}
         </button>
     );
