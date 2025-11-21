@@ -130,6 +130,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 <img
                     src={profile.avatarUrl}
                     alt={profile.name}
+                    loading="lazy"
                     className="w-40 h-40 rounded-full object-cover mb-6 shadow-lg border-4 border-white"
                 />
                 {isEditable && (

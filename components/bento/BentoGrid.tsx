@@ -1,15 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { BentoCardProps, UserProfile } from '@/lib/types';
 import BentoCard from '@/components/bento/BentoCard';
-import FloatingControls from '@/components/bento/FloatingControls';
-import CardEditorModal from '@/components/editor/CardEditorModal';
 import ProfileSection from '@/components/bento/ProfileSection';
-import StatsPanel from '@/components/bento/StatsPanel';
-import ExportImportButtons from '@/components/bento/ExportImportButtons';
 import { saveCard, deleteCard } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
+
+// Dynamic imports for better code splitting
+const FloatingControls = dynamic(() => import('@/components/bento/FloatingControls'), { ssr: false });
+const CardEditorModal = dynamic(() => import('@/components/editor/CardEditorModal'), { ssr: false });
+const StatsPanel = dynamic(() => import('@/components/bento/StatsPanel'), { ssr: false });
 
 interface BentoGridProps {
     initialCards: BentoCardProps[];

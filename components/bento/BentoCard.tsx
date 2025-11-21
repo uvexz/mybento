@@ -427,23 +427,22 @@ const BentoCard: React.FC<BentoCardProps> = ({
     const embedUrl = getEmbedUrl(type, url);
 
     // Click handler for links
-    const handleClick = async (e: React.MouseEvent) => {
+    const handleClick = (e: React.MouseEvent) => {
         // If clicking actions, don't navigate
         if ((e.target as HTMLElement).closest('.action-btn')) return;
 
         if (url && type !== 'image' && !isEmbedCard) {
-            // Track click
-            try {
-                await fetch('/api/track-click', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cardId: id }),
-                });
-            } catch (error) {
-                console.error('Failed to track click:', error);
-            }
-            
+            // Open link immediately for better UX
             window.open(url, '_blank');
+            
+            // Track click asynchronously (don't wait for response)
+            fetch('/api/track-click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cardId: id }),
+            }).catch(error => {
+                console.error('Failed to track click:', error);
+            });
         }
     };
 
@@ -581,10 +580,8 @@ const BentoCard: React.FC<BentoCardProps> = ({
             {/* Content Layer */}
             <div className={cn(
                 "relative z-10 flex flex-col h-full",
-                // Embed cards have special hover effect
-                isEmbedCard && 'opacity-0 hover:opacity-100 transition-opacity bg-black/50',
-                // Apply padding to all cards except BlogCard, ContactCard, and MastodonCard
-                (isBlogCard || isContactCard || isMastodonCard) ? 'p-0' : 'p-6'
+                // Apply padding to all cards except BlogCard, ContactCard, MastodonCard, and EmbedCard
+                (isBlogCard || isContactCard || isMastodonCard || isEmbedCard) ? 'p-0' : 'p-6'
             )}>
 
                 {/* Mastodon Card Special Layout */}
@@ -616,6 +613,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                                     <img 
                                         src={githubData.avatar} 
                                         alt={githubData.login}
+                                        loading="lazy"
                                         className="w-12 h-12 rounded-full border-2 border-white/20"
                                     />
                                     <div className="flex-1 min-w-0">
@@ -645,6 +643,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                                     <img 
                                         src={githubData.owner.avatar} 
                                         alt={githubData.owner.login}
+                                        loading="lazy"
                                         className="w-10 h-10 rounded-full border-2 border-white/20"
                                     />
                                     <div className="flex-1 min-w-0">

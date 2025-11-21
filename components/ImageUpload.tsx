@@ -100,7 +100,7 @@ export default function ImageUpload({ value, onChange, folder = 'cards', placeho
 
             {value && (
                 <div className="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-                    <img src={value} alt="Preview" className="w-full h-full object-cover" />
+                    <img src={value} alt="Preview" loading="lazy" className="w-full h-full object-cover" />
                     <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-md">
                         Preview
                     </div>

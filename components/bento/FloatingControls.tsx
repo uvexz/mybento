@@ -1,9 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { RiAddLine, RiBarChartFill, RiDownloadLine, RiUploadLine, RiCloseLine, RiInformationFill } from '@remixicon/react';
-import StatsPanel from './StatsPanel';
-import ExportImportButtons from './ExportImportButtons';
+import dynamic from 'next/dynamic';
+import { RiAddLine, RiBarChartFill, RiDownloadLine, RiUploadLine, RiCloseLine, RiInformationFill, RiLinkM } from '@remixicon/react';
+
+// Dynamic imports for better code splitting
+const StatsPanel = dynamic(() => import('./StatsPanel'), { ssr: false });
+const ExportImportButtons = dynamic(() => import('./ExportImportButtons'), { ssr: false });
+const ShortLinkManager = dynamic(() => import('@/components/ShortLinkManager'), { ssr: false });
 
 interface FloatingControlsProps {
     onAddCard: () => void;
@@ -13,6 +17,7 @@ interface FloatingControlsProps {
 const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }) => {
     const [showStats, setShowStats] = useState(false);
     const [showExportImport, setShowExportImport] = useState(false);
+    const [showShortLinks, setShowShortLinks] = useState(false);
 
     return (
         <>
@@ -47,6 +52,17 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                     >
                         <RiDownloadLine size={24} className="group-hover:scale-110 transition-transform" />
                     </button>
+
+                    {/* Short Links Button */}
+                    {userId && (
+                        <button
+                            onClick={() => setShowShortLinks(!showShortLinks)}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform text-gray-800 dark:text-white group"
+                            title="Short Links"
+                        >
+                            <RiLinkM size={24} className="group-hover:scale-110 transition-transform" />
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -107,6 +123,30 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                                     </p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Short Links Modal */}
+            {showShortLinks && userId && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowShortLinks(false)}></div>
+                    <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+                        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center z-10">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <RiLinkM size={20} />
+                                Short Links
+                            </h2>
+                            <button
+                                onClick={() => setShowShortLinks(false)}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                            >
+                                <RiCloseLine size={20} />
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            <ShortLinkManager />
                         </div>
                     </div>
                 </div>

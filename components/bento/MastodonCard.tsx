@@ -47,6 +47,7 @@ export default function MastodonCard({ data, title }: MastodonCardProps) {
                     <img 
                         src={data.avatarUrl} 
                         alt={data.name}
+                        loading="lazy"
                         className="w-12 h-12 rounded-full border-2 border-white/20 flex-shrink-0"
                     />
                 )}
@@ -83,6 +84,7 @@ export default function MastodonCard({ data, title }: MastodonCardProps) {
                             <img 
                                 src={data.latestPost.mediaUrl}
                                 alt="Post media"
+                                loading="lazy"
                                 className="mt-2 rounded-lg w-full h-24 object-cover"
                             />
                         )}

@@ -4,11 +4,22 @@ import { eq, asc } from 'drizzle-orm';
 import { UserProfile, BentoCardProps, CardSize, CardType } from '@/lib/types';
 
 export async function getUserProfile(username: string) {
-    const userResult = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    // Select only needed user fields for better performance
+    const userResult = await db.select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        bio: users.bio,
+        image: users.image,
+        backgroundImage: users.backgroundImage,
+        profileColor: users.profileColor,
+    }).from(users).where(eq(users.username, username)).limit(1);
+    
     const user = userResult[0];
 
     if (!user) return null;
 
+    // Fetch cards with index on userId and order for better performance
     const userCards = await db.select().from(cards).where(eq(cards.userId, user.id)).orderBy(asc(cards.order));
 
     const profile: UserProfile = {
@@ -39,8 +50,11 @@ export async function getUserProfile(username: string) {
 }
 
 export async function getHomepageCards() {
-    // Find the first admin user
-    const adminResult = await db.select().from(users).where(eq(users.role, 'admin')).limit(1);
+    // Find the first admin user - only select username for efficiency
+    const adminResult = await db.select({
+        username: users.username,
+    }).from(users).where(eq(users.role, 'admin')).limit(1);
+    
     const admin = adminResult[0];
 
     if (!admin) return null;
