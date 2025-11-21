@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { BentoCardProps, UserProfile } from '@/lib/types';
 import BentoCard from '@/components/bento/BentoCard';
@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 // Dynamic imports for better code splitting
 const FloatingControls = dynamic(() => import('@/components/bento/FloatingControls'), { ssr: false });
 const CardEditorModal = dynamic(() => import('@/components/editor/CardEditorModal'), { ssr: false });
-const StatsPanel = dynamic(() => import('@/components/bento/StatsPanel'), { ssr: false });
 
 interface BentoGridProps {
     initialCards: BentoCardProps[];
@@ -91,7 +90,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
 
     return (
         <div
-            className="min-h-screen bg-gray-50 flex flex-col items-center justify-center sm:p-20 lg:p-40 overflow-x-hidden font-sans transition-all duration-500"
+            className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 sm:p-8 lg:p-40 overflow-x-hidden font-sans transition-all duration-500"
             style={profile.backgroundImage ? {
                 backgroundImage: `url(${profile.backgroundImage})`,
                 backgroundSize: 'cover',
@@ -101,18 +100,11 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
         >
 
             {/* Main Container */}
-            <div className="transition-all duration-500 ease-in-out flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-16 w-full max-w-6xl">
+            <div className="transition-all duration-500 ease-in-out flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-16 w-full max-w-6xl">
                 
-                {/* Stats Panel (only for editable/owner view) */}
-                {isEditable && userId && (
-                    <div className="w-full lg:hidden">
-                        <StatsPanel userId={userId} />
-                    </div>
-                )}
-
                 {/* Left/Top: Profile & Stats */}
                 {showProfile && (
-                    <div className="flex-shrink-0 w-full lg:w-1/3 space-y-6">
+                    <div className="flex-shrink-0 w-full lg:w-1/3 space-y-6 px-2 sm:px-0">
                         <ProfileSection
                             profile={profile}
                             setProfile={isEditable ? setProfile : undefined}
@@ -124,8 +116,8 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                 )}
 
                 {/* Right/Bottom: Grid */}
-                <div className="flex-grow w-full">
-                    <div className="grid gap-4 grid-flow-row-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="flex-grow w-full px-2 sm:px-0">
+                    <div className="grid gap-3 sm:gap-4 grid-flow-row-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 
                         {cards.map((card, index) => (
                             <BentoCard
