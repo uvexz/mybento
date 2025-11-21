@@ -118,19 +118,6 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                             username={userId ? profile.name : undefined}
                         />
                         
-                        {/* Stats Panel (desktop only) */}
-                        {isEditable && userId && (
-                            <div className="hidden lg:block">
-                                <StatsPanel userId={userId} />
-                            </div>
-                        )}
-
-                        {/* Export/Import Buttons */}
-                        {isEditable && (
-                            <div className="hidden lg:block space-y-4">
-                                <ExportImportButtons />
-                            </div>
-                        )}
                     </div>
                 )}
 
@@ -158,6 +145,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                 <>
                     <FloatingControls
                         onAddCard={handleAddCard}
+                        userId={userId}
                     />
 
                     <CardEditorModal

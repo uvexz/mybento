@@ -251,18 +251,21 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 </div>
             )}
 
+            {/* Icon - Fixed at top right */}
+            {IconComponent && !isImageCard && (
+                <div className="absolute top-4 right-4 z-20">
+                    <div className={cn(`${type === 'social-github' ? 'text-gray-900' : 'text-gray-800'} opacity-80`)}>
+                        <IconComponent size={28} />
+                    </div>
+                </div>
+            )}
+
             {/* Content Layer */}
             <div className={cn("relative z-10 flex flex-col h-full p-6", isEmbedCard && 'opacity-0 hover:opacity-100 transition-opacity bg-black/50')}>
 
-                {/* Header: Icon + Titles */}
+                {/* Header: Titles */}
                 <div className="flex justify-between items-start mb-auto">
-                    <div className="flex flex-col gap-1 w-full">
-                        {IconComponent && !isImageCard && (
-                            <div className={cn(`mb-2 ${type === 'social-github' ? 'text-gray-900' : 'text-gray-800'} opacity-90`)}>
-                                <IconComponent size={32} />
-                            </div>
-                        )}
-
+                    <div className="flex flex-col gap-1 w-full pr-8">
                         {(title || subtitle) && (
                             <div className={isImageCard ? 'mt-auto text-white' : ''}>
                                 {title && (

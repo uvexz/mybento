@@ -17,34 +17,37 @@ interface CardEditorModalProps {
 }
 
 const COLORS = [
-    { name: 'Twitter Blue', class: 'bg-[#1DA1F2] text-white' },
-    { name: 'Substack Orange', class: 'bg-[#FF6719] text-white' },
-    { name: 'Youtube Red', class: 'bg-[#FF0000] text-white' },
-    { name: 'Coffee Yellow', class: 'bg-[#FFDD00] text-black' },
-    { name: 'Github Green', class: 'bg-[#2dba4e] text-white' },
-    { name: 'Mastodon Blue', class: 'bg-[#6364FF] text-white' },
-    { name: 'Figma Purple', class: 'bg-[#A259FF] text-white' },
-    { name: 'White', class: 'bg-white text-black' },
-    { name: 'Gray', class: 'bg-gray-100 text-black' },
-    { name: 'Dark', class: 'bg-gray-800 text-white' },
+    { name: 'Twitter Blue', class: 'bg-[#1DA1F2]/80 text-white' },
+    { name: 'Substack Orange', class: 'bg-[#FF6719]/80 text-white' },
+    { name: 'Youtube Red', class: 'bg-[#FF0000]/80 text-white' },
+    { name: 'Coffee Yellow', class: 'bg-[#FFDD00]/80 text-black' },
+    { name: 'Github Green', class: 'bg-[#2dba4e]/80 text-white' },
+    { name: 'Mastodon Blue', class: 'bg-[#6364FF]/80 text-white' },
+    { name: 'Figma Purple', class: 'bg-[#A259FF]/80 text-white' },
+    { name: 'LinkedIn Blue', class: 'bg-[#0A66C2]/80 text-white' },
+    { name: 'Spotify Green', class: 'bg-[#1DB954]/80 text-white' },
+    { name: 'SoundCloud Orange', class: 'bg-[#FF5500]/80 text-white' },
+    { name: 'White', class: 'bg-white/80 text-black' },
+    { name: 'Gray', class: 'bg-gray-100/80 text-black' },
+    { name: 'Dark', class: 'bg-gray-800/80 text-white' },
 ];
 
 // Presets for smart auto-fill
 const TYPE_PRESETS: Partial<Record<CardType, Partial<BentoCardProps>>> = {
-    'social-x': { icon: 'twitter', colorClass: 'bg-[#1DA1F2] text-white', buttonText: 'Follow' },
-    'social-insta': { icon: 'instagram', colorClass: 'bg-white text-black', buttonText: 'Follow' },
-    'social-github': { icon: 'github', colorClass: 'bg-[#2dba4e] text-white', buttonText: 'Follow' },
-    'social-youtube': { icon: 'youtube', colorClass: 'bg-[#FF0000] text-white', buttonText: 'Subscribe' },
-    'social-mastodon': { icon: 'mastodon', colorClass: 'bg-[#6364FF] text-white', buttonText: 'Follow' },
-    'social-linkedin': { icon: 'linkedin', colorClass: 'bg-[#0A66C2] text-white', buttonText: 'Connect' },
+    'social-x': { icon: 'twitter', colorClass: 'bg-[#1DA1F2]/80 text-white', buttonText: 'Follow' },
+    'social-insta': { icon: 'instagram', colorClass: 'bg-white/80 text-black', buttonText: 'Follow' },
+    'social-github': { icon: 'github', colorClass: 'bg-[#2dba4e]/80 text-white', buttonText: 'Follow' },
+    'social-youtube': { icon: 'youtube', colorClass: 'bg-[#FF0000]/80 text-white', buttonText: 'Subscribe' },
+    'social-mastodon': { icon: 'mastodon', colorClass: 'bg-[#6364FF]/80 text-white', buttonText: 'Follow' },
+    'social-linkedin': { icon: 'linkedin', colorClass: 'bg-[#0A66C2]/80 text-white', buttonText: 'Connect' },
     'image': { icon: undefined, buttonText: '' },
     'image-link': { icon: undefined, buttonText: 'Visit' },
-    'video-youtube': { icon: 'youtube', colorClass: 'bg-[#FF0000] text-white', buttonText: 'Watch', size: CardSize.Large },
-    'video-vimeo': { icon: 'link', colorClass: 'bg-[#1AB7EA] text-white', buttonText: 'Watch', size: CardSize.Large },
-    'music-spotify': { icon: 'music', colorClass: 'bg-[#1DB954] text-white', buttonText: 'Listen', size: CardSize.Medium },
-    'music-soundcloud': { icon: 'music', colorClass: 'bg-[#FF5500] text-white', buttonText: 'Listen', size: CardSize.Medium },
-    'email-form': { icon: 'mail', colorClass: 'bg-blue-500 text-white', buttonText: 'Subscribe', size: CardSize.Medium },
-    'calendar': { icon: 'calendar', colorClass: 'bg-purple-500 text-white', buttonText: 'Book', size: CardSize.Medium },
+    'video-youtube': { icon: 'youtube', colorClass: 'bg-[#FF0000]/80 text-white', buttonText: 'Watch', size: CardSize.Large },
+    'video-vimeo': { icon: 'link', colorClass: 'bg-[#1AB7EA]/80 text-white', buttonText: 'Watch', size: CardSize.Large },
+    'music-spotify': { icon: 'music', colorClass: 'bg-[#1DB954]/80 text-white', buttonText: 'Listen', size: CardSize.Medium },
+    'music-soundcloud': { icon: 'music', colorClass: 'bg-[#FF5500]/80 text-white', buttonText: 'Listen', size: CardSize.Medium },
+    'email-form': { icon: 'mail', colorClass: 'bg-blue-500/80 text-white', buttonText: 'Subscribe', size: CardSize.Medium },
+    'calendar': { icon: 'calendar', colorClass: 'bg-purple-500/80 text-white', buttonText: 'Book', size: CardSize.Medium },
 };
 
 const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSave, onDelete, initialData }) => {
@@ -73,7 +76,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSa
                     url: '',
                     type: 'link',
                     size: CardSize.Small,
-                    colorClass: 'bg-gray-100',
+                    colorClass: 'bg-gray-100/80',
                     icon: 'link',
                     imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'
                 });
@@ -107,9 +110,9 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSa
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
-            <div className="relative bg-white rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200">
 
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur-sm z-10">
@@ -165,6 +168,9 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSa
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
+                            <p className="text-xs text-gray-500 mt-1">
+                                💡 Icon will appear in the top-right corner
+                            </p>
                         </div>
 
                         <div>
@@ -306,7 +312,6 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSa
                           ${c.class.includes('bg-white') || c.class.includes('bg-gray-100') ? 'border border-gray-200' : 'border-transparent'} 
                           ${formData.colorClass === c.class ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' : ''}
                         `}
-                                                style={!c.class.startsWith('bg-') ? { backgroundColor: c.class.split(' ')[0] } : undefined}
                                                 title={c.name}
                                             >
                                                 <div className={`w-full h-full rounded-full ${c.class}`}></div>
@@ -315,24 +320,38 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSa
                                     </div>
 
                                     {/* Icons */}
-                                    <div className="border border-gray-100 rounded-xl p-3 bg-gray-50 max-h-32 overflow-y-auto grid grid-cols-6 sm:grid-cols-8 gap-2">
-                                        {Object.keys(ICON_MAP).map((iconKey) => {
-                                            const IconComp = ICON_MAP[iconKey];
-                                            return (
+                                    <div>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-xs text-gray-600">Select Icon (optional)</span>
+                                            {formData.icon && (
                                                 <button
-                                                    key={iconKey}
                                                     type="button"
-                                                    onClick={() => setFormData({ ...formData, icon: iconKey })}
-                                                    className={`
-                            aspect-square rounded-lg flex items-center justify-center transition-all
-                            ${formData.icon === iconKey ? 'bg-white shadow-md text-blue-600 ring-1 ring-blue-100' : 'text-gray-400 hover:bg-white hover:text-gray-700'}
-                          `}
-                                                    title={iconKey}
+                                                    onClick={() => setFormData({ ...formData, icon: undefined })}
+                                                    className="text-xs text-red-500 hover:text-red-700"
                                                 >
-                                                    <IconComp size={18} />
+                                                    Remove Icon
                                                 </button>
-                                            );
-                                        })}
+                                            )}
+                                        </div>
+                                        <div className="border border-gray-100 rounded-xl p-3 bg-gray-50 max-h-32 overflow-y-auto grid grid-cols-6 sm:grid-cols-8 gap-2">
+                                            {Object.keys(ICON_MAP).map((iconKey) => {
+                                                const IconComp = ICON_MAP[iconKey];
+                                                return (
+                                                    <button
+                                                        key={iconKey}
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, icon: iconKey })}
+                                                        className={`
+                                aspect-square rounded-lg flex items-center justify-center transition-all
+                                ${formData.icon === iconKey ? 'bg-white shadow-md text-blue-600 ring-1 ring-blue-100' : 'text-gray-400 hover:bg-white hover:text-gray-700'}
+                              `}
+                                                        title={iconKey}
+                                                    >
+                                                        <IconComp size={18} />
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

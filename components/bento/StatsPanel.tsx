@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { BarChart3, TrendingUp, Eye } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface CardStat {
     id: string;
@@ -37,29 +36,14 @@ export default function StatsPanel({ userId }: StatsPanelProps) {
 
     if (isLoading) {
         return (
-            <Card className="mb-6">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5" />
-                        Analytics
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-gray-500">Loading stats...</p>
-                </CardContent>
-            </Card>
+            <div>
+                <p className="text-gray-500 dark:text-gray-400">Loading stats...</p>
+            </div>
         );
     }
 
     return (
-        <Card className="mb-6">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    Analytics
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
+        <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                         <Eye className="w-8 h-8 text-blue-600" />
@@ -96,7 +80,6 @@ export default function StatsPanel({ userId }: StatsPanelProps) {
                             ))
                     )}
                 </div>
-            </CardContent>
-        </Card>
+        </div>
     );
 }

@@ -42,9 +42,9 @@ export default function QRCodeModal({ isOpen, onClose, url, title }: QRCodeModal
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
-            <div className="relative bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl">
+            <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md p-6 shadow-2xl">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-bold">QR Code</h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
