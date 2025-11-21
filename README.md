@@ -1,99 +1,74 @@
+![mybento](https://raw.githubusercontent.com/uvexz/mybento/main/public/mybento.png)
+
 # mybento
 
-A personal page builder with a beautiful, customizable Bento Grid layout. Create your own corner of the internet to showcase your links, social media, and content.
+A personal page builder with a beautiful Bento Grid layout. Create your own corner of the internet to showcase links, social media, and content.
 
 ## Features
 
-- **Bento Grid Layout**: Drag-and-drop interface to organize your content cards.
-- **Customizable Profile**:
-  - Edit your name, bio, and avatar.
-  - Set a custom background image for your page.
-  - Customize the profile section's background color for better readability.
-- **Card Types**: Support for various card types including links, social media, and images.
-- **Admin Homepage**: The homepage automatically features the content from the site administrator.
-- **Secure Authentication**: Powered by NextAuth.js.
-- **Responsive Design**: Looks great on desktop and mobile.
+- 🎨 **Bento Grid Layout** - Drag-and-drop interface to organize content cards
+- 👤 **Customizable Profile** - Edit name, bio, avatar, and background
+- 🔐 **Secure Authentication** - Email verification, password strength checks, rate limiting
+- 📊 **Analytics** - Track card clicks and performance
+- 📱 **Responsive Design** - Works great on desktop and mobile
+- 🔗 **Short Links** - Create and manage custom short URLs
+- 📸 **Image Upload** - Optional Cloudflare R2 integration
 
 ## Tech Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Database**: PostgreSQL
-- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
-- **Authentication**: [NextAuth.js](https://authjs.dev/) (v5 Beta)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [Shadcn UI](https://ui.shadcn.com/)
+- [Next.js 16](https://nextjs.org/) - React framework
+- [PostgreSQL](https://www.postgresql.org/) - Database
+- [Drizzle ORM](https://orm.drizzle.team/) - Type-safe ORM
+- [NextAuth.js](https://authjs.dev/) - Authentication
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Shadcn UI](https://ui.shadcn.com/) - UI components
 
-## ✨ New Features
+## Quick Start
 
-- 🎨 **Dark Mode**: Toggle between light and dark themes
-- 📊 **Analytics Dashboard**: Track card clicks and performance
-- 🔄 **Drag & Drop Sorting**: Reorder cards with persistent storage
-- 📸 **Image Upload**: Upload images to Cloudflare R2 (optional)
+1. **Clone and install**
+   ```bash
+   git clone https://github.com/uvexz/mybento.git
+   cd mybento
+   npm install
+   ```
 
-See [FEATURES.md](./FEATURES.md) for detailed documentation.
+2. **Setup environment**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your PostgreSQL URL and generate an auth secret:
+   ```bash
+   openssl rand -base64 32
+   ```
 
-## Getting Started
+3. **Run database migrations**
+   ```bash
+   npm run db:push
+   ```
 
-### Prerequisites
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-- Node.js 18+
-- PostgreSQL database (local or hosted like Vercel Postgres / Neon)
-- (Optional) Cloudflare R2 account for image uploads
+Visit [http://localhost:3000](http://localhost:3000) and register. The first user becomes admin.
 
-### Installation
+## Optional Configuration
 
-1.  **Clone the repository:**
+**Email Verification** (via [Resend](https://resend.com/)):
+```env
+RESEND_API_KEY=re_your_api_key
+EMAIL_FROM=noreply@yourdomain.com
+```
 
-    ```bash
-    git clone <repository-url>
-    cd mybento
-    ```
-
-2.  **Install dependencies:**
-
-    ```bash
-    npm install
-    ```
-
-3.  **Environment Setup:**
-
-    Copy `.env.example` to `.env` and fill in your values:
-
-    ```bash
-    cp .env.example .env
-    ```
-
-    **Required Variables:**
-    - `POSTGRES_URL`: Your PostgreSQL connection string.
-    - `AUTH_SECRET`: A random string for authentication (generate with `openssl rand -base64 32`).
-    - `NEXT_PUBLIC_SITE_NAME`: (Optional) Your site's name.
-    - `NEXT_PUBLIC_SITE_DESCRIPTION`: (Optional) Your site's description.
-
-4.  **Database Migration:**
-
-    Push the schema to your database:
-
-    ```bash
-    npm run db:push
-    ```
-
-5.  **Run Development Server:**
-
-    ```bash
-    npm run dev
-    ```
-
-    Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Quick Start
-
-See [QUICKSTART.md](./QUICKSTART.md) for a step-by-step guide to using the new features.
-
-## Usage
-
-1.  **Register**: Create a new account. The first user created will automatically be assigned the `admin` role.
-2.  **Customize**: Go to your dashboard (`/your-username`) to add cards and edit your profile.
-3.  **Homepage**: As an admin, your cards will be featured on the main landing page.
+**Image Uploads** (via Cloudflare R2):
+```env
+R2_ENDPOINT=https://your-account-id.r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=your_access_key_id
+R2_SECRET_ACCESS_KEY=your_secret_access_key
+R2_BUCKET_NAME=mybento
+R2_PUBLIC_URL=https://your-public-domain.com
+```
 
 ## License
 
