@@ -28,39 +28,39 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                     {userId && (
                         <button
                             onClick={() => setShowStats(!showStats)}
-                            className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform text-gray-800 dark:text-white group"
+                            className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-gray-100 hover:scale-105 transition-transform text-gray-800 group"
                             title="Analytics"
                         >
-                            <RiBarChartFill size={24} className="group-hover:scale-110 transition-transform" />
+                            <RiBarChartFill size={20} className="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                         </button>
                     )}
 
                     {/* Add Card Button */}
                     <button
                         onClick={onAddCard}
-                        className="bg-blue-600 p-4 rounded-2xl shadow-2xl hover:scale-105 transition-transform text-white group"
+                        className="bg-blue-600 p-3 sm:p-4 rounded-2xl shadow-2xl hover:scale-105 transition-transform text-white group"
                         title="Add New Card"
                     >
-                        <RiAddLine size={24} className="group-hover:rotate-90 transition-transform" />
+                        <RiAddLine size={20} className="sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
                     </button>
 
                     {/* Export/Import Button */}
                     <button
                         onClick={() => setShowExportImport(!showExportImport)}
-                        className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform text-gray-800 dark:text-white group"
+                        className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-gray-100 hover:scale-105 transition-transform text-gray-800 group"
                         title="Export/Import"
                     >
-                        <RiDownloadLine size={24} className="group-hover:scale-110 transition-transform" />
+                        <RiDownloadLine size={20} className="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                     </button>
 
                     {/* Short Links Button */}
                     {userId && (
                         <button
                             onClick={() => setShowShortLinks(!showShortLinks)}
-                            className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform text-gray-800 dark:text-white group"
+                            className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-gray-100 hover:scale-105 transition-transform text-gray-800 group"
                             title="Short Links"
                         >
-                            <RiLinkM size={24} className="group-hover:scale-110 transition-transform" />
+                            <RiLinkM size={20} className="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                         </button>
                     )}
                 </div>
@@ -70,15 +70,15 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
             {showStats && userId && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowStats(false)}></div>
-                    <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-                        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center z-10">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <div className="relative bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+                        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center z-10 rounded-t-3xl">
+                            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                 <RiBarChartFill size={20} />
                                 Analytics
                             </h2>
                             <button
                                 onClick={() => setShowStats(false)}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                             >
                                 <RiCloseLine size={20} />
                             </button>
@@ -94,15 +94,15 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
             {showExportImport && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowExportImport(false)}></div>
-                    <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl">
-                        <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <div className="relative bg-white rounded-3xl w-full max-w-md shadow-2xl">
+                        <div className="border-b border-gray-200 p-4 flex justify-between items-center rounded-t-3xl">
+                            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                 <RiUploadLine size={20} />
                                 Data Management
                             </h2>
                             <button
                                 onClick={() => setShowExportImport(false)}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                             >
                                 <RiCloseLine size={20} />
                             </button>
@@ -110,14 +110,14 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         <div className="p-6">
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Backup Your Data</h3>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                    <h3 className="font-semibold mb-2 text-gray-900">Backup Your Data</h3>
+                                    <p className="text-sm text-gray-600 mb-3">
                                         Export all your cards and profile data as JSON
                                     </p>
                                     <ExportImportButtons />
                                 </div>
-                                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-start gap-1.5">
+                                <div className="pt-4 border-t border-gray-200">
+                                    <p className="text-xs text-gray-500 flex items-start gap-1.5">
                                         <RiInformationFill size={14} className="text-blue-500 flex-shrink-0 mt-0.5" />
                                         <span>Tip: Export regularly to backup your data. You can import the JSON file later to restore.</span>
                                     </p>
@@ -132,15 +132,15 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
             {showShortLinks && userId && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowShortLinks(false)}></div>
-                    <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-                        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center z-10">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <div className="relative bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+                        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center z-10 rounded-t-3xl">
+                            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                 <RiLinkM size={20} />
                                 Short Links
                             </h2>
                             <button
                                 onClick={() => setShowShortLinks(false)}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                             >
                                 <RiCloseLine size={20} />
                             </button>

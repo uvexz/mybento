@@ -77,7 +77,6 @@ import {
     RiHeartFill,
     RiStarFill,
     RiFireFill,
-    RiThunderstormsFill,
     RiSunFill,
     RiMoonFill,
     RiLeafFill,
@@ -497,13 +496,13 @@ const BentoCard: React.FC<BentoCardProps> = ({
     return (
         <div
             onClick={handleClick}
-            className={cn(`
+            className={`
         ${spanClasses} ${heightClass} ${!isImageCard ? colorClass : 'bg-gray-200'} ${className} 
         rounded-3xl relative group transition-all duration-300 
         ${url ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : ''} 
         shadow-sm overflow-hidden flex flex-col justify-between
         border border-black/5
-      `)}
+      `}
             style={bgStyle}
         >
 
@@ -572,17 +571,15 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 <div className="absolute top-4 right-4 z-20">
                     <IconComponent 
                         size={28} 
-                        className={cn(`${type === 'social-github' ? 'text-gray-900' : 'text-gray-800'} opacity-80`)}
+                        className={`${type === 'social-github' ? 'text-gray-900' : 'text-gray-800'} opacity-80`}
                     />
                 </div>
             )}
 
             {/* Content Layer */}
-            <div className={cn(
-                "relative z-10 flex flex-col h-full",
-                // Apply padding to all cards except BlogCard, ContactCard, MastodonCard, and EmbedCard
+            <div className={`relative z-10 flex flex-col h-full ${
                 (isBlogCard || isContactCard || isMastodonCard || isEmbedCard) ? 'p-0' : 'p-6'
-            )}>
+            }`}>
 
                 {/* Mastodon Card Special Layout */}
                 {isMastodonCard ? (
@@ -682,12 +679,12 @@ const BentoCard: React.FC<BentoCardProps> = ({
                             {(title || subtitle) && (
                                 <div className={isImageCard ? 'mt-auto text-white' : ''}>
                                     {title && (
-                                        <h3 className={cn(`font-bold text-xl leading-tight ${isImageCard ? 'text-white text-shadow-sm' : 'text-gray-900'}`)}>
+                                        <h3 className={`font-bold text-xl leading-tight ${isImageCard ? 'text-white text-shadow-sm' : 'text-gray-900'}`}>
                                             {title}
                                         </h3>
                                     )}
                                     {subtitle && (
-                                        <p className={cn(`text-sm font-medium mt-1 ${isImageCard ? 'text-white/90' : 'text-gray-600'}`)}>
+                                        <p className={`text-sm font-medium mt-1 ${isImageCard ? 'text-white/90' : 'text-gray-600'}`}>
                                             {subtitle}
                                         </p>
                                     )}
@@ -700,13 +697,11 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 {/* Footer: Action Button */}
                 {buttonText && buttonText.trim() && !customComponent && !isGitHubCard && !isContactCard && !isMastodonCard && (
                     <div className="mt-4">
-                        <button className={cn(`
-               py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors
-               ${isImageCard
+                        <button className={`py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors ${
+                            isImageCard
                                 ? 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border border-white/30'
                                 : 'bg-white/90 hover:bg-white text-gray-900 backdrop-blur-sm'
-                            }
-             `)}>
+                        }`}>
                             {buttonText}
                         </button>
                     </div>
