@@ -33,7 +33,6 @@ export async function getUserProfile(username: string) {
     }));
 
     return { profile, cards: mappedCards, user };
-    return { profile, cards: mappedCards, user };
 }
 
 export async function getHomepageCards() {

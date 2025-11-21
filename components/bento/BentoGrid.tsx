@@ -6,6 +6,8 @@ import BentoCard from '@/components/bento/BentoCard';
 import FloatingControls from '@/components/bento/FloatingControls';
 import CardEditorModal from '@/components/editor/CardEditorModal';
 import ProfileSection from '@/components/bento/ProfileSection';
+import StatsPanel from '@/components/bento/StatsPanel';
+import ExportImportButtons from '@/components/bento/ExportImportButtons';
 import { saveCard, deleteCard } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 
@@ -16,7 +18,12 @@ interface BentoGridProps {
     showProfile?: boolean;
 }
 
-export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true }: BentoGridProps) {
+interface BentoGridPropsExtended extends BentoGridProps {
+    userId?: string;
+    username?: string;
+}
+
+export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true, userId, username }: BentoGridPropsExtended) {
     const [cards, setCards] = useState<BentoCardProps[]>(initialCards);
     const [profile, setProfile] = useState<UserProfile>(initialProfile);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,7 +76,14 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
         if (swapIndex >= 0 && swapIndex < newCards.length) {
             [newCards[index], newCards[swapIndex]] = [newCards[swapIndex], newCards[index]];
             setCards(newCards);
-            // TODO: Persist to DB (reorder)
+            
+            // Persist to DB
+            const reorderData = newCards.map((card, idx) => ({ id: card.id, order: idx }));
+            import('@/lib/actions').then(({ reorderCards }) => {
+                reorderCards(reorderData).then(() => {
+                    router.refresh();
+                });
+            });
         }
     };
 
@@ -86,15 +100,37 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
 
             {/* Main Container */}
             <div className="transition-all duration-500 ease-in-out flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-16 w-full max-w-6xl">
+                
+                {/* Stats Panel (only for editable/owner view) */}
+                {isEditable && userId && (
+                    <div className="w-full lg:hidden">
+                        <StatsPanel userId={userId} />
+                    </div>
+                )}
 
-                {/* Left/Top: Profile */}
+                {/* Left/Top: Profile & Stats */}
                 {showProfile && (
-                    <div className="flex-shrink-0 w-full lg:w-1/3">
+                    <div className="flex-shrink-0 w-full lg:w-1/3 space-y-6">
                         <ProfileSection
                             profile={profile}
                             setProfile={isEditable ? setProfile : undefined}
                             isEditable={isEditable}
+                            username={userId ? profile.name : undefined}
                         />
+                        
+                        {/* Stats Panel (desktop only) */}
+                        {isEditable && userId && (
+                            <div className="hidden lg:block">
+                                <StatsPanel userId={userId} />
+                            </div>
+                        )}
+
+                        {/* Export/Import Buttons */}
+                        {isEditable && (
+                            <div className="hidden lg:block space-y-4">
+                                <ExportImportButtons />
+                            </div>
+                        )}
                     </div>
                 )}
 

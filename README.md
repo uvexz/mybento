@@ -23,12 +23,22 @@ A personal page builder with a beautiful, customizable Bento Grid layout. Create
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [Shadcn UI](https://ui.shadcn.com/)
 
+## ✨ New Features
+
+- 🎨 **Dark Mode**: Toggle between light and dark themes
+- 📊 **Analytics Dashboard**: Track card clicks and performance
+- 🔄 **Drag & Drop Sorting**: Reorder cards with persistent storage
+- 📸 **Image Upload**: Upload images to Cloudflare R2 (optional)
+
+See [FEATURES.md](./FEATURES.md) for detailed documentation.
+
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
 - PostgreSQL database (local or hosted like Vercel Postgres / Neon)
+- (Optional) Cloudflare R2 account for image uploads
 
 ### Installation
 
@@ -74,6 +84,10 @@ A personal page builder with a beautiful, customizable Bento Grid layout. Create
     ```
 
     Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Quick Start
+
+See [QUICKSTART.md](./QUICKSTART.md) for a step-by-step guide to using the new features.
 
 ## Usage
 

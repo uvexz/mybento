@@ -7,7 +7,22 @@ export enum CardSize {
     Large = 'large', // 2x2
 }
 
-export type CardType = 'link' | 'social-x' | 'social-insta' | 'social-github' | 'social-mastodon' | 'social-youtube' | 'image' | 'image-link';
+export type CardType = 
+    | 'link' 
+    | 'social-x' 
+    | 'social-insta' 
+    | 'social-github' 
+    | 'social-mastodon' 
+    | 'social-youtube' 
+    | 'social-linkedin'
+    | 'image' 
+    | 'image-link'
+    | 'video-youtube'
+    | 'video-vimeo'
+    | 'music-spotify'
+    | 'music-soundcloud'
+    | 'email-form'
+    | 'calendar';
 
 export interface BentoCardProps {
     id: string;

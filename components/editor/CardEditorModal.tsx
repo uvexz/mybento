@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import ImageUpload from '@/components/ImageUpload';
 
 interface CardEditorModalProps {
     isOpen: boolean;
@@ -35,8 +36,15 @@ const TYPE_PRESETS: Partial<Record<CardType, Partial<BentoCardProps>>> = {
     'social-github': { icon: 'github', colorClass: 'bg-[#2dba4e] text-white', buttonText: 'Follow' },
     'social-youtube': { icon: 'youtube', colorClass: 'bg-[#FF0000] text-white', buttonText: 'Subscribe' },
     'social-mastodon': { icon: 'mastodon', colorClass: 'bg-[#6364FF] text-white', buttonText: 'Follow' },
+    'social-linkedin': { icon: 'linkedin', colorClass: 'bg-[#0A66C2] text-white', buttonText: 'Connect' },
     'image': { icon: undefined, buttonText: '' },
     'image-link': { icon: undefined, buttonText: 'Visit' },
+    'video-youtube': { icon: 'youtube', colorClass: 'bg-[#FF0000] text-white', buttonText: 'Watch', size: CardSize.Large },
+    'video-vimeo': { icon: 'link', colorClass: 'bg-[#1AB7EA] text-white', buttonText: 'Watch', size: CardSize.Large },
+    'music-spotify': { icon: 'music', colorClass: 'bg-[#1DB954] text-white', buttonText: 'Listen', size: CardSize.Medium },
+    'music-soundcloud': { icon: 'music', colorClass: 'bg-[#FF5500] text-white', buttonText: 'Listen', size: CardSize.Medium },
+    'email-form': { icon: 'mail', colorClass: 'bg-blue-500 text-white', buttonText: 'Subscribe', size: CardSize.Medium },
+    'calendar': { icon: 'calendar', colorClass: 'bg-purple-500 text-white', buttonText: 'Book', size: CardSize.Medium },
 };
 
 const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSave, onDelete, initialData }) => {
@@ -140,7 +148,20 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSa
                                         <SelectItem value="social-insta">Instagram</SelectItem>
                                         <SelectItem value="social-github">GitHub</SelectItem>
                                         <SelectItem value="social-youtube">YouTube</SelectItem>
+                                        <SelectItem value="social-linkedin">LinkedIn</SelectItem>
                                         <SelectItem value="social-mastodon">Mastodon</SelectItem>
+                                    </SelectGroup>
+                                    <SelectGroup>
+                                        <SelectLabel>Media</SelectLabel>
+                                        <SelectItem value="video-youtube">YouTube Video</SelectItem>
+                                        <SelectItem value="video-vimeo">Vimeo Video</SelectItem>
+                                        <SelectItem value="music-spotify">Spotify Track</SelectItem>
+                                        <SelectItem value="music-soundcloud">SoundCloud</SelectItem>
+                                    </SelectGroup>
+                                    <SelectGroup>
+                                        <SelectLabel>Interactive</SelectLabel>
+                                        <SelectItem value="email-form">Email Subscription</SelectItem>
+                                        <SelectItem value="calendar">Calendar/Booking</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -184,22 +205,35 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({ isOpen, onClose, onSa
 
                         <div className="grid grid-cols-1 gap-4">
                             {(formData.type === 'image' || formData.type === 'image-link') ? (
-                                <div className="space-y-3">
-                                    <Input
-                                        type="text"
-                                        value={formData.imageUrl || ''}
-                                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                        placeholder="Image URL (https://...)"
-                                    />
-                                    {/* Image Preview */}
-                                    {formData.imageUrl && (
-                                        <div className="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-                                            <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                            <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-md">Preview</div>
-                                        </div>
-                                    )}
-                                </div>
+                                <ImageUpload
+                                    value={formData.imageUrl || ''}
+                                    onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                                    folder="cards"
+                                    placeholder="Image URL or upload (max 5MB)"
+                                />
                             ) : null}
+
+                            {/* Help text for embed types */}
+                            {formData.type === 'video-youtube' && (
+                                <p className="text-xs text-gray-500">
+                                    💡 Paste YouTube video URL (e.g., https://youtube.com/watch?v=...)
+                                </p>
+                            )}
+                            {formData.type === 'video-vimeo' && (
+                                <p className="text-xs text-gray-500">
+                                    💡 Paste Vimeo video URL (e.g., https://vimeo.com/123456789)
+                                </p>
+                            )}
+                            {formData.type === 'music-spotify' && (
+                                <p className="text-xs text-gray-500">
+                                    💡 Paste Spotify track URL (e.g., https://open.spotify.com/track/...)
+                                </p>
+                            )}
+                            {formData.type === 'music-soundcloud' && (
+                                <p className="text-xs text-gray-500">
+                                    💡 Paste SoundCloud track URL
+                                </p>
+                            )}
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-2 sm:col-span-1">

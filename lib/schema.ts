@@ -25,5 +25,24 @@ export const cards = pgTable('cards', {
     colorClass: text('color_class').default('bg-gray-100'),
     size: text('size').default('small'),
     order: integer('order').default(0),
+    clicks: integer('clicks').default(0),
+    createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const cardClicks = pgTable('card_clicks', {
+    id: serial('id').primaryKey(),
+    cardId: uuid('card_id').references(() => cards.id, { onDelete: 'cascade' }).notNull(),
+    clickedAt: timestamp('clicked_at').defaultNow(),
+    userAgent: text('user_agent'),
+    referer: text('referer'),
+});
+
+export const shortLinks = pgTable('short_links', {
+    id: serial('id').primaryKey(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    shortCode: text('short_code').unique().notNull(),
+    originalUrl: text('original_url').notNull(),
+    title: text('title'),
+    clicks: integer('clicks').default(0),
     createdAt: timestamp('created_at').defaultNow(),
 });

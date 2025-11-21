@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || "A place for all your links, social media, and content.",
 };
 
+import ThemeToggle from "@/components/ThemeToggle";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ThemeToggle />
         {children}
       </body>
     </html>

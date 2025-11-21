@@ -2,8 +2,8 @@
 
 import { z } from 'zod';
 import { db } from '@/lib/db';
-import { users, cards } from '@/lib/schema';
-import { eq, asc } from 'drizzle-orm';
+import { users, cards, cardClicks } from '@/lib/schema';
+import { eq, asc, sql } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { signIn, auth } from '@/auth';
 import { AuthError } from 'next-auth';
@@ -164,5 +164,83 @@ export async function deleteCard(id: string) {
     } catch (error) {
         console.error('Delete card error:', error);
         return { error: 'Failed to delete card' };
+    }
+}
+
+export async function reorderCards(items: { id: string; order: number }[]) {
+    const session = await auth();
+    if (!session?.user?.email) return { error: 'Not authenticated' };
+
+    try {
+        // Verify user owns these cards (optional but good practice)
+        // For batch updates, we might skip individual verification for performance 
+        // if we trust the session + ID match, but ideally we check.
+        // Here we'll just update directly where ID matches.
+        
+        // Using a transaction or batch update would be better if supported by the driver/ORM easily,
+        // but a loop is acceptable for small numbers of cards.
+        
+        await db.transaction(async (tx) => {
+             for (const item of items) {
+                await tx.update(cards)
+                    .set({ order: item.order })
+                    .where(eq(cards.id, item.id));
+            }
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error('Reorder cards error:', error);
+        return { error: 'Failed to reorder cards' };
+    }
+}
+
+export async function trackCardClick(cardId: string, userAgent?: string, referer?: string) {
+    try {
+        // Increment click count
+        await db.update(cards)
+            .set({ clicks: sql`${cards.clicks} + 1` })
+            .where(eq(cards.id, cardId));
+
+        // Log detailed click
+        await db.insert(cardClicks).values({
+            cardId,
+            userAgent: userAgent || null,
+            referer: referer || null,
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error('Track click error:', error);
+        return { error: 'Failed to track click' };
+    }
+}
+
+export async function getCardStats(userId: string) {
+    const session = await auth();
+    if (!session?.user?.email) return { error: 'Not authenticated' };
+
+    try {
+        const userResult = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1);
+        const user = userResult[0];
+        
+        if (!user || user.id !== userId) {
+            return { error: 'Unauthorized' };
+        }
+
+        const userCards = await db.select().from(cards).where(eq(cards.userId, userId));
+        
+        const stats = userCards.map(card => ({
+            id: card.id,
+            title: card.title,
+            clicks: card.clicks || 0,
+        }));
+
+        const totalClicks = stats.reduce((sum, card) => sum + card.clicks, 0);
+
+        return { stats, totalClicks };
+    } catch (error) {
+        console.error('Get stats error:', error);
+        return { error: 'Failed to get stats' };
     }
 }

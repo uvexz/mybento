@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
 import { UserProfile } from '@/lib/types';
-import { Pencil, Save, X } from 'lucide-react';
+import { Pencil, Save, X, QrCode } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { updateProfile } from '@/lib/actions';
+import ImageUpload from '@/components/ImageUpload';
+import QRCodeModal from '@/components/QRCodeModal';
 
 interface ProfileSectionProps {
     profile: UserProfile;
     setProfile?: (profile: UserProfile) => void;
     isEditable?: boolean;
+    username?: string;
 }
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedProfile, setEditedProfile] = useState(profile);
     const [isSaving, setIsSaving] = useState(false);
+    const [showQRCode, setShowQRCode] = useState(false);
+
+    const profileUrl = typeof window !== 'undefined' && username 
+        ? `${window.location.origin}/${username}` 
+        : '';
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -64,19 +72,21 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                         />
                     </div>
                     <div>
-                        <Label htmlFor="avatar">Avatar URL</Label>
-                        <Input
-                            id="avatar"
+                        <Label htmlFor="avatar">Avatar</Label>
+                        <ImageUpload
                             value={editedProfile.avatarUrl}
-                            onChange={(e) => setEditedProfile({ ...editedProfile, avatarUrl: e.target.value })}
+                            onChange={(url) => setEditedProfile({ ...editedProfile, avatarUrl: url })}
+                            folder="avatars"
+                            placeholder="Avatar URL or upload"
                         />
                     </div>
                     <div>
-                        <Label htmlFor="background">Background Image URL</Label>
-                        <Input
-                            id="background"
+                        <Label htmlFor="background">Background Image</Label>
+                        <ImageUpload
                             value={editedProfile.backgroundImage || ''}
-                            onChange={(e) => setEditedProfile({ ...editedProfile, backgroundImage: e.target.value })}
+                            onChange={(url) => setEditedProfile({ ...editedProfile, backgroundImage: url })}
+                            folder="backgrounds"
+                            placeholder="Background URL or upload"
                         />
                     </div>
                     <div>
@@ -140,6 +150,27 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                     {profile.bio}
                 </p>
             </div>
+
+            {/* QR Code Button */}
+            {username && (
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowQRCode(true)}
+                    className="mt-4"
+                >
+                    <QrCode className="w-4 h-4 mr-2" />
+                    Show QR Code
+                </Button>
+            )}
+
+            {/* QR Code Modal */}
+            <QRCodeModal
+                isOpen={showQRCode}
+                onClose={() => setShowQRCode(false)}
+                url={profileUrl}
+                title={profile.name}
+            />
         </div>
     );
 };
