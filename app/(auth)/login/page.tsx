@@ -39,11 +39,18 @@ export default function LoginPage() {
                             {isPending ? 'Logging in...' : 'Login'}
                         </Button>
                     </form>
-                    <div className="mt-4 text-center text-sm">
-                        Don&apos;t have an account?{' '}
-                        <Link href="/register" className="underline">
-                            Register
-                        </Link>
+                    <div className="mt-4 text-center text-sm space-y-2">
+                        <div>
+                            Don&apos;t have an account?{' '}
+                            <Link href="/register" className="underline">
+                                Register
+                            </Link>
+                        </div>
+                        <div>
+                            <Link href="/forgot-password" className="underline text-gray-600">
+                                Forgot password?
+                            </Link>
+                        </div>
                     </div>
                 </CardContent>
             </Card>

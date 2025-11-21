@@ -1,14 +1,18 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { register } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import { validatePasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/password';
 
 export default function RegisterPage() {
+    const [password, setPassword] = useState('');
+    const passwordStrength = validatePasswordStrength(password);
+    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [state, formAction, isPending] = useActionState(async (_prev: any, formData: FormData) => {
         return await register(formData);
@@ -35,7 +39,41 @@ export default function RegisterPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password">Password</Label>
-                            <Input id="password" name="password" type="password" required />
+                            <Input 
+                                id="password" 
+                                name="password" 
+                                type="password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required 
+                            />
+                            
+                            {/* Password Strength Indicator */}
+                            {password && (
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div 
+                                                className={`h-full transition-all duration-300 ${getPasswordStrengthColor(passwordStrength.score)}`}
+                                                style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-xs font-medium text-gray-600">
+                                            {getPasswordStrengthLabel(passwordStrength.score)}
+                                        </span>
+                                    </div>
+                                    
+                                    {passwordStrength.feedback.length > 0 && (
+                                        <ul className="text-xs text-gray-600 space-y-1">
+                                            {passwordStrength.feedback.map((msg, i) => (
+                                                <li key={i} className={passwordStrength.isValid ? 'text-green-600' : ''}>
+                                                    {passwordStrength.isValid ? '✓' : '•'} {msg}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {state?.error && (

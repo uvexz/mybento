@@ -11,6 +11,11 @@ export const users = pgTable('users', {
     role: text('role').default('user'), // enum support in pg is possible but text is simpler for now
     backgroundImage: text('background_image'),
     profileColor: text('profile_color'),
+    emailVerified: boolean('email_verified').default(false),
+    verificationToken: text('verification_token'),
+    verificationTokenExpiry: timestamp('verification_token_expiry'),
+    loginAttempts: integer('login_attempts').default(0),
+    lockedUntil: timestamp('locked_until'),
     createdAt: timestamp('created_at').defaultNow(),
 });
 
