@@ -22,6 +22,13 @@
       "when": 1763724735727,
       "tag": "0002_yummy_jigsaw",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763727409708,
+      "tag": "0003_minor_phalanx",
+      "breakpoints": true
     }
   ]
 }

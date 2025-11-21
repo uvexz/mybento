@@ -26,6 +26,7 @@ export const cards = pgTable('cards', {
     size: text('size').default('small'),
     order: integer('order').default(0),
     clicks: integer('clicks').default(0),
+    buttonText: text('button_text'),
     createdAt: timestamp('created_at').defaultNow(),
 });
 

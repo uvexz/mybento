@@ -128,6 +128,7 @@ export async function saveCard(card: any) {
                 icon: card.icon,
                 colorClass: card.colorClass,
                 size: card.size,
+                buttonText: card.buttonText,
             }).where(eq(cards.id, card.id));
         } else {
             // Get max order
@@ -145,6 +146,7 @@ export async function saveCard(card: any) {
                 colorClass: card.colorClass,
                 size: card.size,
                 order: newOrder,
+                buttonText: card.buttonText,
             });
         }
         return { success: true };

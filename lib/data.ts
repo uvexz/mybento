@@ -28,8 +28,8 @@ export async function getUserProfile(username: string) {
         icon: c.icon || undefined,
         colorClass: c.colorClass || 'bg-gray-100',
         size: c.size as CardSize,
-        buttonText: 'Visit', // Default, maybe store in DB if needed
-        imageUrl: c.url && (c.type === 'image' || c.type === 'image-link') ? c.url : undefined, // Assuming url stores image url for image types
+        buttonText: c.buttonText || 'Visit',
+        imageUrl: c.url && (c.type === 'image' || c.type === 'image-link') ? c.url : undefined,
     }));
 
     return { profile, cards: mappedCards, user };
