@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { auth, type ExtendedSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { users, shortLinks } from '@/lib/schema';
+import { user, shortLinks } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 
 // Generate random short code
@@ -17,19 +17,22 @@ function generateShortCode(length = 6): string {
 // GET - List user's short links
 export async function GET(request: NextRequest) {
     try {
-        const session = await auth();
+        const session = await auth.api.getSession({
+            headers: request.headers
+        }) as ExtendedSession | null;
+        
         if (!session?.user?.email) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const userResult = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1);
-        const user = userResult[0];
+        const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+        const userData = userResult[0];
 
-        if (!user) {
+        if (!userData) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        const links = await db.select().from(shortLinks).where(eq(shortLinks.userId, user.id));
+        const links = await db.select().from(shortLinks).where(eq(shortLinks.userId, userData.id));
 
         return NextResponse.json({ links });
     } catch (error) {
@@ -41,7 +44,10 @@ export async function GET(request: NextRequest) {
 // POST - Create new short link
 export async function POST(request: NextRequest) {
     try {
-        const session = await auth();
+        const session = await auth.api.getSession({
+            headers: request.headers
+        }) as ExtendedSession | null;
+        
         if (!session?.user?.email) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -52,10 +58,10 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
         }
 
-        const userResult = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1);
-        const user = userResult[0];
+        const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+        const userData = userResult[0];
 
-        if (!user) {
+        if (!userData) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
@@ -81,7 +87,7 @@ export async function POST(request: NextRequest) {
 
         // Create short link
         const newLink = await db.insert(shortLinks).values({
-            userId: user.id,
+            userId: userData.id,
             shortCode,
             originalUrl,
             title: title || null,
@@ -104,7 +110,10 @@ export async function POST(request: NextRequest) {
 // DELETE - Delete short link
 export async function DELETE(request: NextRequest) {
     try {
-        const session = await auth();
+        const session = await auth.api.getSession({
+            headers: request.headers
+        }) as ExtendedSession | null;
+        
         if (!session?.user?.email) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }

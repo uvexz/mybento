@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
-import { users } from '@/lib/schema';
+import { user } from '@/lib/schema';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     try {
         // Get all users
-        const allUsers = await db.select({ username: users.username, createdAt: users.createdAt }).from(users);
+        const allUsers = await db.select({ username: user.username, createdAt: user.createdAt }).from(user);
 
         userPages = allUsers.map((user) => ({
             url: `${siteUrl}/${user.username}`,

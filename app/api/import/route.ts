@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { auth, type ExtendedSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { users, cards } from '@/lib/schema';
+import { user, cards } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 
 export async function POST(request: NextRequest) {
     try {
-        const session = await auth();
+        const session = await auth.api.getSession({
+            headers: request.headers
+        }) as ExtendedSession | null;
+        
         if (!session?.user?.email) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -19,10 +22,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Get user
-        const userResult = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1);
-        const user = userResult[0];
+        const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+        const userData = userResult[0];
 
-        if (!user) {
+        if (!userData) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
@@ -30,7 +33,7 @@ export async function POST(request: NextRequest) {
         const importedCards = [];
         for (const cardData of data.cards) {
             const newCard = await db.insert(cards).values({
-                userId: user.id,
+                userId: userData.id,
                 title: cardData.title || 'Untitled',
                 subtitle: cardData.subtitle || null,
                 type: cardData.type || 'link',
@@ -46,15 +49,15 @@ export async function POST(request: NextRequest) {
 
         // Update profile if provided
         if (data.profile) {
-            await db.update(users)
+            await db.update(user)
                 .set({
-                    name: data.profile.name || user.name,
-                    bio: data.profile.bio || user.bio,
-                    image: data.profile.image || user.image,
-                    backgroundImage: data.profile.backgroundImage || user.backgroundImage,
-                    profileColor: data.profile.profileColor || user.profileColor,
+                    name: data.profile.name || userData.name,
+                    bio: data.profile.bio || userData.bio,
+                    image: data.profile.image || userData.image,
+                    backgroundImage: data.profile.backgroundImage || userData.backgroundImage,
+                    profileColor: data.profile.profileColor || userData.profileColor,
                 })
-                .where(eq(users.id, user.id));
+                .where(eq(user.id, userData.id));
         }
 
         return NextResponse.json({

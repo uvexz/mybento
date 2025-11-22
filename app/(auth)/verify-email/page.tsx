@@ -1,80 +1,98 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 function VerifyEmailContent() {
     const searchParams = useSearchParams();
-    const token = searchParams.get('token');
-    const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-    const [message, setMessage] = useState('');
+    const router = useRouter();
+    const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+    const [error, setError] = useState<string>('');
 
     useEffect(() => {
+        const token = searchParams.get('token');
+        const callbackURL = searchParams.get('callbackURL') || '/';
+
         if (!token) {
             setStatus('error');
-            setMessage('Invalid verification link');
+            setError('Verification token is missing');
             return;
         }
 
-        fetch('/api/verify-email', {
+        // 调用 Better Auth 的验证端点
+        fetch('/api/auth/verify-email', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ token }),
         })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
+            .then(async (res) => {
+                if (res.ok) {
                     setStatus('success');
-                    setMessage('Email verified successfully! You can now login.');
+                    // 验证成功后，等待 2 秒然后重定向
+                    setTimeout(() => {
+                        window.location.href = callbackURL;
+                    }, 2000);
                 } else {
+                    const data = await res.json();
                     setStatus('error');
-                    setMessage(data.error || 'Verification failed');
+                    setError(data.error || 'Verification failed');
                 }
             })
-            .catch(() => {
+            .catch((err) => {
                 setStatus('error');
-                setMessage('Something went wrong');
+                setError('An unexpected error occurred');
             });
-    }, [token]);
+    }, [searchParams]);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle className="text-2xl text-center">Email Verification</CardTitle>
+                    <CardTitle className="text-2xl text-center">
+                        {status === 'verifying' && 'Verifying Email...'}
+                        {status === 'success' && 'Email Verified! ✓'}
+                        {status === 'error' && 'Verification Failed'}
+                    </CardTitle>
                     <CardDescription className="text-center">
-                        {status === 'loading' && 'Verifying your email...'}
-                        {status === 'success' && 'Verification successful'}
-                        {status === 'error' && 'Verification failed'}
+                        {status === 'verifying' && 'Please wait while we verify your email address'}
+                        {status === 'success' && 'Your email has been successfully verified'}
+                        {status === 'error' && 'There was a problem verifying your email'}
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="text-center">
-                    {status === 'loading' && (
-                        <div className="flex justify-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                <CardContent>
+                    {status === 'verifying' && (
+                        <div className="flex justify-center py-8">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
                         </div>
                     )}
-                    
+
                     {status === 'success' && (
-                        <div className="space-y-4">
-                            <div className="text-green-600 text-4xl">✓</div>
-                            <p className="text-sm text-gray-600">{message}</p>
-                            <Button asChild className="w-full">
-                                <Link href="/login">Go to Login</Link>
-                            </Button>
+                        <div className="text-center space-y-4">
+                            <div className="text-6xl">✓</div>
+                            <p className="text-sm text-gray-600">
+                                Redirecting you to your dashboard...
+                            </p>
                         </div>
                     )}
-                    
+
                     {status === 'error' && (
                         <div className="space-y-4">
-                            <div className="text-red-600 text-4xl">✗</div>
-                            <p className="text-sm text-red-600">{message}</p>
-                            <Button asChild variant="outline" className="w-full">
-                                <Link href="/register">Back to Register</Link>
-                            </Button>
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <p className="text-sm text-red-800">{error}</p>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <Button asChild className="w-full">
+                                    <Link href="/login">Go to Login</Link>
+                                </Button>
+                                <Button variant="outline" asChild className="w-full">
+                                    <Link href="/">Back to Home</Link>
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </CardContent>
@@ -88,8 +106,16 @@ export default function VerifyEmailPage() {
         <Suspense fallback={
             <div className="flex items-center justify-center min-h-screen bg-gray-50">
                 <Card className="w-full max-w-md">
-                    <CardContent className="flex justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                    <CardHeader>
+                        <CardTitle className="text-2xl text-center">Verifying Email...</CardTitle>
+                        <CardDescription className="text-center">
+                            Please wait while we verify your email address
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex justify-center py-8">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

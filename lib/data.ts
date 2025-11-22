@@ -1,33 +1,33 @@
 import { db } from '@/lib/db';
-import { users, cards } from '@/lib/schema';
+import { user, cards } from '@/lib/schema';
 import { eq, asc, sql } from 'drizzle-orm';
 import { UserProfile, BentoCardProps, CardSize, CardType } from '@/lib/types';
 
 export async function getUserProfile(username: string) {
     // Select only needed user fields for better performance
     const userResult = await db.select({
-        id: users.id,
-        name: users.name,
-        username: users.username,
-        bio: users.bio,
-        image: users.image,
-        backgroundImage: users.backgroundImage,
-        profileColor: users.profileColor,
-    }).from(users).where(eq(users.username, username)).limit(1);
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        bio: user.bio,
+        image: user.image,
+        backgroundImage: user.backgroundImage,
+        profileColor: user.profileColor,
+    }).from(user).where(eq(user.username, username)).limit(1);
     
-    const user = userResult[0];
+    const userData = userResult[0];
 
-    if (!user) return null;
+    if (!userData) return null;
 
     // Fetch cards with index on userId and order for better performance
-    const userCards = await db.select().from(cards).where(eq(cards.userId, user.id)).orderBy(asc(cards.order));
+    const userCards = await db.select().from(cards).where(eq(cards.userId, userData.id)).orderBy(asc(cards.order));
 
     const profile: UserProfile = {
-        name: user.name || user.username,
-        bio: user.bio || '',
-        avatarUrl: user.image || `https://i.sevencdn.com/avatar/${user.username}`,
-        backgroundImage: user.backgroundImage || undefined,
-        profileColor: user.profileColor || undefined,
+        name: userData.name || userData.username,
+        bio: userData.bio || '',
+        avatarUrl: userData.image || `https://i.sevencdn.com/avatar/${userData.username}`,
+        backgroundImage: userData.backgroundImage || undefined,
+        profileColor: userData.profileColor || undefined,
     };
 
     const mappedCards: BentoCardProps[] = userCards.map(c => ({
@@ -46,7 +46,20 @@ export async function getUserProfile(username: string) {
         mastodonData: c.mastodonData ? JSON.parse(c.mastodonData) : undefined,
     }));
 
-    return { profile, cards: mappedCards, user };
+    // Return only serializable data (no Drizzle relations)
+    return { 
+        profile, 
+        cards: mappedCards, 
+        user: {
+            id: userData.id,
+            name: userData.name,
+            username: userData.username,
+            bio: userData.bio,
+            image: userData.image,
+            backgroundImage: userData.backgroundImage,
+            profileColor: userData.profileColor,
+        }
+    };
 }
 
 export async function getHomepageCards() {
@@ -55,8 +68,8 @@ export async function getHomepageCards() {
     if (isCommunityMode) {
         // Community mode: show admin user's page
         const adminResult = await db.select({
-            username: users.username,
-        }).from(users).where(eq(users.role, 'admin')).limit(1);
+            username: user.username,
+        }).from(user).where(eq(user.role, 'admin')).limit(1);
         
         const admin = adminResult[0];
         if (!admin) return null;
@@ -65,8 +78,8 @@ export async function getHomepageCards() {
     } else {
         // Single user mode: show first user's page
         const firstUserResult = await db.select({
-            username: users.username,
-        }).from(users).orderBy(asc(users.createdAt)).limit(1);
+            username: user.username,
+        }).from(user).orderBy(asc(user.createdAt)).limit(1);
         
         const firstUser = firstUserResult[0];
         if (!firstUser) return null;
@@ -77,10 +90,10 @@ export async function getHomepageCards() {
 
 export async function getFirstUser() {
     const firstUserResult = await db.select({
-        id: users.id,
-        username: users.username,
-        name: users.name,
-    }).from(users).orderBy(asc(users.createdAt)).limit(1);
+        id: user.id,
+        username: user.username,
+        name: user.name,
+    }).from(user).orderBy(asc(user.createdAt)).limit(1);
     
     return firstUserResult[0] || null;
 }
@@ -93,7 +106,14 @@ export async function isRegistrationOpen() {
         return true;
     }
     
-    // Single user mode: check if any user exists
-    const userCount = await db.select({ count: sql<number>`count(*)` }).from(users);
-    return userCount[0].count === 0;
+    // Single user mode: check if any user exists in Better Auth's user table
+    try {
+        const userCount = await db.select({ count: sql<number>`count(*)` }).from(user);
+        const count = Number(userCount[0]?.count || 0);
+        return count === 0;
+    } catch (error) {
+        console.error('Error checking registration status:', error);
+        // 如果查询失败，默认允许注册
+        return true;
+    }
 }

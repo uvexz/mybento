@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { auth, type ExtendedSession } from '@/lib/auth';
 import { uploadImage, validateImageFile } from '@/lib/upload';
 
 export async function POST(request: NextRequest) {
     try {
-        const session = await auth();
+        const session = await auth.api.getSession({
+            headers: request.headers
+        }) as ExtendedSession | null;
+        
         if (!session?.user?.email) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }

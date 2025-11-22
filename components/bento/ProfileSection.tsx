@@ -11,7 +11,8 @@ import { updateProfile } from '@/lib/actions';
 import ImageUpload from '@/components/ImageUpload';
 import QRCodeModal from '@/components/QRCodeModal';
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ProfileSectionProps {
@@ -23,6 +24,7 @@ interface ProfileSectionProps {
 }
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username, isLoggedIn = false }) => {
+    const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
     const [editedProfile, setEditedProfile] = useState(profile);
     const [isSaving, setIsSaving] = useState(false);
@@ -36,7 +38,16 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
     const handleLogout = async () => {
         setIsLoggingOut(true);
         try {
-            await signOut({ callbackUrl: '/' });
+            await authClient.signOut({
+                fetchOptions: {
+                    onSuccess: () => {
+                        router.push('/');
+                    },
+                    onError: () => {
+                        setIsLoggingOut(false);
+                    },
+                },
+            });
         } catch (error) {
             console.error('Logout failed:', error);
             setIsLoggingOut(false);

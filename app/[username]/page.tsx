@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import { getUserProfile } from '@/lib/data';
 import BentoGrid from '@/components/bento/BentoGrid';
-import { auth } from '@/auth';
+import { auth, type ExtendedSession } from '@/lib/auth';
+import { headers } from 'next/headers';
 import { Metadata } from 'next';
 
 interface PageProps {
@@ -61,8 +62,12 @@ export default async function UserPage({ params }: PageProps) {
         notFound();
     }
 
-    const session = await auth();
-    const isEditable = session?.user?.name === username; // Assuming username is unique and used for login/session
+    const session = await auth.api.getSession({
+        headers: await headers()
+    }) as ExtendedSession | null;
+    
+    // 使用 username 字段来判断是否是页面所有者
+    const isEditable = session?.user?.username === username;
 
     return (
         <BentoGrid

@@ -1,30 +1,71 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { requestPasswordReset } from '@/lib/actions';
+import { authClient } from '@/lib/auth-client';
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [emailConfigured, setEmailConfigured] = useState(true);
+
+    useEffect(() => {
+        // 检查邮件服务是否配置
+        fetch('/api/email-verification-status')
+            .then(res => res.json())
+            .then(data => {
+                setEmailConfigured(data.enabled);
+            })
+            .catch(() => {
+                setEmailConfigured(false);
+            });
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!emailConfigured) {
+            setMessage({ 
+                type: 'error', 
+                text: 'Password reset is not available. Email service is not configured.' 
+            });
+            return;
+        }
+
         setIsLoading(true);
         setMessage(null);
 
-        const result = await requestPasswordReset(email);
+        try {
+            // 直接调用 Better Auth 的 API 端点
+            const response = await fetch('/api/auth/forget-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    redirectTo: `${window.location.origin}/reset-password`,
+                }),
+            });
 
-        if (result.success) {
-            setMessage({ type: 'success', text: result.success });
-            setEmail('');
-        } else {
-            setMessage({ type: 'error', text: result.error || 'Something went wrong' });
+            const result = await response.json();
+
+            if (!response.ok || result.error) {
+                setMessage({ type: 'error', text: result.error || 'Failed to send reset email' });
+            } else {
+                setMessage({ 
+                    type: 'success', 
+                    text: 'If an account exists with this email, you will receive a password reset link.' 
+                });
+                setEmail('');
+            }
+        } catch (err: any) {
+            setMessage({ type: 'error', text: err.message || 'Something went wrong' });
         }
 
         setIsLoading(false);
@@ -47,7 +88,7 @@ export default function ForgotPasswordPage() {
                                 id="email"
                                 name="email"
                                 type="email"
-                                placeholder="m@example.com"
+                                placeholder="mymail@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required

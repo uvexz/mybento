@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { auth } from '@/auth';
+import { auth, type ExtendedSession } from '@/lib/auth';
+import { headers } from 'next/headers';
 import { getHomepageCards } from '@/lib/data';
 import BentoGrid from '@/components/bento/BentoGrid';
 import { Metadata } from 'next';
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  }) as ExtendedSession | null;
   const homepageData = await getHomepageCards();
   const isCommunityMode = process.env.COMMUNITY_MODE === 'true';
 
@@ -20,7 +23,7 @@ export default async function Home() {
 
   // Single user mode: display user page directly
   if (!isCommunityMode && homepageData) {
-    const isOwner = session?.user?.name === homepageData.user.username;
+    const isOwner = session?.user?.username === homepageData.user.username;
     
     return (
       <BentoGrid
@@ -47,7 +50,7 @@ export default async function Home() {
 
           <div className="flex gap-4">
             {session?.user ? (
-              <Link href={`/${session.user.name}`}>
+              <Link href={`/${session.user.username}`}>
                 <Button size="lg" className="text-lg px-8 py-6">Go to Dashboard</Button>
               </Link>
             ) : (
