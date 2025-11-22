@@ -16,17 +16,14 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: !emailConfigured, // 如果配置了邮件，则不自动登录（需要验证邮箱）
     requireEmailVerification: emailConfigured, // 如果配置了邮件，则要求验证邮箱
-    // 密码重置配置（仅在配置了邮件时启用）
-    ...(emailConfigured && {
-      sendResetPassword: async ({ user, url }) => {
-        const { sendPasswordResetEmail } = await import("./email");
-        await sendPasswordResetEmail({
-          to: user.email,
-          username: user.name || user.email.split('@')[0],
-          resetUrl: url,
-        });
-      },
-    }),
+    sendResetPassword: emailConfigured ? async ({ user, url }) => {
+      const { sendPasswordResetEmail } = await import("./email");
+      await sendPasswordResetEmail({
+        to: user.email,
+        username: user.name || user.email.split('@')[0],
+        resetUrl: url,
+      });
+    } : undefined,
   },
   // 邮箱验证配置（仅在配置了 RESEND_API_KEY 时启用）
   ...(emailConfigured && {

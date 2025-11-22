@@ -42,8 +42,8 @@ export default function ForgotPasswordPage() {
         setMessage(null);
 
         try {
-            // 直接调用 Better Auth 的 API 端点
-            const response = await fetch('/api/auth/forget-password', {
+            // 调用 Better Auth 的密码重置端点
+            const response = await fetch('/api/auth/request-password-reset', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,9 +54,8 @@ export default function ForgotPasswordPage() {
                 }),
             });
 
-            const result = await response.json();
-
-            if (!response.ok || result.error) {
+            if (!response.ok) {
+                const result = await response.json().catch(() => ({}));
                 setMessage({ type: 'error', text: result.error || 'Failed to send reset email' });
             } else {
                 setMessage({ 
