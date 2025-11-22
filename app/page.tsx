@@ -41,7 +41,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
       {/* Left Side: Hero */}
-      <div className="w-full lg:w-[40%] flex flex-col justify-center p-8 lg:p-16 bg-white border-r border-gray-200 z-10">
+      <div className="w-full lg:w-[40%] min-h-screen flex flex-col justify-center p-8 lg:p-16 bg-white lg:border-r border-gray-200 z-10">
         <div className="max-w-md mx-auto lg:mx-0">
           <h1 className="text-6xl font-bold mb-6 text-gray-900 tracking-tight">{siteName}</h1>
           <p className="text-xl text-gray-600 mb-10 leading-relaxed whitespace-pre-line">
@@ -66,7 +66,7 @@ export default async function Home() {
           </div>
 
           {/* Open Source Info */}
-          <div className="mt-16 pt-8 border-t border-gray-200">
+          <div className="mt-16 pt-8 border-t border-gray-200 text-center">
             <p className="text-sm text-gray-500">
               Open Source Project
             </p>
@@ -83,8 +83,8 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* Right Side: Bento Grid (Featured User's Cards) */}
-      <div className="w-full relative bg-gray-50 overflow-y-auto max-h-screen">
+      {/* Right Side: Bento Grid (Featured User's Cards) - Hidden on mobile */}
+      <div className="hidden lg:block w-full relative bg-gray-50 overflow-y-auto max-h-screen">
         {homepageData ? (
           <div className="transform origin-top-left lg:origin-top-center w-full">
             <BentoGrid
