@@ -35,15 +35,6 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         </button>
                     )}
 
-                    {/* Add Card Button */}
-                    <button
-                        onClick={onAddCard}
-                        className="bg-blue-600 p-3 sm:p-4 rounded-2xl shadow-2xl hover:scale-105 transition-transform text-white group"
-                        title="Add New Card"
-                    >
-                        <RiAddLine size={20} className="sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
-                    </button>
-
                     {/* Export/Import Button */}
                     <button
                         onClick={() => setShowExportImport(!showExportImport)}
@@ -63,6 +54,16 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                             <RiLinkM size={20} className="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                         </button>
                     )}
+
+                    {/* Add Card Button */}
+                    <button
+                        onClick={onAddCard}
+                        className="bg-blue-600 p-3 sm:p-4 rounded-2xl shadow-2xl hover:scale-105 transition-transform text-white group"
+                        title="Add New Card"
+                    >
+                        <RiAddLine size={20} className="sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
+                    </button>
+
                 </div>
             </div>
 

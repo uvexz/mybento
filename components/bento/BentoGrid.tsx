@@ -22,9 +22,10 @@ interface BentoGridProps {
 interface BentoGridPropsExtended extends BentoGridProps {
     userId?: string;
     username?: string;
+    isLoggedIn?: boolean;
 }
 
-export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true, userId, username }: BentoGridPropsExtended) {
+export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true, userId, username, isLoggedIn = false }: BentoGridPropsExtended) {
     const [cards, setCards] = useState<BentoCardProps[]>(initialCards);
     const [profile, setProfile] = useState<UserProfile>(initialProfile);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -110,6 +111,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                             setProfile={isEditable ? setProfile : undefined}
                             isEditable={isEditable}
                             username={username}
+                            isLoggedIn={isLoggedIn}
                         />
                         
                     </div>

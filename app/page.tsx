@@ -13,10 +13,28 @@ export const metadata: Metadata = {
 export default async function Home() {
   const session = await auth();
   const homepageData = await getHomepageCards();
+  const isCommunityMode = process.env.COMMUNITY_MODE === 'true';
 
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'mybento';
   const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || "A place for all your links, social media, and content.\nBeautiful, customizable, and yours.";
 
+  // Single user mode: display user page directly
+  if (!isCommunityMode && homepageData) {
+    const isOwner = session?.user?.name === homepageData.user.username;
+    
+    return (
+      <BentoGrid
+        initialCards={homepageData.cards}
+        initialProfile={homepageData.profile}
+        isEditable={isOwner}
+        userId={homepageData.user.id}
+        username={homepageData.user.username}
+        isLoggedIn={!!session?.user}
+      />
+    );
+  }
+
+  // Community mode: show landing page
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
       {/* Left Side: Hero */}
@@ -62,7 +80,7 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* Right Side: Bento Grid (Admin's Cards) */}
+      {/* Right Side: Bento Grid (Featured User's Cards) */}
       <div className="w-full relative bg-gray-50 overflow-y-auto max-h-screen">
         {homepageData ? (
           <div className="transform origin-top-left lg:origin-top-center w-full">
@@ -71,6 +89,7 @@ export default async function Home() {
               initialProfile={homepageData.profile}
               isEditable={false}
               showProfile={false}
+              isLoggedIn={!!session?.user}
             />
           </div>
         ) : (

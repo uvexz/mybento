@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
 import { register } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,13 +10,55 @@ import Link from 'next/link';
 import { validatePasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/password';
 
 export default function RegisterPage() {
+    const [registrationClosed, setRegistrationClosed] = useState(false);
     const [password, setPassword] = useState('');
     const passwordStrength = validatePasswordStrength(password);
     
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [state, formAction, isPending] = useActionState(async (_prev: any, formData: FormData) => {
-        return await register(formData);
+        const result = await register(formData);
+        if (result?.error === 'Registration is currently closed.') {
+            setRegistrationClosed(true);
+        }
+        return result;
     }, null);
+
+    useEffect(() => {
+        // Check if registration is closed on mount
+        if (state?.error === 'Registration is currently closed.') {
+            setRegistrationClosed(true);
+        }
+    }, [state]);
+
+    if (registrationClosed) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-50">
+                <Card className="w-full max-w-md">
+                    <CardHeader>
+                        <CardTitle className="text-2xl text-center">Registration Closed</CardTitle>
+                        <CardDescription className="text-center">
+                            This site is in single-user mode and registration is currently closed.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-center space-y-4">
+                            <p className="text-sm text-gray-600">
+                                If you already have an account, you can log in below.
+                            </p>
+                            <Button asChild className="w-full">
+                                <Link href="/login">Go to Login</Link>
+                            </Button>
+                            <div className="pt-4">
+                                <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 underline">
+                                    Back to Home
+                                </Link>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50">

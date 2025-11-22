@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState } from 'react';
 import { UserProfile } from '@/lib/types';
-import { RiPencilFill, RiSaveLine, RiCloseLine, RiQrCodeLine, RiLoader4Line } from '@remixicon/react';
+import { RiPencilFill, RiSaveLine, RiCloseLine, RiQrCodeLine, RiLoader4Line, RiHomeLine, RiLoginBoxLine, RiLogoutBoxLine } from '@remixicon/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,23 +10,38 @@ import { Button } from '@/components/ui/button';
 import { updateProfile } from '@/lib/actions';
 import ImageUpload from '@/components/ImageUpload';
 import QRCodeModal from '@/components/QRCodeModal';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ProfileSectionProps {
     profile: UserProfile;
     setProfile?: (profile: UserProfile) => void;
     isEditable?: boolean;
     username?: string;
+    isLoggedIn?: boolean;
 }
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username, isLoggedIn = false }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedProfile, setEditedProfile] = useState(profile);
     const [isSaving, setIsSaving] = useState(false);
     const [showQRCode, setShowQRCode] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const profileUrl = typeof window !== 'undefined' && username 
         ? `${window.location.origin}/${username}` 
         : '';
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        try {
+            await signOut({ callbackUrl: '/' });
+        } catch (error) {
+            console.error('Logout failed:', error);
+            setIsLoggingOut(false);
+        }
+    };
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -152,31 +169,86 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 </p>
             </div>
 
-            {/* QR Code Button */}
+            {/* Action Buttons */}
             {username && (
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowQRCode(true)}
-                    className="mt-4"
-                >
-                    <RiQrCodeLine className="w-4 h-4 mr-2" />
-                    Show QR Code
-                </Button>
-            )}
+                <TooltipProvider>
+                    <div className="flex gap-2 mt-4">
+                        {/* Home Button */}
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    asChild
+                                >
+                                    <Link href="/">
+                                        <RiHomeLine className="w-4 h-4" />
+                                    </Link>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>返回首页</p>
+                            </TooltipContent>
+                        </Tooltip>
 
-            {/* Copyright Info */}
-            <div className="mt-8 pt-6 border-t border-gray-200 w-full text-center lg:text-left">
-                <p className="text-sm text-gray-900 text-center">
-                    © {new Date().getFullYear()}{' '}
-                    <a 
-                        href={process.env.NEXT_PUBLIC_SITE_URL || '/'} 
-                        className="hover:text-gray-700 transition-colors"
-                    >
-                        {process.env.NEXT_PUBLIC_SITE_NAME || 'mybento'}
-                    </a>
-                </p>
-            </div>
+                        {/* QR Code Button */}
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setShowQRCode(true)}
+                                >
+                                    <RiQrCodeLine className="w-4 h-4" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>显示二维码</p>
+                            </TooltipContent>
+                        </Tooltip>
+
+                        {/* Login/Logout Button */}
+                        {isLoggedIn ? (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleLogout}
+                                        disabled={isLoggingOut}
+                                    >
+                                        {isLoggingOut ? (
+                                            <RiLoader4Line className="w-4 h-4 animate-spin" />
+                                        ) : (
+                                            <RiLogoutBoxLine className="w-4 h-4" />
+                                        )}
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>退出登录</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        ) : (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        asChild
+                                    >
+                                        <Link href="/login">
+                                            <RiLoginBoxLine className="w-4 h-4" />
+                                        </Link>
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>登录</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
+                    </div>
+                </TooltipProvider>
+            )}
 
             {/* QR Code Modal */}
             <QRCodeModal

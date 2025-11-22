@@ -55,6 +55,13 @@ Visit [http://localhost:3000](http://localhost:3000) and register. The first use
 
 ## Optional Configuration
 
+**Community Mode**:
+```env
+COMMUNITY_MODE=true  # or false
+```
+- `true`: Multi-user community mode with open registration
+- `false` or not set: Single-user mode - registration closes after first user, homepage redirects to user page
+
 **Email Verification** (via [Resend](https://resend.com/)):
 ```env
 RESEND_API_KEY=re_your_api_key

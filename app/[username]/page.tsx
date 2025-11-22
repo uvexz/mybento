@@ -71,6 +71,7 @@ export default async function UserPage({ params }: PageProps) {
             isEditable={isEditable}
             userId={data.user.id}
             username={username}
+            isLoggedIn={!!session?.user}
         />
     );
 }

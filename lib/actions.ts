@@ -16,6 +16,7 @@ import {
     sendVerificationEmail 
 } from '@/lib/email';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { isRegistrationOpen } from '@/lib/data';
 
 const RegisterSchema = z.object({
     username: z.string().min(3, 'Username must be at least 3 characters').max(50),
@@ -24,6 +25,12 @@ const RegisterSchema = z.object({
 });
 
 export async function register(formData: FormData) {
+    // Check if registration is open
+    const registrationOpen = await isRegistrationOpen();
+    if (!registrationOpen) {
+        return { error: 'Registration is currently closed.' };
+    }
+
     // Sanitize inputs
     const rawUsername = sanitizeUsername(formData.get('username') as string);
     const rawEmail = sanitizeEmail(formData.get('email') as string);

@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { users, cards } from '@/lib/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, sql } from 'drizzle-orm';
 import { UserProfile, BentoCardProps, CardSize, CardType } from '@/lib/types';
 
 export async function getUserProfile(username: string) {
@@ -50,14 +50,50 @@ export async function getUserProfile(username: string) {
 }
 
 export async function getHomepageCards() {
-    // Find the first admin user - only select username for efficiency
-    const adminResult = await db.select({
-        username: users.username,
-    }).from(users).where(eq(users.role, 'admin')).limit(1);
+    const isCommunityMode = process.env.COMMUNITY_MODE === 'true';
     
-    const admin = adminResult[0];
+    if (isCommunityMode) {
+        // Community mode: show admin user's page
+        const adminResult = await db.select({
+            username: users.username,
+        }).from(users).where(eq(users.role, 'admin')).limit(1);
+        
+        const admin = adminResult[0];
+        if (!admin) return null;
+        
+        return getUserProfile(admin.username);
+    } else {
+        // Single user mode: show first user's page
+        const firstUserResult = await db.select({
+            username: users.username,
+        }).from(users).orderBy(asc(users.createdAt)).limit(1);
+        
+        const firstUser = firstUserResult[0];
+        if (!firstUser) return null;
+        
+        return getUserProfile(firstUser.username);
+    }
+}
 
-    if (!admin) return null;
+export async function getFirstUser() {
+    const firstUserResult = await db.select({
+        id: users.id,
+        username: users.username,
+        name: users.name,
+    }).from(users).orderBy(asc(users.createdAt)).limit(1);
+    
+    return firstUserResult[0] || null;
+}
 
-    return getUserProfile(admin.username);
+export async function isRegistrationOpen() {
+    const isCommunityMode = process.env.COMMUNITY_MODE === 'true';
+    
+    if (isCommunityMode) {
+        // Community mode: registration always open
+        return true;
+    }
+    
+    // Single user mode: check if any user exists
+    const userCount = await db.select({ count: sql<number>`count(*)` }).from(users);
+    return userCount[0].count === 0;
 }
