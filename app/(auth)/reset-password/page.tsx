@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { authClient } from '@/lib/auth-client';
 import { validatePasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/password';
 
+export const dynamic = 'force-dynamic';
+
 function ResetPasswordForm() {
     const searchParams = useSearchParams();
     const router = useRouter();

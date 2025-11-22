@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { validatePasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/password';
 import { authClient, type ExtendedUser } from '@/lib/auth-client';
 
+export const dynamic = 'force-dynamic';
+
 export default function RegisterPage() {
     const [registrationClosed, setRegistrationClosed] = useState(false);
     const [checkingStatus, setCheckingStatus] = useState(true);

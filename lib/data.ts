@@ -63,29 +63,17 @@ export async function getUserProfile(username: string) {
 }
 
 export async function getHomepageCards() {
-    const isCommunityMode = process.env.COMMUNITY_MODE === 'true';
+    // Always show the first registered user's page on homepage
+    // In single user mode: homepage redirects to their page directly
+    // In community mode: homepage shows landing page with their cards as preview
+    const firstUserResult = await db.select({
+        username: user.username,
+    }).from(user).orderBy(asc(user.createdAt)).limit(1);
     
-    if (isCommunityMode) {
-        // Community mode: show admin user's page
-        const adminResult = await db.select({
-            username: user.username,
-        }).from(user).where(eq(user.role, 'admin')).limit(1);
-        
-        const admin = adminResult[0];
-        if (!admin) return null;
-        
-        return getUserProfile(admin.username);
-    } else {
-        // Single user mode: show first user's page
-        const firstUserResult = await db.select({
-            username: user.username,
-        }).from(user).orderBy(asc(user.createdAt)).limit(1);
-        
-        const firstUser = firstUserResult[0];
-        if (!firstUser) return null;
-        
-        return getUserProfile(firstUser.username);
-    }
+    const firstUser = firstUserResult[0];
+    if (!firstUser) return null;
+    
+    return getUserProfile(firstUser.username);
 }
 
 export async function getFirstUser() {
