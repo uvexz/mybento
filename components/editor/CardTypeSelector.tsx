@@ -14,6 +14,7 @@ import {
     RiVideoLine,
     RiMusicLine,
     RiRssLine,
+    RiArticleLine,
     RiMailLine,
     RiPhoneLine,
     RiQqLine,
@@ -57,6 +58,7 @@ const getCardTypes = (t: any) => [
             { value: 'music-spotify', label: t('cardEditor.types.musicSpotify'), icon: RiMusicLine, size: CardSize.Medium },
             { value: 'music-soundcloud', label: t('cardEditor.types.musicSoundcloud'), icon: RiMusicLine, size: CardSize.Medium },
             { value: 'blog-rss', label: t('cardEditor.types.blogRss'), icon: RiRssLine, size: CardSize.Medium },
+            { value: 'article', label: t('cardEditor.types.article'), icon: RiArticleLine, size: CardSize.Medium },
         ]
     },
     {

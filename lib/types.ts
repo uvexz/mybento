@@ -28,6 +28,7 @@ export type CardType =
     | 'music-spotify'
     | 'music-soundcloud'
     | 'blog-rss'
+    | 'article'
     | 'contact-email'
     | 'contact-phone'
     | 'contact-qq'
@@ -95,6 +96,7 @@ export interface BentoCardProps {
     blogPosts?: BlogPost[]; // Blog RSS posts
     contactInfo?: string; // Encoded contact info (email, phone, qq, wechat, telegram)
     mastodonData?: MastodonData; // Mastodon profile and latest post
+    articleContent?: string; // Markdown content for article cards
     // Optional custom component for the complex initial mockups (like Graphs), 
     // usually undefined for new user-created cards
     customComponent?: ReactNode;
@@ -102,6 +104,7 @@ export interface BentoCardProps {
     // Actions
     onEdit?: () => void;
     onMove?: (id: string, direction: 'left' | 'right') => void;
+    onArticleClick?: (card: { id: string; title: string; subtitle?: string; content: string }) => void;
     isFirst?: boolean;
     isLast?: boolean;
     className?: string;

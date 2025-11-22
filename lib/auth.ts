@@ -51,7 +51,12 @@ export const auth = betterAuth({
   advanced: {
     cookiePrefix: "better-auth",
     useSecureCookies: process.env.NODE_ENV === "production",
+    crossSubDomainCookies: {
+      enabled: false, // 禁用跨子域 cookie 以增强安全性
+    },
   },
+  // CSRF 保护（Better Auth 默认启用）
+  trustedOrigins: process.env.TRUSTED_ORIGINS?.split(',') || [],
   user: {
     additionalFields: {
       username: {

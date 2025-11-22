@@ -22,6 +22,7 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@remixicon/react": "^4.7.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/pg": "^8.15.6",
     "bcryptjs": "^3.0.3",
     "better-auth": "^1.4.0",
@@ -37,6 +38,9 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.66.1",
+    "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "resend": "^6.5.2",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.1.12"

@@ -401,6 +401,45 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             );
         }
 
+        // Article 卡片
+        if (type === 'article') {
+            return (
+                <>
+                    <div>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.articleTitle')}</Label>
+                        <Input
+                            value={formData.title || ''}
+                            onChange={(e) => onChange({ title: e.target.value })}
+                            placeholder={t('cardEditor.articleTitlePlaceholder')}
+                        />
+                    </div>
+
+                    <div>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.articleSubtitle')}</Label>
+                        <Input
+                            value={formData.subtitle || ''}
+                            onChange={(e) => onChange({ subtitle: e.target.value })}
+                            placeholder={t('cardEditor.articleSubtitlePlaceholder')}
+                        />
+                    </div>
+
+                    <div>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.articleContent')}</Label>
+                        <Textarea
+                            value={formData.articleContent || ''}
+                            onChange={(e) => onChange({ articleContent: e.target.value })}
+                            placeholder={t('cardEditor.articleContentPlaceholder')}
+                            className="font-mono min-h-[300px] resize-y"
+                        />
+                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                            <RiInformationFill size={12} />
+                            {t('cardEditor.articleMarkdownHint')}
+                        </p>
+                    </div>
+                </>
+            );
+        }
+
         // 标准链接卡片和其他社交媒体卡片
         return (
             <>

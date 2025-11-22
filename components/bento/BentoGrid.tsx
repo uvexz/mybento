@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { BentoCardProps, UserProfile } from '@/lib/types';
 import BentoCard from '@/components/bento/BentoCard';
 import ProfileSection from '@/components/bento/ProfileSection';
+import ArticleModal from '@/components/bento/ArticleModal';
 import { saveCard, deleteCard } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 
@@ -31,6 +32,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
     const [profile, setProfile] = useState<UserProfile>(initialProfile);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCard, setEditingCard] = useState<BentoCardProps | null>(null);
+    const [articleModalData, setArticleModalData] = useState<{ id: string; title: string; subtitle?: string; content: string } | null>(null);
     const router = useRouter();
 
     const handleAddCard = () => {
@@ -128,6 +130,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                                 {...card}
                                 onEdit={isEditable ? () => handleEditCard(card) : undefined}
                                 onMove={isEditable ? handleMoveCard : undefined}
+                                onArticleClick={setArticleModalData}
                                 isFirst={index === 0}
                                 isLast={index === cards.length - 1}
                             />
@@ -154,6 +157,17 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                         initialData={editingCard}
                     />
                 </>
+            )}
+
+            {/* Article Modal - Rendered at top level for proper z-index */}
+            {articleModalData && (
+                <ArticleModal
+                    isOpen={true}
+                    onClose={() => setArticleModalData(null)}
+                    title={articleModalData.title}
+                    subtitle={articleModalData.subtitle}
+                    content={articleModalData.content}
+                />
             )}
 
         </div>

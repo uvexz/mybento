@@ -50,6 +50,9 @@
     "video": "视频",
     "social": "社交媒体"
   },
+  "article": {
+    "readMore": "点击阅读全文"
+  },
   "auth": {
     "login": "登录",
     "signup": "注册",
@@ -140,6 +143,7 @@
       "musicSpotify": "Spotify",
       "musicSoundcloud": "SoundCloud",
       "blogRss": "Blog RSS",
+      "article": "文章",
       "contactEmail": "Email",
       "contactPhone": "电话",
       "contactQQ": "QQ",
@@ -251,6 +255,13 @@
     "rssFeedHint": "输入博客的 RSS 订阅地址",
     "blogName": "博客名称",
     "myBlogPlaceholder": "我的博客",
+    "articleTitle": "文章标题",
+    "articleTitlePlaceholder": "输入文章标题",
+    "articleSubtitle": "副标题（可选）",
+    "articleSubtitlePlaceholder": "简短描述或摘要",
+    "articleContent": "文章内容（支持 Markdown）",
+    "articleContentPlaceholder": "# 标题\n\n这里输入文章内容，支持 Markdown 格式...\n\n- 列表项 1\n- 列表项 2\n\n**粗体** *斜体* `代码`",
+    "articleMarkdownHint": "支持 Markdown 语法：标题、列表、粗体、斜体、代码、链接、图片等",
     "cardTitle": "卡片标题",
     "supplementaryInfo": "补充说明",
     "visitButtonPlaceholder": "访问"

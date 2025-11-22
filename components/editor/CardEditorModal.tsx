@@ -71,6 +71,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                     mastodonData: initialData.mastodonData,
                     contactInfo: initialData.contactInfo,
                     blogPosts: initialData.blogPosts,
+                    articleContent: initialData.articleContent,
                 });
             } else {
                 // 新建模式：使用默认值
@@ -119,6 +120,9 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
         }
         if (cleanData.type !== 'blog-rss') {
             delete cleanData.blogPosts;
+        }
+        if (cleanData.type !== 'article') {
+            delete cleanData.articleContent;
         }
         
         onSave(cleanData as BentoCardProps);

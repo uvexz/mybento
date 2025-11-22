@@ -6,6 +6,8 @@ import { userImages } from '@/lib/schema';
 import { eq, desc } from 'drizzle-orm';
 import { uploadImage } from '@/lib/upload';
 import { canUserPerformAction } from '@/lib/admin';
+import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rate-limit';
+import { handleApiError, createErrorResponse, COMMON_ERRORS } from '@/lib/error-handler';
 
 // Get user's images
 export async function GET() {
@@ -25,8 +27,11 @@ export async function GET() {
 
         return NextResponse.json({ images });
     } catch (error) {
-        console.error('Get images error:', error);
-        return NextResponse.json({ error: 'Failed to get images' }, { status: 500 });
+        const apiError = handleApiError(error, 'Get images');
+        return NextResponse.json(
+            createErrorResponse(apiError),
+            { status: apiError.statusCode }
+        );
     }
 }
 
@@ -38,7 +43,27 @@ export async function POST(request: NextRequest) {
         });
 
         if (!session?.user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+                createErrorResponse(COMMON_ERRORS.UNAUTHORIZED),
+                { status: 401 }
+            );
+        }
+
+        // 速率限制检查
+        const rateLimit = checkRateLimit(`upload:${session.user.id}`, RATE_LIMITS.MODERATE);
+
+        if (!rateLimit.success) {
+            return NextResponse.json(
+                createErrorResponse(COMMON_ERRORS.RATE_LIMIT_EXCEEDED),
+                {
+                    status: 429,
+                    headers: {
+                        'X-RateLimit-Limit': rateLimit.limit.toString(),
+                        'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+                        'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
+                    },
+                }
+            );
         }
 
         // Check if user can upload
@@ -78,9 +103,11 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ image });
     } catch (error: any) {
-        console.error('Upload image error:', error);
-        const errorMessage = error.message || 'Failed to upload image';
-        return NextResponse.json({ error: errorMessage }, { status: 500 });
+        const apiError = handleApiError(error, 'Upload image');
+        return NextResponse.json(
+            createErrorResponse(apiError),
+            { status: apiError.statusCode }
+        );
     }
 }
 
@@ -120,7 +147,10 @@ export async function DELETE(request: NextRequest) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Delete image error:', error);
-        return NextResponse.json({ error: 'Failed to delete image' }, { status: 500 });
+        const apiError = handleApiError(error, 'Delete image');
+        return NextResponse.json(
+            createErrorResponse(apiError),
+            { status: apiError.statusCode }
+        );
     }
 }

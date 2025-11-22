@@ -50,6 +50,9 @@
     "video": "ビデオ",
     "social": "ソーシャルメディア"
   },
+  "article": {
+    "readMore": "クリックして全文を読む"
+  },
   "auth": {
     "login": "ログイン",
     "signup": "サインアップ",
@@ -140,6 +143,7 @@
       "musicSpotify": "Spotify",
       "musicSoundcloud": "SoundCloud",
       "blogRss": "Blog RSS",
+      "article": "記事",
       "contactEmail": "Email",
       "contactPhone": "電話",
       "contactQQ": "QQ",
@@ -251,6 +255,13 @@
     "rssFeedHint": "ブログのRSSフィードURLを入力",
     "blogName": "ブログ名",
     "myBlogPlaceholder": "私のブログ",
+    "articleTitle": "記事タイトル",
+    "articleTitlePlaceholder": "記事タイトルを入力",
+    "articleSubtitle": "サブタイトル（任意）",
+    "articleSubtitlePlaceholder": "簡単な説明または要約",
+    "articleContent": "記事内容（Markdown対応）",
+    "articleContentPlaceholder": "# 見出し\n\nここに記事内容を入力してください。Markdown形式に対応しています...\n\n- リスト項目 1\n- リスト項目 2\n\n**太字** *斜体* `コード`",
+    "articleMarkdownHint": "Markdown構文をサポート：見出し、リスト、太字、斜体、コード、リンク、画像など",
     "cardTitle": "カードタイトル",
     "supplementaryInfo": "補足情報",
     "visitButtonPlaceholder": "訪問"

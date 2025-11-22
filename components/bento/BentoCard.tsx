@@ -3,6 +3,7 @@ import { BentoCardProps, CardSize, CardType } from '@/lib/types';
 import BlogCard from './BlogCard';
 import ContactCard from './ContactCard';
 import MastodonCard from './MastodonCard';
+import { useTranslations } from 'next-intl';
 import {
     RiTwitterXFill,
     RiInstagramFill,
@@ -387,13 +388,17 @@ const BentoCard: React.FC<BentoCardProps> = ({
     githubData,
     contactInfo,
     mastodonData,
+    articleContent,
     customComponent,
     onEdit,
     onMove,
+    onArticleClick,
     isFirst,
     isLast,
     className = ''
 }) => {
+    const t = useTranslations();
+    
     // GitHub card specific rendering
     const isGitHubCard = type === 'social-github' && githubData;
     
@@ -405,6 +410,9 @@ const BentoCard: React.FC<BentoCardProps> = ({
     
     // Mastodon card specific rendering
     const isMastodonCard = type === 'social-mastodon';
+    
+    // Article card specific rendering
+    const isArticleCard = type === 'article';
     // Determine column span based on size
     const spanClasses = {
         [CardSize.Small]: 'sm:col-span-1 sm:row-span-1',
@@ -431,6 +439,25 @@ const BentoCard: React.FC<BentoCardProps> = ({
     const handleClick = (e: React.MouseEvent) => {
         // If clicking actions, don't navigate
         if ((e.target as HTMLElement).closest('.action-btn')) return;
+
+        // Article card opens modal
+        if (isArticleCard && onArticleClick && articleContent) {
+            onArticleClick({
+                id,
+                title,
+                subtitle,
+                content: articleContent
+            });
+            // Track click asynchronously
+            fetch('/api/track-click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cardId: id }),
+            }).catch(error => {
+                console.error('Failed to track click:', error);
+            });
+            return;
+        }
 
         if (url && type !== 'image' && !isEmbedCard) {
             // Open link immediately for better UX
@@ -509,7 +536,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
             className={`
         ${spanClasses} ${heightClass} ${!isImageCard && !hasCustomColor ? colorClass : ''} ${isImageCard ? 'bg-gray-200' : ''} ${className} 
         rounded-3xl relative group transition-all duration-300 
-        ${url ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : ''} 
+        ${url || isArticleCard ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : ''} 
         shadow-sm overflow-hidden flex flex-col justify-between
         border border-black/5
       `}
@@ -577,7 +604,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
             )}
 
             {/* Icon - Fixed at top right */}
-            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && (
+            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && !isArticleCard && (
                 <div className="absolute top-4 right-4 z-20">
                     <IconComponent 
                         size={28} 
@@ -598,6 +625,26 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         data={mastodonData}
                         title={title}
                     />
+                ) : isArticleCard ? (
+                    /* Article Card Layout */
+                    <div className="flex flex-col h-full">
+                        <div className="flex items-start gap-3 mb-auto">
+                            {IconComponent && (
+                                <div className="flex-shrink-0">
+                                    <IconComponent size={32} className="opacity-70" style={{ color: 'inherit' }} />
+                                </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-xl leading-tight mb-1">{title}</h3>
+                                {subtitle && (
+                                    <p className="text-sm opacity-70 line-clamp-3">{subtitle}</p>
+                                )}
+                            </div>
+                        </div>
+                        <div className="mt-auto pt-3">
+                            <span className="text-xs opacity-60 font-medium">{t('article.readMore')} →</span>
+                        </div>
+                    </div>
                 ) : isContactCard ? (
                     <ContactCard 
                         type={type}
@@ -712,7 +759,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 )}
 
                 {/* Footer: Action Button */}
-                {buttonText && buttonText.trim() && !customComponent && !isGitHubCard && !isContactCard && !isMastodonCard && (
+                {buttonText && buttonText.trim() && !customComponent && !isGitHubCard && !isContactCard && !isMastodonCard && !isArticleCard && (
                     <div className="mt-4">
                         <button className={`py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors ${
                             isImageCard

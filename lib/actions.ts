@@ -48,6 +48,11 @@ export async function saveCard(card: any) {
         const existingCard = existingCardResult[0];
 
         if (existingCard) {
+            // Verify ownership before updating
+            if (existingCard.userId !== userData.id) {
+                return { error: 'Forbidden: You do not own this card' };
+            }
+
             await db.update(cards).set({
                 title: card.title,
                 subtitle: card.subtitle,
@@ -63,6 +68,7 @@ export async function saveCard(card: any) {
                 githubData: card.githubData ? JSON.stringify(card.githubData) : null,
                 contactInfo: card.contactInfo || null,
                 mastodonData: card.mastodonData ? JSON.stringify(card.mastodonData) : null,
+                articleContent: card.articleContent || null,
             }).where(eq(cards.id, card.id));
         } else {
             const lastCard = await db.select().from(cards).where(eq(cards.userId, userData.id)).orderBy(asc(cards.order));
@@ -86,6 +92,7 @@ export async function saveCard(card: any) {
                 githubData: card.githubData ? JSON.stringify(card.githubData) : null,
                 contactInfo: card.contactInfo || null,
                 mastodonData: card.mastodonData ? JSON.stringify(card.mastodonData) : null,
+                articleContent: card.articleContent || null,
             });
         }
         return { success: true };
@@ -102,6 +109,21 @@ export async function deleteCard(id: string) {
     if (!session?.user?.email) return { error: 'Not authenticated' };
 
     try {
+        // Verify ownership before deleting
+        const cardResult = await db.select().from(cards).where(eq(cards.id, id)).limit(1);
+        const card = cardResult[0];
+
+        if (!card) {
+            return { error: 'Card not found' };
+        }
+
+        const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+        const userData = userResult[0];
+
+        if (!userData || card.userId !== userData.id) {
+            return { error: 'Forbidden: You do not own this card' };
+        }
+
         await db.delete(cards).where(eq(cards.id, id));
         return { success: true };
     } catch (error) {
@@ -117,6 +139,21 @@ export async function reorderCards(items: { id: string; order: number }[]) {
     if (!session?.user?.email) return { error: 'Not authenticated' };
 
     try {
+        const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+        const userData = userResult[0];
+        if (!userData) return { error: 'User not found' };
+
+        // Verify all cards belong to the user before reordering
+        const cardIds = items.map(item => item.id);
+        const userCards = await db.select().from(cards).where(eq(cards.userId, userData.id));
+        const userCardIds = new Set(userCards.map(c => c.id));
+
+        for (const cardId of cardIds) {
+            if (!userCardIds.has(cardId)) {
+                return { error: 'Forbidden: One or more cards do not belong to you' };
+            }
+        }
+
         await db.transaction(async (tx) => {
             for (const item of items) {
                 await tx.update(cards)

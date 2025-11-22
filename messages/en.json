@@ -50,6 +50,9 @@
     "video": "Video",
     "social": "Social Media"
   },
+  "article": {
+    "readMore": "Click to read more"
+  },
   "auth": {
     "login": "Login",
     "signup": "Sign Up",
@@ -140,6 +143,7 @@
       "musicSpotify": "Spotify",
       "musicSoundcloud": "SoundCloud",
       "blogRss": "Blog RSS",
+      "article": "Article",
       "contactEmail": "Email",
       "contactPhone": "Phone",
       "contactQQ": "QQ",
@@ -251,6 +255,13 @@
     "rssFeedHint": "Enter your blog's RSS feed URL",
     "blogName": "Blog Name",
     "myBlogPlaceholder": "My Blog",
+    "articleTitle": "Article Title",
+    "articleTitlePlaceholder": "Enter article title",
+    "articleSubtitle": "Subtitle (Optional)",
+    "articleSubtitlePlaceholder": "Brief description or summary",
+    "articleContent": "Article Content (Markdown Supported)",
+    "articleContentPlaceholder": "# Heading\n\nEnter your article content here, Markdown format supported...\n\n- List item 1\n- List item 2\n\n**Bold** *Italic* `Code`",
+    "articleMarkdownHint": "Supports Markdown syntax: headings, lists, bold, italic, code, links, images, etc.",
     "cardTitle": "Card Title",
     "supplementaryInfo": "Supplementary Info",
     "visitButtonPlaceholder": "Visit"

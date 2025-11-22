@@ -102,6 +102,7 @@ export const cards = pgTable('cards', {
     githubData: text('github_data'),
     contactInfo: text('contact_info'),
     mastodonData: text('mastodon_data'),
+    articleContent: text('article_content'),
     createdAt: timestamp('created_at').defaultNow(),
 });
 
