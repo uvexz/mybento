@@ -13,6 +13,7 @@ export async function getUserProfile(username: string) {
         image: user.image,
         backgroundImage: user.backgroundImage,
         profileColor: user.profileColor,
+        role: user.role,
     }).from(user).where(eq(user.username, username)).limit(1);
     
     const userData = userResult[0];
@@ -60,6 +61,7 @@ export async function getUserProfile(username: string) {
             image: userData.image,
             backgroundImage: userData.backgroundImage,
             profileColor: userData.profileColor,
+            role: userData.role,
         }
     };
 }

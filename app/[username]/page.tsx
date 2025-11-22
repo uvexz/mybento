@@ -68,6 +68,7 @@ export default async function UserPage({ params }: PageProps) {
     
     // 使用 username 字段来判断是否是页面所有者
     const isEditable = session?.user?.username === username;
+    const isAdmin = data.user.role === 'admin';
 
     return (
         <BentoGrid
@@ -77,6 +78,7 @@ export default async function UserPage({ params }: PageProps) {
             userId={data.user.id}
             username={username}
             isLoggedIn={!!session?.user}
+            isAdmin={isAdmin}
         />
     );
 }

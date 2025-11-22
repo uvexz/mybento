@@ -27,6 +27,7 @@ export default async function Home() {
   // Single user mode: display user page directly
   if (!isCommunityMode && homepageData) {
     const isOwner = session?.user?.username === homepageData.user.username;
+    const isAdmin = homepageData.user.role === 'admin';
     
     return (
       <BentoGrid
@@ -36,6 +37,7 @@ export default async function Home() {
         userId={homepageData.user.id}
         username={homepageData.user.username}
         isLoggedIn={!!session?.user}
+        isAdmin={isAdmin}
       />
     );
   }

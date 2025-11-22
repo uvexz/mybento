@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, type ExtendedSession } from '@/lib/auth';
-import { uploadImage, validateImageFile } from '@/lib/upload';
+import { uploadImage, validateImageFile, isR2Configured } from '@/lib/upload';
 
 export async function POST(request: NextRequest) {
     try {
@@ -21,24 +21,29 @@ export async function POST(request: NextRequest) {
         }
 
         // Validate file
-        const validation = validateImageFile(file);
+        const validation = await validateImageFile(file);
         if (!validation.valid) {
             return NextResponse.json({ error: validation.error }, { status: 400 });
         }
 
         // Check if R2 is configured
-        if (!process.env.R2_ENDPOINT || !process.env.R2_ACCESS_KEY_ID) {
+        const configured = await isR2Configured();
+        if (!configured) {
             return NextResponse.json({ 
-                error: 'Image upload not configured. Please set R2 environment variables.' 
+                error: 'Image upload not configured. Please configure R2 in the admin panel.' 
             }, { status: 503 });
         }
 
+        // Get username from session
+        const username = (session.user as any).username || session.user.email?.split('@')[0] || 'user';
+
         // Upload to R2
-        const url = await uploadImage(file, folder);
+        const url = await uploadImage(file, folder, username);
 
         return NextResponse.json({ url });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Upload error:', error);
-        return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
+        const errorMessage = error.message || 'Failed to upload image';
+        return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }

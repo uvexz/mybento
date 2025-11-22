@@ -78,6 +78,20 @@
       "when": 1763815203105,
       "tag": "0010_early_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1763823616376,
+      "tag": "0011_flashy_colonel_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1763825209804,
+      "tag": "0012_lame_ulik",
+      "breakpoints": true
     }
   ]
 }

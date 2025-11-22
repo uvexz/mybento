@@ -123,12 +123,48 @@ export const shortLinks = pgTable('short_links', {
     createdAt: timestamp('created_at').defaultNow(),
 });
 
+// Site settings table
+export const siteSettings = pgTable('site_settings', {
+    id: serial('id').primaryKey(),
+    key: text('key').unique().notNull(),
+    value: text('value'),
+    updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+});
+
+// User permissions table
+export const userPermissions = pgTable('user_permissions', {
+    id: serial('id').primaryKey(),
+    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull().unique(),
+    canUploadImages: boolean('can_upload_images').default(true).notNull(),
+    maxImages: integer('max_images').default(50).notNull(),
+    maxShortLinks: integer('max_short_links').default(100).notNull(),
+    maxCards: integer('max_cards').default(50).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+});
+
+// User images table
+export const userImages = pgTable('user_images', {
+    id: serial('id').primaryKey(),
+    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
+    url: text('url').notNull(),
+    filename: text('filename').notNull(),
+    size: integer('size').notNull(), // in bytes
+    type: text('type').notNull(), // image/jpeg, image/png, etc.
+    usedIn: text('used_in'), // 'avatar', 'background', 'card', null
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => [index('user_images_userId_idx').on(table.userId)]);
+
 // Relations
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
   accounts: many(account),
   cards: many(cards),
   shortLinks: many(shortLinks),
+  permissions: one(userPermissions, {
+    fields: [user.id],
+    references: [userPermissions.userId],
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
