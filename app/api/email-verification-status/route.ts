@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
-import { isEmailConfigured } from '@/lib/email';
 
 export async function GET() {
-    return NextResponse.json({
-        enabled: isEmailConfigured(),
-    });
+    // Check if email service is configured
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const emailFrom = process.env.EMAIL_FROM;
+    
+    const enabled = !!(resendApiKey && emailFrom);
+    
+    return NextResponse.json({ enabled });
 }
