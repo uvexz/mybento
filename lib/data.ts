@@ -40,7 +40,7 @@ export async function getUserProfile(username: string) {
         colorClass: c.colorClass || 'bg-gray-100',
         size: c.size as CardSize,
         buttonText: c.buttonText || undefined,
-        imageUrl: c.url && (c.type === 'image' || c.type === 'image-link') ? c.url : undefined,
+        imageUrl: c.imageUrl || undefined,
         githubData: c.githubData ? JSON.parse(c.githubData) : undefined,
         contactInfo: c.contactInfo || undefined,
         mastodonData: c.mastodonData ? JSON.parse(c.mastodonData) : undefined,
