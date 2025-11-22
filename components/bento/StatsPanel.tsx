@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { RiBarChartFill, RiLineChartLine, RiEyeLine } from '@remixicon/react';
+import { RiLineChartLine, RiEyeLine } from '@remixicon/react';
 import { useTranslations } from 'next-intl';
 
 interface CardStat {
@@ -24,6 +24,9 @@ export default function StatsPanel({ userId }: StatsPanelProps) {
         fetch(`/api/stats?userId=${userId}`)
             .then(res => res.json())
             .then(data => {
+                if (data.error) {
+                    console.error('[StatsPanel] Error from API:', data.error);
+                }
                 if (data.stats) {
                     setStats(data.stats);
                     setTotalClicks(data.totalClicks);
@@ -72,11 +75,16 @@ export default function StatsPanel({ userId }: StatsPanelProps) {
                             .sort((a, b) => b.clicks - a.clicks)
                             .map(card => (
                                 <div key={card.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                    <span className="text-sm font-medium text-gray-900 dark:text-white truncate flex-1">
-                                        {card.title}
-                                    </span>
-                                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400 ml-2">
-                                        {t('common.clicks', { count: card.clicks })}
+                                    <div className="flex flex-col flex-1 min-w-0 mr-2">
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                            {card.title || t('common.untitled')}
+                                        </span>
+                                        <span className="text-xs text-gray-500 dark:text-gray-400 font-mono truncate">
+                                            {card.id}
+                                        </span>
+                                    </div>
+                                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400 flex-shrink-0">
+                                        {card.clicks} {t('common.clicks')}
                                     </span>
                                 </div>
                             ))

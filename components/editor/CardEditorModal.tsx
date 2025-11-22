@@ -150,8 +150,10 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                                 {initialData ? t('editor.title') : t('editor.title')}
                             </h2>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {initialData ? t('editor.editContent') : t('editor.selectType')}
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                <code className="px-1 bg-gray-100 dark:bg-gray-400 rounded font-mono text-xs">
+                                    Card ID: {formData.id}
+                                </code>
                             </p>
                         </div>
                     </div>
@@ -266,40 +268,44 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
-                    <div>
-                        {initialData && (
+                <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col gap-3">
+                   
+                    {/* Action Buttons */}
+                    <div className="flex justify-between items-center">
+                        <div>
+                            {initialData && (
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={() => {
+                                        if (confirm(t('common.confirm'))) {
+                                            onDelete(initialData.id);
+                                            onClose();
+                                        }
+                                    }}
+                                    className="gap-2"
+                                >
+                                    <RiDeleteBinLine size={16} />
+                                    {t('common.delete')}
+                                </Button>
+                            )}
+                        </div>
+                        
+                        <div className="flex gap-3">
                             <Button
                                 type="button"
-                                variant="destructive"
-                                onClick={() => {
-                                    if (confirm(t('common.confirm'))) {
-                                        onDelete(initialData.id);
-                                        onClose();
-                                    }
-                                }}
-                                className="gap-2"
+                                variant="outline"
+                                onClick={onClose}
                             >
-                                <RiDeleteBinLine size={16} />
-                                {t('common.delete')}
+                                {t('common.cancel')}
                             </Button>
-                        )}
-                    </div>
-                    
-                    <div className="flex gap-3">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={onClose}
-                        >
-                            {t('common.cancel')}
-                        </Button>
-                        <Button
-                            type="button"
-                            onClick={handleSubmit}
-                        >
-                            {t('common.save')}
-                        </Button>
+                            <Button
+                                type="button"
+                                onClick={handleSubmit}
+                            >
+                                {t('common.save')}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

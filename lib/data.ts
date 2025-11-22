@@ -48,6 +48,7 @@ export async function getUserProfile(username: string) {
         contactInfo: c.contactInfo || undefined,
         mastodonData: c.mastodonData ? JSON.parse(c.mastodonData) : undefined,
         articleContent: c.articleContent || undefined,
+        clicks: c.clicks || 0,
     }));
 
     // Return only serializable data (no Drizzle relations)
