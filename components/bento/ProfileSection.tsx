@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { UserProfile } from '@/lib/types';
-import { RiPencilFill, RiSaveLine, RiCloseLine, RiQrCodeLine, RiLoader4Line, RiHomeLine, RiLoginBoxLine, RiLogoutBoxLine } from '@remixicon/react';
+import { RiPencilFill, RiSaveLine, RiCloseLine, RiQrCodeLine, RiLoader4Line, RiHomeLine, RiLoginBoxLine, RiLogoutBoxLine, RiGithubFill } from '@remixicon/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -187,7 +187,25 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>返回首页</p>
+                                <p>Homepage</p>
+                            </TooltipContent>
+                        </Tooltip>
+
+                        {/* Home Button */}
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    asChild
+                                >
+                                    <Link href="https://github.com/uvexz/mybento" target='_blank'>
+                                        <RiGithubFill className="w-4 h-4" />
+                                    </Link>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Open source</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -203,7 +221,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>显示二维码</p>
+                                <p>QRCode</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -225,7 +243,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>退出登录</p>
+                                    <p>Logout</p>
                                 </TooltipContent>
                             </Tooltip>
                         ) : (
@@ -242,7 +260,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>登录</p>
+                                    <p>Signin</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}
