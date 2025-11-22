@@ -4,8 +4,10 @@ import { useState, useRef } from 'react';
 import { RiDownloadLine, RiUploadLine, RiLoader4Line } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function ExportImportButtons() {
+    const t = useTranslations();
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,7 +30,7 @@ export default function ExportImportButtons() {
             document.body.removeChild(a);
         } catch (error) {
             console.error('Export error:', error);
-            alert('Failed to export data');
+            alert(t('dataManagement.exportFailed'));
         } finally {
             setIsExporting(false);
         }
@@ -52,11 +54,11 @@ export default function ExportImportButtons() {
             if (!response.ok) throw new Error('Import failed');
 
             const result = await response.json();
-            alert(`Successfully imported ${result.imported} cards!`);
+            alert(t('dataManagement.importSuccess', { count: result.imported }));
             router.refresh();
         } catch (error) {
             console.error('Import error:', error);
-            alert('Failed to import data. Please check the file format.');
+            alert(t('dataManagement.importFailed'));
         } finally {
             setIsImporting(false);
             if (fileInputRef.current) {
@@ -78,7 +80,7 @@ export default function ExportImportButtons() {
                 ) : (
                     <RiDownloadLine className="w-4 h-4 mr-2" />
                 )}
-                Export
+                {t('dataManagement.export')}
             </Button>
 
             <Button
@@ -92,7 +94,7 @@ export default function ExportImportButtons() {
                 ) : (
                     <RiUploadLine className="w-4 h-4 mr-2" />
                 )}
-                Import
+                {t('dataManagement.import')}
             </Button>
 
             <input

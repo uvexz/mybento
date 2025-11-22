@@ -93,6 +93,8 @@ export const cards = pgTable('cards', {
     imageUrl: text('image_url'),
     icon: text('icon'),
     colorClass: text('color_class').default('bg-gray-100'),
+    customBgColor: text('custom_bg_color'),
+    customTextColor: text('custom_text_color'),
     size: text('size').default('small'),
     order: integer('order').default(0),
     clicks: integer('clicks').default(0),

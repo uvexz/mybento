@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { RiCloseLine, RiDownloadLine } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
 import QRCode from 'qrcode';
+import { useTranslations } from 'next-intl';
 
 interface QRCodeModalProps {
     isOpen: boolean;
@@ -15,6 +16,7 @@ interface QRCodeModalProps {
 }
 
 export default function QRCodeModal({ isOpen, onClose, url, title, username }: QRCodeModalProps) {
+    const t = useTranslations();
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
     const [mounted, setMounted] = useState(false);
 
@@ -56,7 +58,7 @@ export default function QRCodeModal({ isOpen, onClose, url, title, username }: Q
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
             <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md p-6 shadow-2xl">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold">QR Code</h2>
+                    <h2 className="text-xl font-bold">{t('qrcode.title')}</h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <RiCloseLine size={20} />
                     </button>
@@ -64,7 +66,7 @@ export default function QRCodeModal({ isOpen, onClose, url, title, username }: Q
 
                 <div className="flex flex-col items-center space-y-4">
                     <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                        Scan this QR code to visit: <strong>{username || title}</strong>
+                        {t('qrcode.scanText')} <strong>{username || title}</strong>
                     </p>
 
                     {qrCodeDataUrl && (
@@ -75,7 +77,7 @@ export default function QRCodeModal({ isOpen, onClose, url, title, username }: Q
 
                     <Button onClick={handleDownload} className="w-full">
                         <RiDownloadLine className="w-4 h-4 mr-2" />
-                        Download QR Code
+                        {t('qrcode.download')}
                     </Button>
 
                     <p className="text-xs text-gray-500 dark:text-gray-400 text-center break-all">

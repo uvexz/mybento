@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 
 interface ShortLink {
     id: number;
@@ -17,6 +18,7 @@ interface ShortLink {
 }
 
 export default function ShortLinkManager() {
+    const t = useTranslations();
     const [links, setLinks] = useState<ShortLink[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
@@ -63,7 +65,7 @@ export default function ShortLinkManager() {
             const data = await response.json();
 
             if (!response.ok) {
-                alert(data.error || 'Failed to create short link');
+                alert(data.error || t('shortLinks.deleteConfirm'));
                 return;
             }
 
@@ -72,14 +74,14 @@ export default function ShortLinkManager() {
             loadLinks();
         } catch (error) {
             console.error('Create error:', error);
-            alert('Failed to create short link');
+            alert(t('shortLinks.deleteConfirm'));
         } finally {
             setIsCreating(false);
         }
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm('Delete this short link?')) return;
+        if (!confirm(t('shortLinks.deleteConfirm'))) return;
 
         try {
             await fetch(`/api/short-links?id=${id}`, { method: 'DELETE' });
@@ -91,11 +93,11 @@ export default function ShortLinkManager() {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
-        alert('Copied to clipboard!');
+        alert(t('shortLinks.copySuccess'));
     };
 
     if (isLoading) {
-        return <div className="text-gray-500">Loading...</div>;
+        return <div className="text-gray-500">{t('common.loading')}</div>;
     }
 
     return (
@@ -104,11 +106,11 @@ export default function ShortLinkManager() {
                 <div className="flex justify-between items-center">
                     <CardTitle className="flex items-center gap-2">
                         <RiLinksFill className="w-5 h-5" />
-                        Short Links
+                        {t('shortLinks.title')}
                     </CardTitle>
                     <Button size="sm" onClick={() => setShowForm(!showForm)}>
                         <RiAddLine className="w-4 h-4 mr-2" />
-                        New Link
+                        {t('shortLinks.newLink')}
                     </Button>
                 </div>
             </CardHeader>
@@ -116,39 +118,39 @@ export default function ShortLinkManager() {
                 {showForm && (
                     <form onSubmit={handleCreate} className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
                         <div>
-                            <Label>Original URL *</Label>
+                            <Label>{t('shortLinks.originalUrl')} *</Label>
                             <Input
                                 type="url"
                                 value={formData.originalUrl}
                                 onChange={(e) => setFormData({ ...formData, originalUrl: e.target.value })}
-                                placeholder="https://example.com/very/long/url"
+                                placeholder={t('shortLinks.urlPlaceholder')}
                                 required
                             />
                         </div>
                         <div>
-                            <Label>Title (optional)</Label>
+                            <Label>{t('shortLinks.title_field')} ({t('common.optional')})</Label>
                             <Input
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="My Link"
+                                placeholder={t('shortLinks.titlePlaceholder')}
                             />
                         </div>
                         <div>
-                            <Label>Custom Code (optional)</Label>
+                            <Label>{t('shortLinks.customCode')} ({t('common.optional')})</Label>
                             <Input
                                 value={formData.customCode}
                                 onChange={(e) => setFormData({ ...formData, customCode: e.target.value })}
-                                placeholder="mycode"
+                                placeholder={t('shortLinks.codePlaceholder')}
                                 pattern="[a-zA-Z0-9]+"
                             />
-                            <p className="text-xs text-gray-500 mt-1">Leave empty for random code</p>
+                            <p className="text-xs text-gray-500 mt-1">{t('shortLinks.customCodeHint')}</p>
                         </div>
                         <div className="flex gap-2">
                             <Button type="submit" disabled={isCreating}>
-                                {isCreating ? 'Creating...' : 'Create'}
+                                {isCreating ? t('common.creating') : t('common.create')}
                             </Button>
                             <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                         </div>
                     </form>
@@ -156,14 +158,14 @@ export default function ShortLinkManager() {
 
                 <div className="space-y-3">
                     {links.length === 0 ? (
-                        <p className="text-gray-500 text-sm">No short links yet</p>
+                        <p className="text-gray-500 text-sm">{t('shortLinks.noLinks')}</p>
                     ) : (
                         links.map((link) => (
                             <div key={link.id} className="p-4 bg-gray-50 rounded-lg">
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="flex-1">
                                         <h4 className="font-semibold text-sm">
-                                            {link.title || 'Untitled'}
+                                            {link.title || t('common.untitled')}
                                         </h4>
                                         <a
                                             href={`/s/${link.shortCode}`}
@@ -196,7 +198,7 @@ export default function ShortLinkManager() {
                                     </div>
                                 </div>
                                 <div className="text-xs text-gray-500">
-                                    {link.clicks} clicks
+                                    {link.clicks} {t('common.clicks')}
                                 </div>
                             </div>
                         ))

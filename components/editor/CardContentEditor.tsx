@@ -18,6 +18,7 @@ import {
     RiWechatFill,
     RiTelegramFill,
 } from '@remixicon/react';
+import { useTranslations } from 'next-intl';
 
 interface CardContentEditorProps {
     formData: Partial<BentoCardProps>;
@@ -25,6 +26,7 @@ interface CardContentEditorProps {
 }
 
 const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChange }) => {
+    const t = useTranslations();
     const [isLoadingGitHub, setIsLoadingGitHub] = useState(false);
     const [githubError, setGithubError] = useState<string | null>(null);
     const [isLoadingMastodon, setIsLoadingMastodon] = useState(false);
@@ -41,14 +43,14 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             const data = await response.json();
 
             if (!response.ok) {
-                setGithubError(data.error || '获取 GitHub 数据失败');
+                setGithubError(data.error || t('cardEditor.githubFetchError'));
                 return;
             }
 
             if (data.type === 'user') {
                 onChange({
                     title: data.name || data.login,
-                    subtitle: data.bio || `${data.followers} 关注者 · ${data.publicRepos} 仓库`,
+                    subtitle: data.bio || `${t('cardEditor.githubFollowers', { count: data.followers })} · ${t('cardEditor.githubRepos', { count: data.publicRepos })}`,
                     url: data.url,
                     githubData: data,
                 });
@@ -61,7 +63,7 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                 });
             }
         } catch (error) {
-            setGithubError('获取 GitHub 数据失败');
+            setGithubError(t('cardEditor.githubFetchError'));
         } finally {
             setIsLoadingGitHub(false);
         }
@@ -78,7 +80,7 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             const data = await response.json();
 
             if (!response.ok) {
-                setMastodonError(data.error || '获取 Mastodon 数据失败');
+                setMastodonError(data.error || t('cardEditor.mastodonFetchError'));
                 return;
             }
 
@@ -89,7 +91,7 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                 mastodonData: data,
             });
         } catch (error) {
-            setMastodonError('获取 Mastodon 数据失败');
+            setMastodonError(t('cardEditor.mastodonFetchError'));
         } finally {
             setIsLoadingMastodon(false);
         }
@@ -127,18 +129,18 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             return (
                 <>
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">图片</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.image')}</Label>
                         <ImageUpload
                             value={formData.imageUrl || ''}
                             onChange={(url) => onChange({ imageUrl: url })}
                             folder="cards"
-                            placeholder="上传图片或粘贴图片链接"
+                            placeholder={t('cardEditor.uploadImagePlaceholder')}
                         />
                     </div>
 
                     {type === 'image-link' && (
                         <div>
-                            <Label className="text-sm font-medium mb-2 block">链接地址</Label>
+                            <Label className="text-sm font-medium mb-2 block">{t('cardEditor.linkUrl')}</Label>
                             <Input
                                 type="url"
                                 value={formData.url || ''}
@@ -149,11 +151,11 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                     )}
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">标题（可选）</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.titleOptional')}</Label>
                         <Input
                             value={formData.title || ''}
                             onChange={(e) => onChange({ title: e.target.value })}
-                            placeholder="图片标题"
+                            placeholder={t('cardEditor.imageTitlePlaceholder')}
                         />
                     </div>
                 </>
@@ -165,21 +167,21 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             return (
                 <>
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">GitHub 用户名或仓库</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.githubUsernameOrRepo')}</Label>
                         <Input
                             value={formData.url || ''}
                             onChange={(e) => handleGitHubUrlChange(e.target.value)}
-                            placeholder="octocat 或 facebook/react"
+                            placeholder={t('cardEditor.githubPlaceholder')}
                             className="font-mono"
                         />
                         <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                             <RiInformationFill size={12} />
-                            输入用户名或 用户名/仓库名
+                            {t('cardEditor.githubHint')}
                         </p>
                         {isLoadingGitHub && (
                             <p className="text-xs text-blue-500 mt-2 flex items-center gap-1">
                                 <RiRefreshFill size={12} className="animate-spin" />
-                                正在获取 GitHub 数据...
+                                {t('cardEditor.githubLoading')}
                             </p>
                         )}
                         {githubError && (
@@ -191,26 +193,26 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                         {formData.githubData && (
                             <p className="text-xs text-green-500 mt-2 flex items-center gap-1">
                                 <RiCheckboxCircleFill size={12} />
-                                GitHub 数据已加载
+                                {t('cardEditor.githubLoaded')}
                             </p>
                         )}
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">标题</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.title')}</Label>
                         <Input
                             value={formData.title || ''}
                             onChange={(e) => onChange({ title: e.target.value })}
-                            placeholder="自动从 GitHub 获取"
+                            placeholder={t('cardEditor.githubAutoFetch')}
                         />
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">副标题（可选）</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.subtitleOptional')}</Label>
                         <Input
                             value={formData.subtitle || ''}
                             onChange={(e) => onChange({ subtitle: e.target.value })}
-                            placeholder="自动从 GitHub 获取"
+                            placeholder={t('cardEditor.githubAutoFetch')}
                         />
                     </div>
                 </>
@@ -222,21 +224,21 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             return (
                 <>
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">Mastodon 账号</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.mastodonAccount')}</Label>
                         <Input
                             value={formData.url || ''}
                             onChange={(e) => handleMastodonInputChange(e.target.value)}
-                            placeholder="@username@instance.com"
+                            placeholder={t('cardEditor.mastodonPlaceholder')}
                             className="font-mono"
                         />
                         <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                             <RiInformationFill size={12} />
-                            输入 @用户名@实例域名 或完整 URL
+                            {t('cardEditor.mastodonHint')}
                         </p>
                         {isLoadingMastodon && (
                             <p className="text-xs text-blue-500 mt-2 flex items-center gap-1">
                                 <RiRefreshFill size={12} className="animate-spin" />
-                                正在获取 Mastodon 数据...
+                                {t('cardEditor.mastodonLoading')}
                             </p>
                         )}
                         {mastodonError && (
@@ -248,17 +250,17 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                         {formData.mastodonData && (
                             <p className="text-xs text-green-500 mt-2 flex items-center gap-1">
                                 <RiCheckboxCircleFill size={12} />
-                                Mastodon 数据已加载
+                                {t('cardEditor.mastodonLoaded')}
                             </p>
                         )}
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">标题</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.title')}</Label>
                         <Input
                             value={formData.title || ''}
                             onChange={(e) => onChange({ title: e.target.value })}
-                            placeholder="自动从 Mastodon 获取"
+                            placeholder={t('cardEditor.mastodonAutoFetch')}
                         />
                     </div>
                 </>
@@ -268,11 +270,11 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
         // 联系方式卡片
         if (type?.startsWith('contact-')) {
             const contactIcons = {
-                'contact-email': { icon: RiMailFill, placeholder: 'your@email.com', label: 'Email 地址' },
-                'contact-phone': { icon: RiPhoneFill, placeholder: '+86 138 0000 0000', label: '电话号码' },
-                'contact-qq': { icon: RiQqFill, placeholder: '123456789', label: 'QQ 号码' },
-                'contact-wechat': { icon: RiWechatFill, placeholder: 'your-wechat-id', label: '微信号' },
-                'contact-telegram': { icon: RiTelegramFill, placeholder: 'username', label: 'Telegram 用户名' },
+                'contact-email': { icon: RiMailFill, placeholder: t('cardEditor.contactEmailPlaceholder'), label: t('cardEditor.contactEmail') },
+                'contact-phone': { icon: RiPhoneFill, placeholder: t('cardEditor.contactPhonePlaceholder'), label: t('cardEditor.contactPhone') },
+                'contact-qq': { icon: RiQqFill, placeholder: t('cardEditor.contactQQPlaceholder'), label: t('cardEditor.contactQQ') },
+                'contact-wechat': { icon: RiWechatFill, placeholder: t('cardEditor.contactWechatPlaceholder'), label: t('cardEditor.contactWechat') },
+                'contact-telegram': { icon: RiTelegramFill, placeholder: t('cardEditor.contactTelegramPlaceholder'), label: t('cardEditor.contactTelegram') },
             };
 
             const config = contactIcons[type as keyof typeof contactIcons];
@@ -283,7 +285,7 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                     <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                         <p className="text-xs text-yellow-800 flex items-center gap-2">
                             <RiShieldCheckFill size={14} />
-                            您的联系信息将被加密保护，防止爬虫抓取
+                            {t('cardEditor.contactEncryptionNotice')}
                         </p>
                     </div>
 
@@ -301,20 +303,20 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">显示标题</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.displayTitle')}</Label>
                         <Input
                             value={formData.title || ''}
                             onChange={(e) => onChange({ title: e.target.value })}
-                            placeholder="联系我"
+                            placeholder={t('cardEditor.contactMePlaceholder')}
                         />
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">按钮文字</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.buttonText')}</Label>
                         <Input
                             value={formData.buttonText || ''}
                             onChange={(e) => onChange({ buttonText: e.target.value })}
-                            placeholder="联系"
+                            placeholder={t('cardEditor.contactButtonPlaceholder')}
                         />
                     </div>
                 </>
@@ -333,7 +335,7 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             return (
                 <>
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">媒体链接</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.mediaLink')}</Label>
                         <Input
                             type="url"
                             value={formData.url || ''}
@@ -343,25 +345,25 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                         />
                         <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                             <RiInformationFill size={12} />
-                            粘贴完整的媒体链接
+                            {t('cardEditor.mediaLinkHint')}
                         </p>
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">标题</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.title')}</Label>
                         <Input
                             value={formData.title || ''}
                             onChange={(e) => onChange({ title: e.target.value })}
-                            placeholder="媒体标题"
+                            placeholder={t('cardEditor.mediaTitle')}
                         />
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">副标题（可选）</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.subtitleOptional')}</Label>
                         <Input
                             value={formData.subtitle || ''}
                             onChange={(e) => onChange({ subtitle: e.target.value })}
-                            placeholder="描述信息"
+                            placeholder={t('cardEditor.descriptionPlaceholder')}
                         />
                     </div>
                 </>
@@ -373,26 +375,26 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
             return (
                 <>
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">RSS Feed URL</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.rssFeedUrl')}</Label>
                         <Input
                             type="url"
                             value={formData.url || ''}
                             onChange={(e) => onChange({ url: e.target.value })}
-                            placeholder="https://yourblog.com/rss"
+                            placeholder={t('cardEditor.rssFeedPlaceholder')}
                             className="font-mono"
                         />
                         <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                             <RiInformationFill size={12} />
-                            输入博客的 RSS 订阅地址
+                            {t('cardEditor.rssFeedHint')}
                         </p>
                     </div>
 
                     <div>
-                        <Label className="text-sm font-medium mb-2 block">博客名称</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('cardEditor.blogName')}</Label>
                         <Input
                             value={formData.title || ''}
                             onChange={(e) => onChange({ title: e.target.value })}
-                            placeholder="我的博客"
+                            placeholder={t('cardEditor.myBlogPlaceholder')}
                         />
                     </div>
                 </>
@@ -403,25 +405,25 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
         return (
             <>
                 <div>
-                    <Label className="text-sm font-medium mb-2 block">标题</Label>
+                    <Label className="text-sm font-medium mb-2 block">{t('cardEditor.title')}</Label>
                     <Input
                         value={formData.title || ''}
                         onChange={(e) => onChange({ title: e.target.value })}
-                        placeholder="卡片标题"
+                        placeholder={t('cardEditor.cardTitle')}
                     />
                 </div>
 
                 <div>
-                    <Label className="text-sm font-medium mb-2 block">副标题（可选）</Label>
+                    <Label className="text-sm font-medium mb-2 block">{t('cardEditor.subtitleOptional')}</Label>
                     <Input
                         value={formData.subtitle || ''}
                         onChange={(e) => onChange({ subtitle: e.target.value })}
-                        placeholder="补充说明"
+                        placeholder={t('cardEditor.supplementaryInfo')}
                     />
                 </div>
 
                 <div>
-                    <Label className="text-sm font-medium mb-2 block">链接地址</Label>
+                    <Label className="text-sm font-medium mb-2 block">{t('cardEditor.linkUrl')}</Label>
                     <Input
                         type="url"
                         value={formData.url || ''}
@@ -432,11 +434,11 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
                 </div>
 
                 <div>
-                    <Label className="text-sm font-medium mb-2 block">按钮文字</Label>
+                    <Label className="text-sm font-medium mb-2 block">{t('cardEditor.buttonText')}</Label>
                     <Input
                         value={formData.buttonText || ''}
                         onChange={(e) => onChange({ buttonText: e.target.value })}
-                        placeholder="访问"
+                        placeholder={t('cardEditor.visitButtonPlaceholder')}
                     />
                 </div>
             </>
@@ -447,7 +449,7 @@ const CardContentEditor: React.FC<CardContentEditorProps> = ({ formData, onChang
         <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
                 <RiInformationFill size={16} className="text-blue-500" />
-                <span>填写卡片的内容信息</span>
+                <span>{t('cardEditor.contentInfo')}</span>
             </div>
             
             {renderContentFields()}

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { RiAddLine, RiBarChartFill, RiDownloadLine, RiUploadLine, RiCloseLine, RiInformationFill, RiLinkM } from '@remixicon/react';
+import { useTranslations } from 'next-intl';
 
 // Dynamic imports for better code splitting
 const StatsPanel = dynamic(() => import('./StatsPanel'), { ssr: false });
@@ -15,6 +16,7 @@ interface FloatingControlsProps {
 }
 
 const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }) => {
+    const t = useTranslations();
     const [showStats, setShowStats] = useState(false);
     const [showExportImport, setShowExportImport] = useState(false);
     const [showShortLinks, setShowShortLinks] = useState(false);
@@ -29,7 +31,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         <button
                             onClick={() => setShowStats(!showStats)}
                             className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-gray-100 hover:scale-105 transition-transform text-gray-800 group"
-                            title="Analytics"
+                            title={t('floatingControls.analytics')}
                         >
                             <RiBarChartFill size={20} className="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                         </button>
@@ -39,7 +41,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                     <button
                         onClick={() => setShowExportImport(!showExportImport)}
                         className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-gray-100 hover:scale-105 transition-transform text-gray-800 group"
-                        title="Export/Import"
+                        title={t('floatingControls.exportImport')}
                     >
                         <RiDownloadLine size={20} className="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                     </button>
@@ -49,7 +51,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         <button
                             onClick={() => setShowShortLinks(!showShortLinks)}
                             className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-gray-100 hover:scale-105 transition-transform text-gray-800 group"
-                            title="Short Links"
+                            title={t('floatingControls.shortLinks')}
                         >
                             <RiLinkM size={20} className="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
                         </button>
@@ -59,7 +61,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                     <button
                         onClick={onAddCard}
                         className="bg-blue-600 p-3 sm:p-4 rounded-2xl shadow-2xl hover:scale-105 transition-transform text-white group"
-                        title="Add New Card"
+                        title={t('floatingControls.addCard')}
                     >
                         <RiAddLine size={20} className="sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
                     </button>
@@ -75,7 +77,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center z-10 rounded-t-3xl">
                             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                 <RiBarChartFill size={20} />
-                                Analytics
+                                {t('stats.title')}
                             </h2>
                             <button
                                 onClick={() => setShowStats(false)}
@@ -99,7 +101,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         <div className="border-b border-gray-200 p-4 flex justify-between items-center rounded-t-3xl">
                             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                 <RiUploadLine size={20} />
-                                Data Management
+                                {t('dataManagement.title')}
                             </h2>
                             <button
                                 onClick={() => setShowExportImport(false)}
@@ -111,16 +113,16 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         <div className="p-6">
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="font-semibold mb-2 text-gray-900">Backup Your Data</h3>
+                                    <h3 className="font-semibold mb-2 text-gray-900">{t('dataManagement.backup')}</h3>
                                     <p className="text-sm text-gray-600 mb-3">
-                                        Export all your cards and profile data as JSON
+                                        {t('dataManagement.backupDesc')}
                                     </p>
                                     <ExportImportButtons />
                                 </div>
                                 <div className="pt-4 border-t border-gray-200">
                                     <p className="text-xs text-gray-500 flex items-start gap-1.5">
                                         <RiInformationFill size={14} className="text-blue-500 flex-shrink-0 mt-0.5" />
-                                        <span>Tip: Export regularly to backup your data. You can import the JSON file later to restore.</span>
+                                        <span>{t('dataManagement.tip')}</span>
                                     </p>
                                 </div>
                             </div>
@@ -137,7 +139,7 @@ const FloatingControls: React.FC<FloatingControlsProps> = ({ onAddCard, userId }
                         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center z-10 rounded-t-3xl">
                             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                 <RiLinkM size={20} />
-                                Short Links
+                                {t('shortLinks.title')}
                             </h2>
                             <button
                                 onClick={() => setShowShortLinks(false)}

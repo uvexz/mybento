@@ -85,6 +85,8 @@ export interface BentoCardProps {
     buttonText?: string;
     icon?: string; // String identifier for the icon
     colorClass: string;
+    customBgColor?: string; // Custom background color (RGBA)
+    customTextColor?: string; // Custom text color (RGBA)
     size: CardSize;
     type: CardType;
     url?: string;

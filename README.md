@@ -13,6 +13,7 @@ A personal page builder with a beautiful Bento Grid layout. Create your own corn
 - 📱 **Responsive Design** - Works great on desktop and mobile
 - 🔗 **Short Links** - Create and manage custom short URLs
 - 📸 **Image Upload** - Optional Cloudflare R2 integration
+- 🌍 **Internationalization** - Multi-language support (English, 中文, 日本語)
 
 ## Tech Stack
 
@@ -20,26 +21,9 @@ A personal page builder with a beautiful Bento Grid layout. Create your own corn
 - [PostgreSQL](https://www.postgresql.org/) - Database
 - [Drizzle ORM](https://orm.drizzle.team/) - Type-safe ORM
 - [Better Auth](https://www.better-auth.com/) - Modern authentication (migrated from NextAuth)
+- [next-intl](https://next-intl-docs.vercel.app/) - Internationalization
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [Shadcn UI](https://ui.shadcn.com/) - UI components
-
-## 🔐 Authentication Migration
-
-This project has been migrated from NextAuth to Better Auth for improved developer experience and flexibility.
-
-### 🚀 Quick Start for Migration
-
-**Already have users in the database?** → Start here: [START_HERE.md](./START_HERE.md)
-
-**📚 Complete Documentation:**
-- [START_HERE.md](./START_HERE.md) - **Quick start guide (3 steps)**
-- [BETTER_AUTH_INDEX.md](./BETTER_AUTH_INDEX.md) - Documentation navigation
-- [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md) - Complete migration steps
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
-- [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) - API quick reference
-- [BETTER_AUTH_EXAMPLES.md](./BETTER_AUTH_EXAMPLES.md) - Code examples
-
-**For new installations**, Better Auth is already configured. For existing installations migrating from NextAuth, follow the [START_HERE.md](./START_HERE.md) guide.
 
 ## Quick Start
 

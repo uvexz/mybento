@@ -378,6 +378,8 @@ const BentoCard: React.FC<BentoCardProps> = ({
     buttonText,
     icon,
     colorClass,
+    customBgColor,
+    customTextColor,
     size,
     type,
     url,
@@ -493,17 +495,25 @@ const BentoCard: React.FC<BentoCardProps> = ({
         return match ? match[1] : null;
     }
 
+    // 使用自定义颜色或默认样式
+    const hasCustomColor = customBgColor || customTextColor;
+    const cardStyle = hasCustomColor ? {
+        ...bgStyle,
+        backgroundColor: customBgColor || 'rgba(243, 244, 246, 0.8)',
+        color: customTextColor || 'rgb(0, 0, 0)'
+    } : bgStyle;
+
     return (
         <div
             onClick={handleClick}
             className={`
-        ${spanClasses} ${heightClass} ${!isImageCard ? colorClass : 'bg-gray-200'} ${className} 
+        ${spanClasses} ${heightClass} ${!isImageCard && !hasCustomColor ? colorClass : ''} ${isImageCard ? 'bg-gray-200' : ''} ${className} 
         rounded-3xl relative group transition-all duration-300 
         ${url ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : ''} 
         shadow-sm overflow-hidden flex flex-col justify-between
         border border-black/5
       `}
-            style={bgStyle}
+            style={cardStyle}
         >
 
             {/* Action Overlay (Edit & Move) */}
@@ -571,7 +581,8 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 <div className="absolute top-4 right-4 z-20">
                     <IconComponent 
                         size={28} 
-                        className={`${type === 'social-github' ? 'text-gray-900' : 'text-gray-800'} opacity-80`}
+                        className="opacity-60"
+                        style={{ color: 'inherit' }}
                     />
                 </div>
             )}
@@ -607,23 +618,26 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         {githubData.type === 'user' ? (
                             <>
                                 <div className="flex items-start gap-3 mb-auto">
-                                    <img 
-                                        src={githubData.avatar} 
-                                        alt={githubData.login}
-                                        loading="lazy"
-                                        className="w-12 h-12 rounded-full border-2 border-white/20"
-                                    />
+                                    <div className="relative flex-shrink-0">
+                                        <img 
+                                            src={githubData.avatar} 
+                                            alt={githubData.login}
+                                            loading="lazy"
+                                            className="w-12 h-12 rounded-full"
+                                        />
+                                        <div className="absolute inset-0 rounded-full border-2 opacity-20" style={{ borderColor: 'currentColor' }}></div>
+                                    </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-lg text-white truncate">
+                                        <h3 className="font-bold text-lg truncate">
                                             {githubData.name || githubData.login}
                                         </h3>
-                                        <p className="text-sm text-white/80">@{githubData.login}</p>
+                                        <p className="text-sm opacity-80">@{githubData.login}</p>
                                     </div>
                                 </div>
                                 {githubData.bio && (
-                                    <p className="text-sm text-white/90 mb-3 line-clamp-2">{githubData.bio}</p>
+                                    <p className="text-sm opacity-90 mb-3 line-clamp-2">{githubData.bio}</p>
                                 )}
-                                <div className="flex gap-4 text-xs text-white/80 mt-auto">
+                                <div className="flex gap-4 text-xs opacity-80 mt-auto">
                                     <span className="flex items-center gap-1">
                                         <RiGroupLine size={14} />
                                         {githubData.followers} followers
@@ -637,23 +651,26 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         ) : (
                             <>
                                 <div className="flex items-start gap-3 mb-3">
-                                    <img 
-                                        src={githubData.owner.avatar} 
-                                        alt={githubData.owner.login}
-                                        loading="lazy"
-                                        className="w-10 h-10 rounded-full border-2 border-white/20"
-                                    />
+                                    <div className="relative flex-shrink-0">
+                                        <img 
+                                            src={githubData.owner.avatar} 
+                                            alt={githubData.owner.login}
+                                            loading="lazy"
+                                            className="w-10 h-10 rounded-full"
+                                        />
+                                        <div className="absolute inset-0 rounded-full border-2 opacity-20" style={{ borderColor: 'currentColor' }}></div>
+                                    </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-lg text-white truncate">
+                                        <h3 className="font-bold text-lg truncate">
                                             {githubData.name}
                                         </h3>
-                                        <p className="text-xs text-white/70">{githubData.owner.login}</p>
+                                        <p className="text-xs opacity-70">{githubData.owner.login}</p>
                                     </div>
                                 </div>
                                 {githubData.description && (
-                                    <p className="text-sm text-white/90 mb-3 line-clamp-2">{githubData.description}</p>
+                                    <p className="text-sm opacity-90 mb-3 line-clamp-2">{githubData.description}</p>
                                 )}
-                                <div className="flex gap-3 text-xs text-white/80 mt-auto">
+                                <div className="flex gap-3 text-xs opacity-80 mt-auto">
                                     <span className="flex items-center gap-1">
                                         <RiStarLine size={14} />
                                         {githubData.stars}
@@ -679,12 +696,12 @@ const BentoCard: React.FC<BentoCardProps> = ({
                             {(title || subtitle) && (
                                 <div className={isImageCard ? 'mt-auto text-white' : ''}>
                                     {title && (
-                                        <h3 className={`font-bold text-xl leading-tight ${isImageCard ? 'text-white text-shadow-sm' : 'text-gray-900'}`}>
+                                        <h3 className={`font-bold text-xl leading-tight ${isImageCard ? 'text-white text-shadow-sm' : ''}`}>
                                             {title}
                                         </h3>
                                     )}
                                     {subtitle && (
-                                        <p className={`text-sm font-medium mt-1 ${isImageCard ? 'text-white/90' : 'text-gray-600'}`}>
+                                        <p className={`text-sm font-medium mt-1 ${isImageCard ? 'text-white/90' : 'opacity-70'}`}>
                                             {subtitle}
                                         </p>
                                     )}
@@ -699,8 +716,8 @@ const BentoCard: React.FC<BentoCardProps> = ({
                     <div className="mt-4">
                         <button className={`py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors ${
                             isImageCard
-                                ? 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border border-white/30'
-                                : 'bg-white/90 hover:bg-white text-gray-900 backdrop-blur-sm'
+                                ? 'bg-white/20 hover:bg-white/50 text-white backdrop-blur-md border border-white/30'
+                                : 'bg-white/20 hover:bg-white/50 backdrop-blur-sm'
                         }`}>
                             {buttonText}
                         </button>

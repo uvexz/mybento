@@ -6,12 +6,15 @@ import { getHomepageCards } from '@/lib/data';
 import BentoGrid from '@/components/bento/BentoGrid';
 import { Metadata } from 'next';
 import { RiGithubFill } from '@remixicon/react';
+import { getTranslator } from '@/lib/i18n';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'mybento',
 };
 
 export default async function Home() {
+  const t = await getTranslator();
   const session = await auth.api.getSession({
     headers: await headers()
   }) as ExtendedSession | null;
@@ -43,6 +46,11 @@ export default async function Home() {
       {/* Left Side: Hero */}
       <div className="w-full lg:w-[40%] min-h-screen flex flex-col justify-center p-8 lg:p-16 bg-white lg:border-r border-gray-200 z-10">
         <div className="max-w-md mx-auto lg:mx-0">
+          {/* Language Switcher */}
+          <div className="mb-8">
+            <LanguageSwitcher />
+          </div>
+
           <h1 className="text-6xl font-bold mb-6 text-gray-900 tracking-tight">{siteName}</h1>
           <p className="text-xl text-gray-600 mb-10 leading-relaxed whitespace-pre-line">
             {siteDescription}
@@ -51,15 +59,15 @@ export default async function Home() {
           <div className="flex gap-4">
             {session?.user ? (
               <Link href={`/${session.user.username}`}>
-                <Button size="lg" className="text-lg px-8 py-6">Go to Dashboard</Button>
+                <Button size="lg" className="text-lg px-8 py-6">{t('nav.profile')}</Button>
               </Link>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="outline" size="lg" className="text-lg px-8 py-6">Login</Button>
+                  <Button variant="outline" size="lg" className="text-lg px-8 py-6">{t('auth.login')}</Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="lg" className="text-lg px-8 py-6">Get Yours</Button>
+                  <Button size="lg" className="text-lg px-8 py-6">{t('auth.signup')}</Button>
                 </Link>
               </>
             )}

@@ -10,11 +10,11 @@ import {
     RiEyeOffLine,
 } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import CardTypeSelector from '@/components/editor/CardTypeSelector';
 import CardContentEditor from '@/components/editor/CardContentEditor';
 import CardStyleEditor from '@/components/editor/CardStyleEditor';
 import CardPreview from '@/components/editor/CardPreview';
+import { useTranslations } from 'next-intl';
 
 interface CardEditorModalProps {
     isOpen: boolean;
@@ -31,6 +31,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
     onDelete, 
     initialData 
 }) => {
+    const t = useTranslations();
     const [formData, setFormData] = useState<Partial<BentoCardProps>>({
         id: crypto.randomUUID(),
         title: '',
@@ -39,7 +40,9 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
         url: '',
         type: 'link',
         size: CardSize.Small,
-        colorClass: 'bg-gray-100/80 text-black',
+        colorClass: 'custom-color',
+        customBgColor: 'hsla(0, 0%, 95%, 0.8)',
+        customTextColor: 'hsla(0, 0%, 0%, 1)',
         icon: 'link',
     });
 
@@ -60,7 +63,9 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                     imageUrl: initialData.imageUrl || '',
                     type: initialData.type || 'link',
                     size: initialData.size || CardSize.Small,
-                    colorClass: initialData.colorClass || 'bg-gray-100/80 text-black',
+                    colorClass: initialData.customBgColor ? 'custom-color' : (initialData.colorClass || 'custom-color'),
+                    customBgColor: initialData.customBgColor || 'hsla(0, 0%, 95%, 0.8)',
+                    customTextColor: initialData.customTextColor || 'hsla(0, 0%, 0%, 1)',
                     icon: initialData.icon || 'link',
                     githubData: initialData.githubData,
                     mastodonData: initialData.mastodonData,
@@ -77,7 +82,9 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                     url: '',
                     type: 'link',
                     size: CardSize.Small,
-                    colorClass: 'bg-gray-100/80 text-black',
+                    colorClass: 'custom-color',
+                    customBgColor: 'hsla(0, 0%, 95%, 0.8)',
+                    customTextColor: 'hsla(0, 0%, 0%, 1)',
                     icon: 'link',
                 });
             }
@@ -134,13 +141,13 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <RiLayoutGridFill size={24} className="text-blue-500" />
+                        <RiLayoutGridFill size={24} className="text-gray-900" />
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                                {initialData ? 'Edit Card' : 'Create New Card'}
+                                {initialData ? t('editor.title') : t('editor.title')}
                             </h2>
                             <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {initialData ? 'Modify card content and style' : 'Choose type and fill in content'}
+                                {initialData ? t('editor.editContent') : t('editor.selectType')}
                             </p>
                         </div>
                     </div>
@@ -180,7 +187,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                                         }
                                     `}
                                 >
-                                    1. Type & Size
+                                    1. {t('editor.cardType')}
                                 </button>
                                 <button
                                     type="button"
@@ -193,7 +200,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                                         }
                                     `}
                                 >
-                                    2. Content
+                                    2. {t('editor.content')}
                                 </button>
                                 <button
                                     type="button"
@@ -206,7 +213,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                                         }
                                     `}
                                 >
-                                    3. Style
+                                    3. {t('editor.style')}
                                 </button>
                             </div>
                         </div>
@@ -245,7 +252,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                         <div className="w-80 border-l border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-y-auto">
                             <div className="sticky top-0 p-6">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Live Preview</h3>
+                                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('editor.preview')}</h3>
                                     <span className="text-xs text-gray-500 dark:text-gray-400">Real-time</span>
                                 </div>
                                 <CardPreview data={formData as BentoCardProps} />
@@ -262,7 +269,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                                 type="button"
                                 variant="destructive"
                                 onClick={() => {
-                                    if (confirm('Are you sure you want to delete this card?')) {
+                                    if (confirm(t('common.confirm'))) {
                                         onDelete(initialData.id);
                                         onClose();
                                     }
@@ -270,7 +277,7 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                                 className="gap-2"
                             >
                                 <RiDeleteBinLine size={16} />
-                                Delete Card
+                                {t('common.delete')}
                             </Button>
                         )}
                     </div>
@@ -281,13 +288,13 @@ const CardEditorModal: React.FC<CardEditorModalProps> = ({
                             variant="outline"
                             onClick={onClose}
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </Button>
                         <Button
                             type="button"
                             onClick={handleSubmit}
                         >
-                            {initialData ? 'Save Changes' : 'Create Card'}
+                            {t('common.save')}
                         </Button>
                     </div>
                 </div>

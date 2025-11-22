@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useTranslations } from 'next-intl';
 
 interface ProfileSectionProps {
     profile: UserProfile;
@@ -24,6 +25,7 @@ interface ProfileSectionProps {
 }
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username, isLoggedIn = false }) => {
+    const t = useTranslations();
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
     const [editedProfile, setEditedProfile] = useState(profile);
@@ -81,10 +83,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
     if (isEditing) {
         return (
             <div className="flex flex-col p-6 bg-white rounded-xl shadow-lg max-w-md mx-auto lg:mx-0 self-start w-full z-10">
-                <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
+                <h2 className="text-xl font-bold mb-4">{t('profile.editProfile')}</h2>
                 <div className="space-y-4">
                     <div>
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name">{t('common.name')}</Label>
                         <Input
                             id="name"
                             value={editedProfile.name}
@@ -92,7 +94,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                         />
                     </div>
                     <div>
-                        <Label htmlFor="bio">Bio</Label>
+                        <Label htmlFor="bio">{t('common.bio')}</Label>
                         <Textarea
                             id="bio"
                             value={editedProfile.bio}
@@ -100,25 +102,25 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                         />
                     </div>
                     <div>
-                        <Label htmlFor="avatar">Avatar</Label>
+                        <Label htmlFor="avatar">{t('common.avatar')}</Label>
                         <ImageUpload
                             value={editedProfile.avatarUrl}
                             onChange={(url) => setEditedProfile({ ...editedProfile, avatarUrl: url })}
                             folder="avatars"
-                            placeholder="Avatar URL or upload"
+                            placeholder={t('profile.avatarPlaceholder')}
                         />
                     </div>
                     <div>
-                        <Label htmlFor="background">Background Image</Label>
+                        <Label htmlFor="background">{t('common.background')}</Label>
                         <ImageUpload
                             value={editedProfile.backgroundImage || ''}
                             onChange={(url) => setEditedProfile({ ...editedProfile, backgroundImage: url })}
                             folder="backgrounds"
-                            placeholder="Background URL or upload"
+                            placeholder={t('profile.backgroundPlaceholder')}
                         />
                     </div>
                     <div>
-                        <Label htmlFor="color">Profile Background Color</Label>
+                        <Label htmlFor="color">{t('common.color')}</Label>
                         <div className="flex gap-2">
                             <Input
                                 id="color"
@@ -129,7 +131,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                             />
                             <Input
                                 value={editedProfile.profileColor || ''}
-                                placeholder="e.g. rgba(255, 255, 255, 0.8)"
+                                placeholder={t('profile.colorPlaceholder')}
                                 onChange={(e) => setEditedProfile({ ...editedProfile, profileColor: e.target.value })}
                             />
                         </div>
@@ -137,11 +139,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                     <div className="flex gap-2 pt-2">
                         <Button onClick={handleSave} disabled={isSaving}>
                             {isSaving ? <RiLoader4Line className="w-4 h-4 mr-2 animate-spin" /> : <RiSaveLine className="w-4 h-4 mr-2" />}
-                            Save
+                            {t('common.save')}
                         </Button>
                         <Button variant="outline" onClick={() => setIsEditing(false)} disabled={isSaving}>
                             <RiCloseLine className="w-4 h-4 mr-2" />
-                            Cancel
+                            {t('common.cancel')}
                         </Button>
                     </div>
                 </div>
@@ -165,7 +167,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                     <button
                         onClick={() => setIsEditing(true)}
                         className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all opacity-0 group-hover:opacity-100"
-                        title="Edit Profile"
+                        title={t('profile.editProfile')}
                     >
                         <RiPencilFill className="w-4 h-4 text-gray-600" />
                     </button>
@@ -198,11 +200,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Homepage</p>
+                                <p>{t('common.homepage')}</p>
                             </TooltipContent>
                         </Tooltip>
 
-                        {/* Home Button */}
+                        {/* GitHub Button */}
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
@@ -216,7 +218,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Open source</p>
+                                <p>{t('common.openSource')}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -232,7 +234,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>QRCode</p>
+                                <p>{t('qrcode.title')}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -254,7 +256,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Logout</p>
+                                    <p>{t('nav.logout')}</p>
                                 </TooltipContent>
                             </Tooltip>
                         ) : (
@@ -271,7 +273,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Signin</p>
+                                    <p>{t('common.signin')}</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}

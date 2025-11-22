@@ -3,12 +3,14 @@
 import React from 'react';
 import { BentoCardProps, CardSize } from '@/lib/types';
 import { ICON_MAP } from '@/components/bento/BentoCard';
+import { useTranslations } from 'next-intl';
 
 interface CardPreviewProps {
     data: BentoCardProps;
 }
 
 const CardPreview: React.FC<CardPreviewProps> = ({ data }) => {
+    const t = useTranslations();
     const Icon = data.icon ? ICON_MAP[data.icon] : null;
     
     const sizeClasses = {
@@ -19,24 +21,37 @@ const CardPreview: React.FC<CardPreviewProps> = ({ data }) => {
     };
 
     const isImageCard = data.type === 'image' || data.type === 'image-link';
-    const bgStyle = isImageCard && data.imageUrl 
-        ? { backgroundImage: `url(${data.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
-        : {};
+    
+    // 使用自定义颜色或默认样式
+    const cardStyle = data.customBgColor ? {
+        backgroundColor: data.customBgColor,
+        color: data.customTextColor || 'inherit',
+        ...(isImageCard && data.imageUrl ? { 
+            backgroundImage: `url(${data.imageUrl})`, 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center' 
+        } : {})
+    } : (isImageCard && data.imageUrl ? { 
+        backgroundImage: `url(${data.imageUrl})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center' 
+    } : {});
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-4">
             <div className="text-xs text-gray-500 mb-2">
-                预览效果（实际大小可能不同）
+                {t('cardEditor.previewNote')}
             </div>
             
+            {/* 卡片预览 */}
             <div 
                 className={`
                     relative rounded-2xl p-4 shadow-lg transition-all
-                    ${data.colorClass || 'bg-gray-100/80 text-black'}
+                    ${!data.customBgColor ? (data.colorClass || 'bg-gray-100/80 text-black') : ''}
                     ${sizeClasses[data.size || CardSize.Small]}
-                    min-h-[120px] flex flex-col justify-between
+                    min-h-52 flex flex-col justify-between
                 `}
-                style={bgStyle}
+                style={cardStyle}
             >
                 {/* 图标 */}
                 {Icon && !isImageCard && (
@@ -71,9 +86,9 @@ const CardPreview: React.FC<CardPreviewProps> = ({ data }) => {
 
             {/* 信息提示 */}
             <div className="text-xs text-gray-500 space-y-1">
-                <div>类型: {data.type}</div>
-                <div>尺寸: {data.size}</div>
-                {data.url && <div className="truncate">链接: {data.url}</div>}
+                <div>{t('cardEditor.type')}: {data.type}</div>
+                <div>{t('cardEditor.size')}: {data.size}</div>
+                {data.url && <div className="truncate">{t('cardEditor.link')}: {data.url}</div>}
             </div>
         </div>
     );

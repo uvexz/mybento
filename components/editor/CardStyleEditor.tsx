@@ -1,49 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BentoCardProps } from '@/lib/types';
 import { ICON_MAP } from '@/components/bento/BentoCard';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { RiSearchLine, RiCloseLine } from '@remixicon/react';
+import { useTranslations } from 'next-intl';
+import ColorPicker from '@/components/ui/colorpicker';
 
 interface CardStyleEditorProps {
     formData: Partial<BentoCardProps>;
     onChange: (updates: Partial<BentoCardProps>) => void;
 }
-
-const PRESET_COLORS = [
-    // 品牌色
-    { name: 'Twitter', class: 'bg-[#1DA1F2]/80 text-white', category: 'brand' },
-    { name: 'GitHub', class: 'bg-[#2dba4e]/80 text-white', category: 'brand' },
-    { name: 'YouTube', class: 'bg-[#FF0000]/80 text-white', category: 'brand' },
-    { name: 'LinkedIn', class: 'bg-[#0A66C2]/80 text-white', category: 'brand' },
-    { name: 'Instagram', class: 'bg-[#E4405F]/80 text-white', category: 'brand' },
-    { name: 'Spotify', class: 'bg-[#1DB954]/80 text-white', category: 'brand' },
-    
-    // 常用色
-    { name: '蓝色', class: 'bg-blue-500/80 text-white', category: 'common' },
-    { name: '紫色', class: 'bg-purple-500/80 text-white', category: 'common' },
-    { name: '粉色', class: 'bg-pink-500/80 text-white', category: 'common' },
-    { name: '红色', class: 'bg-red-500/80 text-white', category: 'common' },
-    { name: '橙色', class: 'bg-orange-500/80 text-white', category: 'common' },
-    { name: '黄色', class: 'bg-yellow-400/80 text-black', category: 'common' },
-    { name: '绿色', class: 'bg-green-500/80 text-white', category: 'common' },
-    { name: '青色', class: 'bg-cyan-500/80 text-white', category: 'common' },
-    
-    // 中性色
-    { name: '白色', class: 'bg-white/80 text-black', category: 'neutral' },
-    { name: '浅灰', class: 'bg-gray-100/80 text-black', category: 'neutral' },
-    { name: '灰色', class: 'bg-gray-400/80 text-white', category: 'neutral' },
-    { name: '深灰', class: 'bg-gray-700/80 text-white', category: 'neutral' },
-    { name: '黑色', class: 'bg-gray-900/80 text-white', category: 'neutral' },
-    
-    // 渐变色
-    { name: '日落', class: 'bg-gradient-to-r from-orange-500 to-pink-500 text-white', category: 'gradient' },
-    { name: '海洋', class: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white', category: 'gradient' },
-    { name: '森林', class: 'bg-gradient-to-r from-green-500 to-emerald-500 text-white', category: 'gradient' },
-    { name: '紫霞', class: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white', category: 'gradient' },
-];
 
 const ICON_CATEGORIES = {
     social: ['twitter', 'instagram', 'github', 'youtube', 'linkedin', 'mastodon', 'spotify', 'soundcloud', 'discord', 'twitch', 'tiktok', 'pinterest', 'reddit', 'whatsapp', 'telegram', 'wechat', 'qq'],
@@ -54,14 +23,23 @@ const ICON_CATEGORIES = {
 };
 
 const CardStyleEditor: React.FC<CardStyleEditorProps> = ({ formData, onChange }) => {
+    const t = useTranslations();
     const [iconSearch, setIconSearch] = useState('');
     const [iconCategory, setIconCategory] = useState<string>('all');
+    const [bgColor, setBgColor] = useState(formData.customBgColor || 'hsla(0, 0%, 95%, 0.8)');
+    const [textColor, setTextColor] = useState(formData.customTextColor || 'hsla(0, 0%, 0%, 1)');
+
+    // 当 formData.id 变化时（切换卡片），重置颜色状态
+    React.useEffect(() => {
+        setBgColor(formData.customBgColor || 'hsla(0, 0%, 95%, 0.8)');
+        setTextColor(formData.customTextColor || 'hsla(0, 0%, 0%, 1)');
+    }, [formData.id, formData.customBgColor, formData.customTextColor]);
 
     // 图片类型不需要样式编辑
     if (formData.type === 'image' || formData.type === 'image-link') {
         return (
             <div className="text-center py-8 text-gray-500">
-                <p>图片卡片不需要设置颜色和图标</p>
+                <p>{t('cardEditor.noImageStyle')}</p>
             </div>
         );
     }
@@ -74,65 +52,55 @@ const CardStyleEditor: React.FC<CardStyleEditorProps> = ({ formData, onChange })
         return ICON_CATEGORIES[iconCategory as keyof typeof ICON_CATEGORIES]?.includes(iconKey) || false;
     });
 
+    const handleBgColorChange = useCallback((color: string) => {
+        setBgColor(color);
+        // 更新 formData，使用自定义样式
+        onChange({ 
+            colorClass: 'custom-color',
+            customBgColor: color,
+            customTextColor: textColor
+        });
+    }, [textColor, onChange]);
+
+    const handleTextColorChange = useCallback((color: string) => {
+        setTextColor(color);
+        // 更新 formData
+        onChange({ 
+            colorClass: 'custom-color',
+            customBgColor: bgColor,
+            customTextColor: color
+        });
+    }, [bgColor, onChange]);
+
     return (
         <div className="space-y-6">
-            {/* 颜色选择 */}
-            <div>
-                <Label className="text-sm font-semibold mb-3 block">卡片颜色</Label>
-                
-                <div className="space-y-3">
-                    {['brand', 'common', 'neutral', 'gradient'].map((category) => {
-                        const colors = PRESET_COLORS.filter(c => c.category === category);
-                        const categoryNames = {
-                            brand: '品牌色',
-                            common: '常用色',
-                            neutral: '中性色',
-                            gradient: '渐变色',
-                        };
-                        
-                        return (
-                            <div key={category}>
-                                <div className="text-xs font-medium text-gray-500 mb-2">
-                                    {categoryNames[category as keyof typeof categoryNames]}
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {colors.map((color) => {
-                                        const isSelected = formData.colorClass === color.class;
-                                        
-                                        return (
-                                            <button
-                                                key={color.name}
-                                                type="button"
-                                                onClick={() => onChange({ colorClass: color.class })}
-                                                className={`
-                                                    group relative w-12 h-12 rounded-lg transition-all
-                                                    ${color.class}
-                                                    ${isSelected 
-                                                        ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' 
-                                                        : 'hover:scale-105'
-                                                    }
-                                                `}
-                                                title={color.name}
-                                            >
-                                                {isSelected && (
-                                                    <div className="absolute inset-0 flex items-center justify-center">
-                                                        <div className="w-3 h-3 bg-white rounded-full" />
-                                                    </div>
-                                                )}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })}
+            {/* 颜色选择 - 桌面并排，移动端堆叠 */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* 背景颜色选择 */}
+                <div className="flex justify-center">
+                    <ColorPicker 
+                        key={`bg-${formData.id}`}
+                        default_value={bgColor} 
+                        onChange={handleBgColorChange}
+                        label={t('cardEditor.backgroundColor')}
+                    />
+                </div>
+
+                {/* 文字颜色选择 */}
+                <div className="flex justify-center">
+                    <ColorPicker 
+                        key={`text-${formData.id}`}
+                        default_value={textColor} 
+                        onChange={handleTextColorChange}
+                        label={t('cardEditor.textColor')}
+                    />
                 </div>
             </div>
 
             {/* 图标选择 */}
             <div>
                 <div className="flex justify-between items-center mb-3">
-                    <Label className="text-sm font-semibold">卡片图标（可选）</Label>
+                    <Label className="text-sm font-semibold">{t('cardEditor.cardIcon')}</Label>
                     {formData.icon && (
                         <button
                             type="button"
@@ -140,7 +108,7 @@ const CardStyleEditor: React.FC<CardStyleEditorProps> = ({ formData, onChange })
                             className="text-xs text-red-500 hover:text-red-700 flex items-center gap-1"
                         >
                             <RiCloseLine size={14} />
-                            移除图标
+                            {t('common.delete')}
                         </button>
                     )}
                 </div>
@@ -152,7 +120,7 @@ const CardStyleEditor: React.FC<CardStyleEditorProps> = ({ formData, onChange })
                         <Input
                             value={iconSearch}
                             onChange={(e) => setIconSearch(e.target.value)}
-                            placeholder="搜索图标..."
+                            placeholder={t('cardEditor.searchIcon')}
                             className="pl-9"
                         />
                     </div>
@@ -171,17 +139,17 @@ const CardStyleEditor: React.FC<CardStyleEditorProps> = ({ formData, onChange })
                                     }
                                 `}
                             >
-                                {cat === 'all' ? '全部' : cat}
+                                {t(`cardEditor.iconCategories.${cat}`)}
                             </button>
                         ))}
                     </div>
                 </div>
 
-                {/* 图标网格 */}
-                <div className="border border-gray-200 rounded-lg p-3 bg-gray-50 max-h-64 overflow-y-auto">
-                    <div className="grid grid-cols-8 gap-1">
+                {/* 图标列表 */}
+                <div className="border border-gray-200 rounded-lg p-2 bg-gray-50 max-h-64 overflow-y-auto">
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-1">
                         {filteredIcons.map((iconKey) => {
-                            const IconComp = ICON_MAP[iconKey];
+                            const Icon = ICON_MAP[iconKey];
                             const isSelected = formData.icon === iconKey;
                             
                             return (
@@ -190,24 +158,21 @@ const CardStyleEditor: React.FC<CardStyleEditorProps> = ({ formData, onChange })
                                     type="button"
                                     onClick={() => onChange({ icon: iconKey })}
                                     className={`
-                                        aspect-square rounded-lg flex items-center justify-center transition-all
-                                        ${isSelected 
-                                            ? 'bg-blue-500 text-white shadow-md scale-110' 
-                                            : 'text-gray-400 hover:bg-white hover:text-gray-700 hover:scale-105'
-                                        }
+                                        p-2 rounded-md transition-all hover:bg-gray-200
+                                        flex items-center gap-3 text-left 
+                                        ${isSelected ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-white text-gray-600'}
                                     `}
                                     title={iconKey}
                                 >
-                                    <IconComp size={18} />
+                                    <Icon size={20} className="flex-shrink-0" />
+                                    <span className="text-xs font-light overflow-hidden text-ellipsis whitespace-nowrap">
+                                        {iconKey}
+                                    </span>
                                 </button>
                             );
                         })}
                     </div>
                 </div>
-                
-                <p className="text-xs text-gray-500 mt-2">
-                    找到 {filteredIcons.length} 个图标
-                </p>
             </div>
         </div>
     );
