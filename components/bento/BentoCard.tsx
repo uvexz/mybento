@@ -489,12 +489,20 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 const videoId = extractVimeoId(originalUrl);
                 return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
             }
+            if (cardType === 'video-bilibili') {
+                const bvid = extractBilibiliId(originalUrl);
+                return bvid ? `https://player.bilibili.com/player.html?bvid=${bvid}&high_quality=1&autoplay=0` : null;
+            }
             if (cardType === 'music-spotify') {
                 const trackId = extractSpotifyId(originalUrl);
                 return trackId ? `https://open.spotify.com/embed/track/${trackId}` : null;
             }
             if (cardType === 'music-soundcloud') {
                 return `https://w.soundcloud.com/player/?url=${encodeURIComponent(originalUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`;
+            }
+            if (cardType === 'music-netease') {
+                const songId = extractNeteaseId(originalUrl);
+                return songId ? `https://music.163.com/outchain/player?type=2&id=${songId}&auto=0&height=66` : null;
             }
         } catch (error) {
             console.error('Failed to parse embed URL:', error);
@@ -519,8 +527,25 @@ const BentoCard: React.FC<BentoCardProps> = ({
         return match ? match[1] : null;
     }
 
+    function extractBilibiliId(url: string): string | null {
+        // 支持 BV 号和 av 号
+        const bvMatch = url.match(/(?:bilibili\.com\/video\/)?(BV[a-zA-Z0-9]+)/);
+        if (bvMatch) return bvMatch[1];
+        
+        const avMatch = url.match(/(?:bilibili\.com\/video\/)?av(\d+)/);
+        if (avMatch) return `av${avMatch[1]}`;
+        
+        return null;
+    }
+
     function extractSpotifyId(url: string): string | null {
         const match = url.match(/spotify\.com\/track\/([^?]+)/);
+        return match ? match[1] : null;
+    }
+
+    function extractNeteaseId(url: string): string | null {
+        // 支持 music.163.com/song?id=xxx 和 music.163.com/#/song?id=xxx
+        const match = url.match(/song\?id=(\d+)/);
         return match ? match[1] : null;
     }
 
@@ -595,7 +620,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
 
             {/* Embed Content (Video/Music) */}
             {isEmbedCard && embedUrl && (
-                <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 z-10">
                     <iframe
                         src={embedUrl}
                         className="w-full h-full rounded-3xl"
@@ -605,8 +630,8 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 </div>
             )}
 
-            {/* Icon - Fixed at top right (except for universal cards) */}
-            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && !isArticleCard && !isUniversalCard && !(isUniversalCard && imageUrl) && (
+            {/* Icon - Fixed at top right (except for universal cards and embed cards) */}
+            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && !isArticleCard && !isUniversalCard && !isEmbedCard && !(isUniversalCard && imageUrl) && (
                 <div className="absolute top-4 right-4 z-20">
                     <IconComponent 
                         size={28} 
@@ -617,9 +642,9 @@ const BentoCard: React.FC<BentoCardProps> = ({
             )}
 
             {/* Content Layer */}
-            <div className={`relative z-10 flex flex-col h-full ${
+            <div className={`relative ${isEmbedCard ? 'z-0' : 'z-10'} flex flex-col h-full ${
                 (isBlogCard || isContactCard || isMastodonCard || isEmbedCard) ? 'p-0' : 'p-6'
-            }`}>
+            } ${isEmbedCard ? 'pointer-events-none' : ''}`}>
 
                 {/* Mastodon Card Special Layout */}
                 {isMastodonCard ? (

@@ -21,6 +21,7 @@ import {
     RiQqLine,
     RiWechatLine,
     RiTelegramLine,
+    RiNetflixLine,
 } from '@remixicon/react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -56,8 +57,10 @@ const getCardTypes = (t: any) => [
         types: [
             { value: 'video-youtube', label: t('cardEditor.types.videoYoutube'), icon: RiYoutubeLine, size: CardSize.Large },
             { value: 'video-vimeo', label: t('cardEditor.types.videoVimeo'), icon: RiVideoLine, size: CardSize.Large },
+            { value: 'video-bilibili', label: t('cardEditor.types.videoBilibili'), icon: RiNetflixLine, size: CardSize.Large },
             { value: 'music-spotify', label: t('cardEditor.types.musicSpotify'), icon: RiMusicLine, size: CardSize.Medium },
             { value: 'music-soundcloud', label: t('cardEditor.types.musicSoundcloud'), icon: RiMusicLine, size: CardSize.Medium },
+            { value: 'music-netease', label: t('cardEditor.types.musicNetease'), icon: RiMusicLine, size: CardSize.Medium },
             { value: 'blog-rss', label: t('cardEditor.types.blogRss'), icon: RiRssLine, size: CardSize.Medium },
         ]
     },
