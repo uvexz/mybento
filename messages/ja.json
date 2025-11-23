@@ -129,6 +129,8 @@
       "contact": "連絡先（暗号化保護）"
     },
     "types": {
+      "universal": "ユニバーサルカード",
+      "text": "テキストカード",
       "link": "標準リンク",
       "image": "純粋な画像",
       "imageLink": "画像リンク",
@@ -264,7 +266,13 @@
     "articleMarkdownHint": "Markdown構文をサポート：見出し、リスト、太字、斜体、コード、リンク、画像など",
     "cardTitle": "カードタイトル",
     "supplementaryInfo": "補足情報",
-    "visitButtonPlaceholder": "訪問"
+    "visitButtonPlaceholder": "訪問",
+    "customColor": "カスタム",
+    "whiteText": "白",
+    "blackText": "黒",
+    "backgroundImageUrl": "背景画像URL",
+    "backgroundImagePlaceholder": "https://example.com/image.jpg またはアップロード",
+    "universalCardHint": "すべてのフィールドはオプションです。タイトル、サブタイトル、リンク、背景画像、ボタンテキストの任意の組み合わせを入力できます。"
   },
   "admin": {
     "title": "管理パネル",

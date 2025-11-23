@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 // Dynamic imports for better code splitting
 const FloatingControls = dynamic(() => import('@/components/bento/FloatingControls'), { ssr: false });
-const CardEditorModal = dynamic(() => import('@/components/editor/CardEditorModal'), { ssr: false });
+const UnifiedCardEditor = dynamic(() => import('@/components/editor/UnifiedCardEditor'), { ssr: false });
 
 interface BentoGridProps {
     initialCards: BentoCardProps[];
@@ -149,7 +149,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                         isAdmin={isAdmin}
                     />
 
-                    <CardEditorModal
+                    <UnifiedCardEditor
                         isOpen={isModalOpen}
                         onClose={() => setIsModalOpen(false)}
                         onSave={handleSaveCard}

@@ -129,6 +129,8 @@
       "contact": "Contact (Encrypted)"
     },
     "types": {
+      "universal": "Universal Card",
+      "text": "Text Card",
       "link": "Standard Link",
       "image": "Pure Image",
       "imageLink": "Image Link",
@@ -264,7 +266,13 @@
     "articleMarkdownHint": "Supports Markdown syntax: headings, lists, bold, italic, code, links, images, etc.",
     "cardTitle": "Card Title",
     "supplementaryInfo": "Supplementary Info",
-    "visitButtonPlaceholder": "Visit"
+    "visitButtonPlaceholder": "Visit",
+    "customColor": "Custom",
+    "whiteText": "White",
+    "blackText": "Black",
+    "backgroundImageUrl": "Background Image URL",
+    "backgroundImagePlaceholder": "https://example.com/image.jpg or upload",
+    "universalCardHint": "All fields are optional. You can fill in any combination of title, subtitle, link, background image, and button text."
   },
   "admin": {
     "title": "Admin Panel",

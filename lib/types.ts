@@ -14,6 +14,8 @@ export interface BlogPost {
 }
 
 export type CardType = 
+    | 'universal'
+    | 'text'
     | 'link' 
     | 'social-x' 
     | 'social-insta' 

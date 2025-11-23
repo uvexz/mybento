@@ -129,6 +129,8 @@
       "contact": "联系方式（加密保护）"
     },
     "types": {
+      "universal": "通用卡片",
+      "text": "文字卡片",
       "link": "标准链接",
       "image": "纯图片",
       "imageLink": "图片链接",
@@ -264,7 +266,13 @@
     "articleMarkdownHint": "支持 Markdown 语法：标题、列表、粗体、斜体、代码、链接、图片等",
     "cardTitle": "卡片标题",
     "supplementaryInfo": "补充说明",
-    "visitButtonPlaceholder": "访问"
+    "visitButtonPlaceholder": "访问",
+    "customColor": "自定义",
+    "whiteText": "白色",
+    "blackText": "黑色",
+    "backgroundImageUrl": "背景图片链接",
+    "backgroundImagePlaceholder": "https://example.com/image.jpg 或上传",
+    "universalCardHint": "所有字段均为可选。您可以填写标题、副标题、链接、背景图片、按钮文字的任意组合。"
   },
   "admin": {
     "title": "管理面板",

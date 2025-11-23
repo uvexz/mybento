@@ -429,7 +429,9 @@ const BentoCard: React.FC<BentoCardProps> = ({
 
     // Image Card Logic
     const isImageCard = type === 'image' || type === 'image-link';
-    const bgStyle = isImageCard && imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {};
+    const isUniversalCard = type === 'universal';
+    const hasBackgroundImage = (isImageCard || (isUniversalCard && imageUrl)) && imageUrl;
+    const bgStyle = hasBackgroundImage ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {};
 
     // Embed Card Logic
     const isEmbedCard = type.startsWith('video-') || type.startsWith('music-');
@@ -587,7 +589,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
             )}
 
             {/* Dark Overlay for Image Cards to make text readable */}
-            {isImageCard && (
+            {(isImageCard || (isUniversalCard && imageUrl)) && (
                 <div className="absolute inset-0 bg-black/30 transition-opacity hover:bg-black/40 z-0" />
             )}
 
@@ -603,8 +605,8 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 </div>
             )}
 
-            {/* Icon - Fixed at top right */}
-            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && !isArticleCard && (
+            {/* Icon - Fixed at top right (except for universal cards) */}
+            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && !isArticleCard && !isUniversalCard && !(isUniversalCard && imageUrl) && (
                 <div className="absolute top-4 right-4 z-20">
                     <IconComponent 
                         size={28} 
@@ -642,7 +644,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                             </div>
                         </div>
                         <div className="mt-auto pt-3">
-                            <span className="text-xs opacity-60 font-medium">{t('article.readMore')} →</span>
+                            <span className="text-xs opacity-60 font-medium">{t('article.readMore')}</span>
                         </div>
                     </div>
                 ) : isContactCard ? (
@@ -737,18 +739,26 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         )}
                     </div>
                 ) : (
-                    /* Regular Card Layout */
+                    /* Regular Card Layout (includes universal and text types) */
                     <div className="flex justify-between items-start mb-auto">
                         <div className="flex flex-col gap-1 w-full pr-8">
                             {(title || subtitle) && (
-                                <div className={isImageCard ? 'mt-auto text-white' : ''}>
+                                <div className={(isImageCard || (isUniversalCard && imageUrl)) ? 'mt-auto text-white' : ''}>
                                     {title && (
-                                        <h3 className={`font-bold text-xl leading-tight ${isImageCard ? 'text-white text-shadow-sm' : ''}`}>
-                                            {title}
+                                        <h3 className={`font-bold text-xl leading-tight flex items-center gap-2 ${(isImageCard || (isUniversalCard && imageUrl)) ? 'text-white text-shadow-sm' : ''}`}>
+                                            {/* 通用卡片的图标显示在标题同一行 */}
+                                            {isUniversalCard && IconComponent && (
+                                                <IconComponent 
+                                                    size={20}
+                                                    className="flex-shrink-0"
+                                                    style={{ color: 'inherit' }}
+                                                />
+                                            )}
+                                            <span>{title}</span>
                                         </h3>
                                     )}
                                     {subtitle && (
-                                        <p className={`text-sm font-medium mt-1 ${isImageCard ? 'text-white/90' : 'opacity-70'}`}>
+                                        <p className={`text-sm font-medium mt-1 ${(isImageCard || (isUniversalCard && imageUrl)) ? 'text-white/90' : 'opacity-70'}`}>
                                             {subtitle}
                                         </p>
                                     )}
@@ -762,7 +772,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 {buttonText && buttonText.trim() && !customComponent && !isGitHubCard && !isContactCard && !isMastodonCard && !isArticleCard && (
                     <div className="mt-4">
                         <button className={`py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors ${
-                            isImageCard
+                            (isImageCard || (isUniversalCard && imageUrl))
                                 ? 'bg-white/20 hover:bg-white/50 text-white backdrop-blur-md border border-white/30'
                                 : 'bg-white/20 hover:bg-white/50 backdrop-blur-sm'
                         }`}>
