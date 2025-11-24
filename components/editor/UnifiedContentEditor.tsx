@@ -79,6 +79,41 @@ const UnifiedContentEditor: React.FC<UnifiedContentEditorProps> = ({ formData, o
         );
     }
 
+    // Highlights Card - 重点展示卡片，支持背景图片
+    if (type === 'highlights') {
+        return (
+            <div className="space-y-4">
+                <div>
+                    <Label className="text-sm font-medium mb-2 block">{t('cardEditor.title')}</Label>
+                    <Input
+                        value={formData.title || ''}
+                        onChange={(e) => onChange({ title: e.target.value })}
+                        placeholder={t('cardEditor.cardTitle')}
+                    />
+                </div>
+
+                <div>
+                    <Label className="text-sm font-medium mb-2 block">{t('cardEditor.subtitleOptional')}</Label>
+                    <Input
+                        value={formData.subtitle || ''}
+                        onChange={(e) => onChange({ subtitle: e.target.value })}
+                        placeholder={t('cardEditor.supplementaryInfo')}
+                    />
+                </div>
+
+                <div>
+                    <Label className="text-sm font-medium mb-2 block">{t('cardEditor.backgroundImageUrl')} ({t('common.optional')})</Label>
+                    <ImageUpload
+                        value={formData.imageUrl || ''}
+                        onChange={(url) => onChange({ imageUrl: url })}
+                        folder="cards"
+                        placeholder={t('cardEditor.backgroundImagePlaceholder')}
+                    />
+                </div>
+            </div>
+        );
+    }
+
     // Text Card - 简单文字卡片
     if (type === 'text') {
         return (

@@ -96,7 +96,7 @@ const UnifiedCardEditor: React.FC<UnifiedCardEditorProps> = ({
         const cleanData = { ...formData };
         
         // Clean up unused fields based on card type
-        if (cleanData.type !== 'universal' && cleanData.type !== 'article' && cleanData.type !== 'image' && cleanData.type !== 'image-link') {
+        if (cleanData.type !== 'universal' && cleanData.type !== 'highlights' && cleanData.type !== 'article' && cleanData.type !== 'image' && cleanData.type !== 'image-link') {
             delete cleanData.imageUrl;
         }
         if (cleanData.type !== 'article') {

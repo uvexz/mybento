@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { BentoCardProps, UserProfile } from '@/lib/types';
-import BentoCard from '@/components/bento/BentoCard';
-import ProfileSection from '@/components/bento/ProfileSection';
-import ArticleModal from '@/components/bento/ArticleModal';
+import BentoGridView from '@/components/bento/BentoGridView';
 import { saveCard, deleteCard } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 
@@ -70,76 +68,70 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
         });
     };
 
-    const handleMoveCard = (id: string, direction: 'left' | 'right') => {
+    const handleMove = (id: string, direction: 'left' | 'right') => {
         if (!isEditable) return;
-        const index = cards.findIndex(c => c.id === id);
-        if (index === -1) return;
 
-        const newCards = [...cards];
-        const swapIndex = direction === 'left' ? index - 1 : index + 1;
+        const currentIndex = cards.findIndex(c => c.id === id);
+        if (currentIndex === -1) return;
 
-        if (swapIndex >= 0 && swapIndex < newCards.length) {
-            [newCards[index], newCards[swapIndex]] = [newCards[swapIndex], newCards[index]];
-            setCards(newCards);
-            
-            // Persist to DB
-            const reorderData = newCards.map((card, idx) => ({ id: card.id, order: idx }));
-            import('@/lib/actions').then(({ reorderCards }) => {
-                reorderCards(reorderData).then(() => {
-                    router.refresh();
-                });
+        const newIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1;
+        if (newIndex < 0 || newIndex >= cards.length) return;
+
+        const newCards = Array.from(cards);
+        const [movedCard] = newCards.splice(currentIndex, 1);
+        newCards.splice(newIndex, 0, movedCard);
+
+        setCards(newCards);
+
+        // Persist to DB
+        const reorderData = newCards.map((card, idx) => ({ id: card.id, order: idx }));
+        import('@/lib/actions').then(({ reorderCards }) => {
+            reorderCards(reorderData).then(() => {
+                router.refresh();
             });
-        }
+        });
+    };
+
+    const handleDragEnd = (result: any) => {
+        if (!result.destination) return;
+        if (!isEditable) return;
+
+        const sourceIndex = result.source.index;
+        const destinationIndex = result.destination.index;
+
+        if (sourceIndex === destinationIndex) return;
+
+        const newCards = Array.from(cards);
+        const [reorderedItem] = newCards.splice(sourceIndex, 1);
+        newCards.splice(destinationIndex, 0, reorderedItem);
+
+        setCards(newCards);
+
+        // Persist to DB
+        const reorderData = newCards.map((card, idx) => ({ id: card.id, order: idx }));
+        import('@/lib/actions').then(({ reorderCards }) => {
+            reorderCards(reorderData).then(() => {
+                router.refresh();
+            });
+        });
     };
 
     return (
-        <div
-            className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 sm:p-8 lg:p-40 overflow-x-hidden font-sans transition-all duration-500"
-            style={profile.backgroundImage ? {
-                backgroundImage: `url(${profile.backgroundImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundAttachment: 'fixed'
-            } : {}}
-        >
-
-            {/* Main Container */}
-            <div className="transition-all duration-500 ease-in-out flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-16 w-full max-w-6xl">
-                
-                {/* Left/Top: Profile & Stats */}
-                {showProfile && (
-                    <div className="flex-shrink-0 w-full lg:w-1/3 space-y-6 px-2 sm:px-0">
-                        <ProfileSection
-                            profile={profile}
-                            setProfile={isEditable ? setProfile : undefined}
-                            isEditable={isEditable}
-                            username={username}
-                            isLoggedIn={isLoggedIn}
-                        />
-                        
-                    </div>
-                )}
-
-                {/* Right/Bottom: Grid */}
-                <div className="flex-grow w-full px-2 sm:px-0">
-                    <div className="grid gap-3 sm:gap-4 grid-flow-row-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-
-                        {cards.map((card, index) => (
-                            <BentoCard
-                                key={card.id}
-                                {...card}
-                                onEdit={isEditable ? () => handleEditCard(card) : undefined}
-                                onMove={isEditable ? handleMoveCard : undefined}
-                                onArticleClick={setArticleModalData}
-                                isFirst={index === 0}
-                                isLast={index === cards.length - 1}
-                            />
-                        ))}
-
-                    </div>
-                </div>
-
-            </div>
+        <>
+            <BentoGridView
+                cards={cards}
+                profile={profile}
+                showProfile={showProfile}
+                username={username}
+                isLoggedIn={isLoggedIn}
+                isEditable={isEditable}
+                onEditCard={handleEditCard}
+                onMove={handleMove}
+                onReorder={handleDragEnd}
+                onProfileUpdate={setProfile}
+                articleModalData={articleModalData}
+                setArticleModalData={setArticleModalData}
+            />
 
             {isEditable && (
                 <>
@@ -158,18 +150,6 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                     />
                 </>
             )}
-
-            {/* Article Modal - Rendered at top level for proper z-index */}
-            {articleModalData && (
-                <ArticleModal
-                    isOpen={true}
-                    onClose={() => setArticleModalData(null)}
-                    title={articleModalData.title}
-                    subtitle={articleModalData.subtitle}
-                    content={articleModalData.content}
-                />
-            )}
-
-        </div>
+        </>
     );
 }

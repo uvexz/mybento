@@ -130,6 +130,7 @@
     },
     "types": {
       "universal": "Universal Card",
+      "highlights": "Highlights",
       "text": "Text Card",
       "link": "Standard Link",
       "image": "Pure Image",

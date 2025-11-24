@@ -1,8 +1,10 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { BentoCardProps, CardSize, CardType } from '@/lib/types';
 import BlogCard from './BlogCard';
 import ContactCard from './ContactCard';
 import MastodonCard from './MastodonCard';
+import GithubCard from './GithubCard';
 import { useTranslations } from 'next-intl';
 import {
     RiTwitterXFill,
@@ -63,6 +65,7 @@ import {
     RiSafariFill,
     RiEdgeFill,
     RiOperaFill,
+    RiDragMoveFill,
 } from '@remixicon/react';
 import { cn } from '@/lib/utils';
 
@@ -211,7 +214,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'producthunt': RiProductHuntFill,
     'stackoverflow': RiStackOverflowFill,
     'npm': RiNpmjsFill,
-    
+
     // Platforms & Browsers
     'apple': RiAppleFill,
     'android': RiAndroidFill,
@@ -221,7 +224,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'safari': RiSafariFill,
     'edge': RiEdgeFill,
     'opera': RiOperaFill,
-    
+
     // Common
     'home': RiHomeFill,
     'link': RiLinksFill,
@@ -245,7 +248,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'eye': RiEyeFill,
     'eye-off': RiEyeOffFill,
     'eye-close': RiEyeCloseFill,
-    
+
     // Content & Files
     'book': RiBookOpenFill,
     'article': RiArticleLine,
@@ -262,7 +265,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'external-link': RiExternalLinkFill,
     'attachment': RiAttachmentFill,
     'pushpin': RiPushpinFill,
-    
+
     // Media
     'image': RiImageFill,
     'gallery': RiGalleryFill,
@@ -283,7 +286,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'skip-back': RiSkipBackFill,
     'fullscreen': RiFullscreenFill,
     'picture-in-picture': RiPictureInPictureFill,
-    
+
     // Work & Business
     'briefcase': RiBriefcaseFill,
     'shopping': RiShoppingBagFill,
@@ -294,7 +297,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'tag': RiPriceTag3Fill,
     'coupon': RiCoupon3Fill,
     'gift': RiGiftFill,
-    
+
     // Tech & Development
     'code': RiCodeBoxFill,
     'terminal': RiTerminalBoxFill,
@@ -306,7 +309,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'settings': RiSettings3Fill,
     'download': RiDownloadCloudFill,
     'upload': RiUploadCloudFill,
-    
+
     // Nature & Objects
     'coffee': RiCupFill,
     'fire': RiFireFill,
@@ -327,7 +330,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'lock-unlock': RiLockUnlockFill,
     'key': RiKeyFill,
     'fingerprint': RiFingerprint2Fill,
-    
+
     // UI Elements
     'smile': RiEmotionHappyFill,
     'anchor': RiAnchorFill,
@@ -358,16 +361,16 @@ export const ICON_MAP: Record<string, React.ElementType> = {
     'shuffle': RiShuffleFill,
     'logout': RiLogoutBoxFill,
     'login': RiLoginBoxFill,
-    
+
     // Location & Map
     'map': RiMapPinFill,
     'location': RiMapPinFill,
-    
+
     // Design
     'figma': RiFigmaFill,
     'palette': RiPaletteFill,
     'paint': RiPaletteFill,
-    
+
     // Games
     'game': RiGamepadFill,
 };
@@ -395,24 +398,29 @@ const BentoCard: React.FC<BentoCardProps> = ({
     onArticleClick,
     isFirst,
     isLast,
-    className = ''
+    className = '',
+    dragHandleProps,
+    isDragging = false
 }) => {
     const t = useTranslations();
-    
+
     // GitHub card specific rendering
     const isGitHubCard = type === 'social-github' && githubData;
-    
+
     // Blog card specific rendering
     const isBlogCard = type === 'blog-rss';
-    
+
     // Contact card specific rendering
     const isContactCard = type.startsWith('contact-') && contactInfo;
-    
+
     // Mastodon card specific rendering
     const isMastodonCard = type === 'social-mastodon';
-    
+
     // Article card specific rendering
     const isArticleCard = type === 'article';
+    
+    // Highlights card specific rendering
+    const isHighlightsCard = type === 'highlights';
     // Determine column span based on size
     const spanClasses = {
         [CardSize.Small]: 'sm:col-span-1 sm:row-span-1',
@@ -464,7 +472,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
         if (url && type !== 'image' && !isEmbedCard) {
             // Open link immediately for better UX
             window.open(url, '_blank');
-            
+
             // Track click asynchronously (don't wait for response)
             fetch('/api/track-click', {
                 method: 'POST',
@@ -531,10 +539,10 @@ const BentoCard: React.FC<BentoCardProps> = ({
         // 支持 BV 号和 av 号
         const bvMatch = url.match(/(?:bilibili\.com\/video\/)?(BV[a-zA-Z0-9]+)/);
         if (bvMatch) return bvMatch[1];
-        
+
         const avMatch = url.match(/(?:bilibili\.com\/video\/)?av(\d+)/);
         if (avMatch) return `av${avMatch[1]}`;
-        
+
         return null;
     }
 
@@ -553,58 +561,78 @@ const BentoCard: React.FC<BentoCardProps> = ({
     const hasCustomColor = customBgColor || customTextColor;
     const cardStyle = hasCustomColor ? {
         ...bgStyle,
-        backgroundColor: customBgColor || 'rgba(243, 244, 246, 0.8)',
-        color: customTextColor || 'rgb(0, 0, 0)'
+        backgroundColor: customBgColor || 'var(--glass-surface)',
+        color: customTextColor || 'var(--foreground)'
     } : bgStyle;
 
     return (
-        <div
+        <motion.div
+            layoutId={id}
             onClick={handleClick}
+            whileHover={{ scale: 1.02, boxShadow: "var(--glass-shadow)" }}
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className={`
         ${spanClasses} ${heightClass} ${!isImageCard && !hasCustomColor ? colorClass : ''} ${isImageCard ? 'bg-gray-200' : ''} ${className} 
-        rounded-3xl relative group transition-all duration-300 
-        ${url || isArticleCard ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : ''} 
-        shadow-sm overflow-hidden flex flex-col justify-between
-        border border-black/5
+        rounded-3xl relative group transition-colors duration-300 
+        ${url || isArticleCard ? 'cursor-pointer' : ''} 
+        overflow-hidden flex flex-col justify-between
+        border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md
+        shadow-sm
       `}
             style={cardStyle}
         >
 
-            {/* Action Overlay (Edit & Move) */}
+            {/* Action Overlay (Edit + Drag Handle) */}
             <div className="absolute top-3 right-3 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {/* Move Left */}
-                {onMove && !isFirst && (
+                {/* Drag Handle */}
+                {dragHandleProps && (
                     <button
-                        onClick={(e) => { e.stopPropagation(); onMove(id, 'left'); }}
-                        className="action-btn p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white text-gray-700 transition-colors"
-                        title="Move Previous"
+                        {...dragHandleProps}
+                        className="action-btn p-2 bg-[var(--glass-surface)] backdrop-blur-md rounded-full shadow-sm hover:bg-[var(--glass-highlight)] text-foreground transition-colors border border-[var(--glass-border)] cursor-grab active:cursor-grabbing"
+                        title="Drag to reorder"
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        <RiArrowLeftLine size={14} />
+                        <RiDragMoveFill size={14} />
                     </button>
                 )}
-
-                {/* Move Right */}
-                {onMove && !isLast && (
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onMove(id, 'right'); }}
-                        className="action-btn p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white text-gray-700 transition-colors"
-                        title="Move Next"
-                    >
-                        <RiArrowRightLine size={14} />
-                    </button>
-                )}
-
                 {/* Edit */}
                 {onEdit && (
                     <button
                         onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                        className="action-btn p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white text-gray-700 transition-colors"
+                        className="action-btn p-2 bg-[var(--glass-surface)] backdrop-blur-md rounded-full shadow-sm hover:bg-[var(--glass-highlight)] text-foreground transition-colors border border-[var(--glass-border)]"
                         title="Edit Card"
                     >
                         <RiEdit2Fill size={14} />
                     </button>
                 )}
             </div>
+
+            {/* Move Buttons (Left/Right) */}
+            {onMove && (
+                <div className="absolute top-3 left-3 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {!isFirst && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onMove(id, 'left'); }}
+                            className="action-btn p-2 bg-[var(--glass-surface)] backdrop-blur-md rounded-full shadow-sm hover:bg-[var(--glass-highlight)] text-foreground transition-colors border border-[var(--glass-border)]"
+                            title="Move Left"
+                        >
+                            <RiArrowLeftLine size={14} />
+                        </button>
+                    )}
+                    {!isLast && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onMove(id, 'right'); }}
+                            className="action-btn p-2 bg-[var(--glass-surface)] backdrop-blur-md rounded-full shadow-sm hover:bg-[var(--glass-highlight)] text-foreground transition-colors border border-[var(--glass-border)]"
+                            title="Move Right"
+                        >
+                            <RiArrowRightLine size={14} />
+                        </button>
+                    )}
+                </div>
+            )}
 
             {/* Custom Background Elements (e.g. Graphs, Mockups) */}
             {customComponent && (
@@ -630,11 +658,11 @@ const BentoCard: React.FC<BentoCardProps> = ({
                 </div>
             )}
 
-            {/* Icon - Fixed at top right (except for universal cards and embed cards) */}
-            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && !isArticleCard && !isUniversalCard && !isEmbedCard && !(isUniversalCard && imageUrl) && (
+            {/* Icon - Fixed at top right (except for special card types) */}
+            {IconComponent && !isImageCard && !isContactCard && !isMastodonCard && !isArticleCard && !isUniversalCard && !isEmbedCard && !isGitHubCard && !isHighlightsCard && !(isUniversalCard && imageUrl) && (
                 <div className="absolute top-4 right-4 z-20">
-                    <IconComponent 
-                        size={28} 
+                    <IconComponent
+                        size={28}
                         className="opacity-60"
                         style={{ color: 'inherit' }}
                     />
@@ -642,16 +670,29 @@ const BentoCard: React.FC<BentoCardProps> = ({
             )}
 
             {/* Content Layer */}
-            <div className={`relative ${isEmbedCard ? 'z-0' : 'z-10'} flex flex-col h-full ${
-                (isBlogCard || isContactCard || isMastodonCard || isEmbedCard) ? 'p-0' : 'p-6'
-            } ${isEmbedCard ? 'pointer-events-none' : ''}`}>
+            <div className={`relative ${isEmbedCard ? 'z-0' : 'z-10'} flex flex-col h-full ${(isBlogCard || isContactCard || isMastodonCard || isEmbedCard) ? 'p-0' : 'p-6'
+                } ${isEmbedCard ? 'pointer-events-none' : ''}`}>
 
                 {/* Mastodon Card Special Layout */}
                 {isMastodonCard ? (
-                    <MastodonCard 
+                    <MastodonCard
                         data={mastodonData}
                         title={title}
                     />
+                ) : isHighlightsCard ? (
+                    /* Highlights Card Layout - Centered content, no icon, no button */
+                    <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                        {title && (
+                            <h3 className={`font-bold text-2xl leading-tight tracking-tight ${(imageUrl) ? 'text-white text-shadow-md' : ''}`}>
+                                {title}
+                            </h3>
+                        )}
+                        {subtitle && (
+                            <p className={`text-base font-medium mt-3 leading-relaxed ${(imageUrl) ? 'text-white/95 text-shadow-sm' : 'opacity-80'}`}>
+                                {subtitle}
+                            </p>
+                        )}
+                    </div>
                 ) : isArticleCard ? (
                     /* Article Card Layout */
                     <div className="flex flex-col h-full">
@@ -662,9 +703,9 @@ const BentoCard: React.FC<BentoCardProps> = ({
                                 </div>
                             )}
                             <div className="flex-1 min-w-0">
-                                <h3 className="font-bold text-xl leading-tight mb-1">{title}</h3>
+                                <h3 className="font-bold text-xl leading-tight mb-1 tracking-tight">{title}</h3>
                                 {subtitle && (
-                                    <p className="text-sm opacity-70 line-clamp-3">{subtitle}</p>
+                                    <p className="text-sm opacity-70 line-clamp-3 leading-relaxed">{subtitle}</p>
                                 )}
                             </div>
                         </div>
@@ -673,7 +714,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         </div>
                     </div>
                 ) : isContactCard ? (
-                    <ContactCard 
+                    <ContactCard
                         type={type}
                         title={title}
                         subtitle={subtitle}
@@ -681,88 +722,14 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         colorClass={colorClass}
                     />
                 ) : isBlogCard ? (
-                    <BlogCard 
-                        rssUrl={url || ''} 
+                    <BlogCard
+                        rssUrl={url || ''}
                         title={title}
                         colorClass={colorClass}
                         isImageCard={isImageCard}
                     />
                 ) : isGitHubCard ? (
-                    <div className="flex flex-col h-full">
-                        {githubData.type === 'user' ? (
-                            <>
-                                <div className="flex items-start gap-3 mb-auto">
-                                    <div className="relative flex-shrink-0">
-                                        <img 
-                                            src={githubData.avatar} 
-                                            alt={githubData.login}
-                                            loading="lazy"
-                                            className="w-12 h-12 rounded-full"
-                                        />
-                                        <div className="absolute inset-0 rounded-full border-2 opacity-20" style={{ borderColor: 'currentColor' }}></div>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-lg truncate">
-                                            {githubData.name || githubData.login}
-                                        </h3>
-                                        <p className="text-sm opacity-80">@{githubData.login}</p>
-                                    </div>
-                                </div>
-                                {githubData.bio && (
-                                    <p className="text-sm opacity-90 mb-3 line-clamp-2">{githubData.bio}</p>
-                                )}
-                                <div className="flex gap-4 text-xs opacity-80 mt-auto">
-                                    <span className="flex items-center gap-1">
-                                        <RiGroupLine size={14} />
-                                        {githubData.followers} followers
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <RiArchiveLine size={14} />
-                                        {githubData.publicRepos} repos
-                                    </span>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <div className="flex items-start gap-3 mb-3">
-                                    <div className="relative flex-shrink-0">
-                                        <img 
-                                            src={githubData.owner.avatar} 
-                                            alt={githubData.owner.login}
-                                            loading="lazy"
-                                            className="w-10 h-10 rounded-full"
-                                        />
-                                        <div className="absolute inset-0 rounded-full border-2 opacity-20" style={{ borderColor: 'currentColor' }}></div>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-lg truncate">
-                                            {githubData.name}
-                                        </h3>
-                                        <p className="text-xs opacity-70">{githubData.owner.login}</p>
-                                    </div>
-                                </div>
-                                {githubData.description && (
-                                    <p className="text-sm opacity-90 mb-3 line-clamp-2">{githubData.description}</p>
-                                )}
-                                <div className="flex gap-3 text-xs opacity-80 mt-auto">
-                                    <span className="flex items-center gap-1">
-                                        <RiStarLine size={14} />
-                                        {githubData.stars}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <RiGitForkLine size={14} />
-                                        {githubData.forks}
-                                    </span>
-                                    {githubData.language && (
-                                        <span className="flex items-center gap-1">
-                                            <RiCodeLine size={14} />
-                                            {githubData.language}
-                                        </span>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                    </div>
+                    <GithubCard data={githubData} />
                 ) : (
                     /* Regular Card Layout (includes universal and text types) */
                     <div className="flex justify-between items-start mb-auto">
@@ -770,10 +737,10 @@ const BentoCard: React.FC<BentoCardProps> = ({
                             {(title || subtitle) && (
                                 <div className={(isImageCard || (isUniversalCard && imageUrl)) ? 'mt-auto text-white' : ''}>
                                     {title && (
-                                        <h3 className={`font-bold text-xl leading-tight flex items-center gap-2 ${(isImageCard || (isUniversalCard && imageUrl)) ? 'text-white text-shadow-sm' : ''}`}>
+                                        <h3 className={`font-bold text-xl leading-tight flex items-center gap-2 tracking-tight ${(isImageCard || (isUniversalCard && imageUrl)) ? 'text-white text-shadow-sm' : ''}`}>
                                             {/* 通用卡片的图标显示在标题同一行 */}
                                             {isUniversalCard && IconComponent && (
-                                                <IconComponent 
+                                                <IconComponent
                                                     size={20}
                                                     className="flex-shrink-0"
                                                     style={{ color: 'inherit' }}
@@ -783,7 +750,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
                                         </h3>
                                     )}
                                     {subtitle && (
-                                        <p className={`text-sm font-medium mt-1 ${(isImageCard || (isUniversalCard && imageUrl)) ? 'text-white/90' : 'opacity-70'}`}>
+                                        <p className={`text-sm font-medium mt-1 leading-relaxed ${(isImageCard || (isUniversalCard && imageUrl)) ? 'text-white/90' : 'opacity-70'}`}>
                                             {subtitle}
                                         </p>
                                     )}
@@ -791,22 +758,24 @@ const BentoCard: React.FC<BentoCardProps> = ({
                             )}
                         </div>
                     </div>
-                )}
+                )
+                }
 
                 {/* Footer: Action Button */}
-                {buttonText && buttonText.trim() && !customComponent && !isGitHubCard && !isContactCard && !isMastodonCard && !isArticleCard && (
-                    <div className="mt-4">
-                        <button className={`py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors ${
-                            (isImageCard || (isUniversalCard && imageUrl))
+                {
+                    buttonText && buttonText.trim() && !customComponent && !isGitHubCard && !isContactCard && !isMastodonCard && !isArticleCard && !isHighlightsCard && (
+                        <div className="mt-4">
+                            <button className={`py-2 px-6 rounded-xl font-semibold text-sm w-full sm:w-auto shadow-sm transition-colors ${(isImageCard || (isUniversalCard && imageUrl))
                                 ? 'bg-white/20 hover:bg-white/50 text-white backdrop-blur-md border border-white/30'
-                                : 'bg-white/20 hover:bg-white/50 backdrop-blur-sm'
-                        }`}>
-                            {buttonText}
-                        </button>
-                    </div>
-                )}
-            </div>
-        </div>
+                                : 'bg-[var(--glass-highlight)] hover:bg-[var(--glass-border)] backdrop-blur-sm border border-[var(--glass-border)]'
+                                }`}>
+                                {buttonText}
+                            </button>
+                        </div>
+                    )
+                }
+            </div >
+        </motion.div >
     );
 };
 

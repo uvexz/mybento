@@ -38,6 +38,7 @@ const getCardTypes = (t: any) => [
         category: t('cardEditor.categories.basic'),
         types: [
             { value: 'universal', label: t('cardEditor.types.universal'), icon: RiLink, size: CardSize.Small },
+            { value: 'highlights', label: t('cardEditor.types.highlights'), icon: RiText, size: CardSize.Medium },
             { value: 'article', label: t('cardEditor.types.article'), icon: RiArticleLine, size: CardSize.Medium },
         ]
     },

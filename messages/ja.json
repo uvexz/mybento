@@ -130,6 +130,7 @@
     },
     "types": {
       "universal": "ユニバーサルカード",
+      "highlights": "ハイライト",
       "text": "テキストカード",
       "link": "標準リンク",
       "image": "純粋な画像",

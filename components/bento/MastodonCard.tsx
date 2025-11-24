@@ -1,14 +1,37 @@
 'use client';
 
-import { RiMastodonFill, RiTimeFill } from '@remixicon/react';
+import { useState } from 'react';
+import { RiMastodonFill, RiTimeFill, RiRefreshLine } from '@remixicon/react';
 import { MastodonData } from '@/lib/types';
 
 interface MastodonCardProps {
     data?: MastodonData;
     title?: string;
+    instance?: string;
+    username?: string;
 }
 
-export default function MastodonCard({ data, title }: MastodonCardProps) {
+export default function MastodonCard({ data: initialData, title, instance, username }: MastodonCardProps) {
+    const [data, setData] = useState(initialData);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const handleRefresh = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!instance || !username) return;
+
+        setIsRefreshing(true);
+        try {
+            const response = await fetch(`/api/mastodon/${instance}/${username}`);
+            if (response.ok) {
+                const freshData = await response.json();
+                setData(freshData);
+            }
+        } catch (error) {
+            console.error('Failed to refresh Mastodon data:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
 
     // Format relative time
     const formatRelativeTime = (dateString: string) => {
@@ -64,7 +87,22 @@ export default function MastodonCard({ data, title }: MastodonCardProps) {
                         </p>
                     )}
                 </div>
-                <RiMastodonFill size={20} className="opacity-60 flex-shrink-0" />
+                <div className="flex items-center gap-1">
+                    {instance && username && (
+                        <button
+                            onClick={handleRefresh}
+                            disabled={isRefreshing}
+                            className="p-1.5 rounded-lg hover:bg-black/10 transition-colors opacity-0 group-hover:opacity-100"
+                            title="Refresh data"
+                        >
+                            <RiRefreshLine
+                                size={16}
+                                className={isRefreshing ? 'animate-spin' : ''}
+                            />
+                        </button>
+                    )}
+                    <RiMastodonFill size={20} className="opacity-60 flex-shrink-0" />
+                </div>
             </div>
 
             {/* Latest Post */}

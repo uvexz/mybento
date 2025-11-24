@@ -130,6 +130,7 @@
     },
     "types": {
       "universal": "通用卡片",
+      "highlights": "重点展示",
       "text": "文字卡片",
       "link": "标准链接",
       "image": "纯图片",

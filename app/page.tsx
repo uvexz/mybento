@@ -28,7 +28,7 @@ export default async function Home() {
   if (!isCommunityMode && homepageData) {
     const isOwner = session?.user?.username === homepageData.user.username;
     const isAdmin = homepageData.user.role === 'admin';
-    
+
     return (
       <BentoGrid
         initialCards={homepageData.cards}
@@ -47,9 +47,9 @@ export default async function Home() {
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
       {/* Left Side: Hero */}
       <div className="w-full lg:w-[40%] min-h-screen flex flex-col justify-center p-8 lg:p-16 bg-white lg:border-r border-gray-200 z-10">
-        <div className="max-w-md mx-auto lg:mx-0">
+        <div className="max-w-md mx-auto text-center">
           {/* Language Switcher */}
-          <div className="mb-8">
+          <div className="mb-8 flex justify-center">
             <LanguageSwitcher />
           </div>
 
@@ -58,7 +58,7 @@ export default async function Home() {
             {siteDescription}
           </p>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 justify-center">
             {session?.user ? (
               <Link href={`/${session.user.username}`}>
                 <Button size="lg" className="text-lg px-8 py-6">{t('nav.profile')}</Button>
@@ -80,9 +80,9 @@ export default async function Home() {
             <p className="text-sm text-gray-500">
               Open Source Project
             </p>
-            <a 
-              href="https://github.com/uvexz/mybento" 
-              target="_blank" 
+            <a
+              href="https://github.com/uvexz/mybento"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-gray-700 hover:text-gray-900 transition-colors inline-flex items-center gap-1 mt-1"
             >

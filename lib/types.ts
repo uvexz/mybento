@@ -17,6 +17,7 @@ export type CardType =
     | 'universal'
     | 'text'
     | 'link' 
+    | 'highlights'
     | 'social-x' 
     | 'social-insta' 
     | 'social-github' 
@@ -112,6 +113,10 @@ export interface BentoCardProps {
     isFirst?: boolean;
     isLast?: boolean;
     className?: string;
+    
+    // Drag and drop
+    dragHandleProps?: any;
+    isDragging?: boolean;
 }
 
 export interface UserProfile {
