@@ -33,8 +33,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
     const [showQRCode, setShowQRCode] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const profileUrl = typeof window !== 'undefined' && username 
-        ? `${window.location.origin}/${username}` 
+    const profileUrl = typeof window !== 'undefined' && username
+        ? `${window.location.origin}/${username}`
         : '';
 
     const handleLogout = async () => {
@@ -290,6 +290,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 username={username}
             />
         </div>
+        {/* page switcher here */ }
     );
 };
 

@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import { validatePasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/password';
 import { authClient, type ExtendedUser } from '@/lib/auth-client';
+import { validateUsername } from '@/lib/username-validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +21,7 @@ export default function RegisterPage() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
+
     const passwordStrength = validatePasswordStrength(password);
 
     useEffect(() => {
@@ -49,6 +50,14 @@ export default function RegisterPage() {
             return;
         }
 
+        // 验证用户名
+        const usernameValidation = validateUsername(username);
+        if (!usernameValidation.valid) {
+            setError(usernameValidation.error || 'Invalid username');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             // 使用自定义注册端点（会检查注册是否开放）
             const response = await fetch('/api/auth/register', {
@@ -72,7 +81,7 @@ export default function RegisterPage() {
             } else {
                 // 检查是否需要邮箱验证
                 const requiresVerification = result.requiresVerification;
-                
+
                 if (requiresVerification) {
                     // 需要邮箱验证
                     setSuccess('Account created! Please check your email to verify your account.');
@@ -163,47 +172,47 @@ export default function RegisterPage() {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="username">Username</Label>
-                            <Input 
-                                id="username" 
-                                name="username" 
+                            <Input
+                                id="username"
+                                name="username"
                                 placeholder="johndoe"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                required 
+                                required
                                 disabled={isLoading || !!success}
                             />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
-                            <Input 
-                                id="email" 
-                                name="email" 
-                                type="email" 
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
                                 placeholder="m@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                required 
+                                required
                                 disabled={isLoading || !!success}
                             />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password">Password</Label>
-                            <Input 
-                                id="password" 
-                                name="password" 
-                                type="password" 
+                            <Input
+                                id="password"
+                                name="password"
+                                type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                required 
+                                required
                                 disabled={isLoading || !!success}
                             />
-                            
+
                             {/* Password Strength Indicator */}
                             {password && (
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                            <div 
+                                            <div
                                                 className={`h-full transition-all duration-300 ${getPasswordStrengthColor(passwordStrength.score)}`}
                                                 style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
                                             />
@@ -212,7 +221,7 @@ export default function RegisterPage() {
                                             {getPasswordStrengthLabel(passwordStrength.score)}
                                         </span>
                                     </div>
-                                    
+
                                     {passwordStrength.feedback.length > 0 && (
                                         <ul className="text-xs text-gray-600 space-y-1">
                                             {passwordStrength.feedback.map((msg, i) => (
@@ -229,17 +238,17 @@ export default function RegisterPage() {
                         {error && (
                             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                                 <div className="flex items-start gap-2">
-                                    <svg 
-                                        className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" 
-                                        fill="none" 
-                                        viewBox="0 0 24 24" 
+                                    <svg
+                                        className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
                                         stroke="currentColor"
                                     >
-                                        <path 
-                                            strokeLinecap="round" 
-                                            strokeLinejoin="round" 
-                                            strokeWidth={2} 
-                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
                                     <p className="text-sm text-red-800 flex-1">{error}</p>
@@ -249,17 +258,17 @@ export default function RegisterPage() {
                         {success && (
                             <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                                 <div className="flex items-start gap-2">
-                                    <svg 
-                                        className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" 
-                                        fill="none" 
-                                        viewBox="0 0 24 24" 
+                                    <svg
+                                        className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
                                         stroke="currentColor"
                                     >
-                                        <path 
-                                            strokeLinecap="round" 
-                                            strokeLinejoin="round" 
-                                            strokeWidth={2} 
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
                                     <p className="text-sm text-green-800 flex-1">{success}</p>

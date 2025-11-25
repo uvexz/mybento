@@ -6,6 +6,7 @@ import { user } from '@/lib/schema';
 import { eq, sql } from 'drizzle-orm';
 import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rate-limit';
 import { handleApiError, createErrorResponse, COMMON_ERRORS } from '@/lib/error-handler';
+import { validateUsername } from '@/lib/username-validation';
 
 export async function POST(request: NextRequest) {
     try {
@@ -44,6 +45,15 @@ export async function POST(request: NextRequest) {
         if (!email || !password || !username) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
+                { status: 400 }
+            );
+        }
+
+        // 验证用户名
+        const usernameValidation = validateUsername(username);
+        if (!usernameValidation.valid) {
+            return NextResponse.json(
+                { error: usernameValidation.error },
                 { status: 400 }
             );
         }
