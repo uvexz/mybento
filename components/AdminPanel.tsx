@@ -175,7 +175,7 @@ const AdminPanel: React.FC = () => {
                             }`}
                     >
                         <RiBarChartBoxLine size={18} />
-                        Analytics
+                        {t('stats.title')}
                     </button>
                     <button
                         onClick={() => setActiveTab('general')}

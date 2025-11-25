@@ -309,7 +309,9 @@
     "maxCards": "ユーザーあたりの最大カード数",
     "maxCardsDesc": "ユーザーが作成できる最大カード数",
     "maxShortLinks": "ユーザーあたりの最大短縮リンク数",
-    "maxShortLinksDesc": "ユーザーが作成できる最大短縮リンク数"
+    "maxShortLinksDesc": "ユーザーが作成できる最大短縮リンク数",
+    "maxPages": "ユーザーあたりの最大ページ数",
+    "maxPagesDesc": "ユーザーが作成できる最大ページ数"
   },
   "imageGallery": {
     "title": "画像ギャラリー",
@@ -325,5 +327,20 @@
     "fileTooLarge": "ファイルが大きすぎます。最大5MBまで",
     "uploadFailed": "アップロードに失敗しました",
     "deleteFailed": "削除に失敗しました"
+  },
+  "pages": {
+    "addNewPage": "新しいページを追加",
+    "pageTitle": "ページタイトル",
+    "urlSlug": "URL スラッグ",
+    "mainProfile": "メインプロフィール",
+    "selectPage": "ページを選択",
+    "createPage": "ページを作成",
+    "pageTitlePlaceholder": "私の素晴らしいページ",
+    "urlSlugPlaceholder": "my-awesome-page",
+    "titleRequired": "タイトルとURLスラッグは必須です",
+    "createSuccess": "ページが正常に作成されました",
+    "createFailed": "ページの作成に失敗しました",
+    "slugExists": "このURLのページは既に存在します",
+    "limitReached": "{max} ページの制限に達しました"
   }
 }

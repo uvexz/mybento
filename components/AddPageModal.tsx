@@ -32,7 +32,7 @@ export default function AddPageModal({ isOpen, onClose, username }: AddPageModal
 
     const handleSave = async () => {
         if (!title || !slug) {
-            setError('Title and URL slug are required');
+            setError(t('pages.titleRequired'));
             return;
         }
 
@@ -46,10 +46,10 @@ export default function AddPageModal({ isOpen, onClose, username }: AddPageModal
                 router.refresh();
                 router.push(`/${username}/${slug}`);
             } else {
-                setError(result.error || 'Failed to create page');
+                setError(result.error || t('pages.createFailed'));
             }
         } catch (err) {
-            setError('An error occurred');
+            setError(t('common.error'));
         } finally {
             setIsSaving(false);
         }
@@ -62,7 +62,7 @@ export default function AddPageModal({ isOpen, onClose, username }: AddPageModal
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
             <div className="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md p-6 shadow-2xl">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold">Add New Page</h2>
+                    <h2 className="text-xl font-bold">{t('pages.addNewPage')}</h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <RiCloseLine size={20} />
                     </button>
@@ -70,7 +70,7 @@ export default function AddPageModal({ isOpen, onClose, username }: AddPageModal
 
                 <div className="space-y-4">
                     <div>
-                        <Label htmlFor="page-title">Page Title</Label>
+                        <Label htmlFor="page-title">{t('pages.pageTitle')}</Label>
                         <Input
                             id="page-title"
                             value={title}
@@ -80,18 +80,18 @@ export default function AddPageModal({ isOpen, onClose, username }: AddPageModal
                                     setSlug(e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
                                 }
                             }}
-                            placeholder="My Awesome Page"
+                            placeholder={t('pages.pageTitlePlaceholder')}
                         />
                     </div>
                     <div>
-                        <Label htmlFor="page-slug">URL Slug</Label>
+                        <Label htmlFor="page-slug">{t('pages.urlSlug')}</Label>
                         <div className="flex items-center gap-2">
                             <span className="text-gray-500 text-sm">/{username}/</span>
                             <Input
                                 id="page-slug"
                                 value={slug}
                                 onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))}
-                                placeholder="my-awesome-page"
+                                placeholder={t('pages.urlSlugPlaceholder')}
                             />
                         </div>
                     </div>
@@ -102,11 +102,11 @@ export default function AddPageModal({ isOpen, onClose, username }: AddPageModal
 
                     <div className="flex justify-end gap-2 pt-4">
                         <Button variant="outline" onClick={onClose} disabled={isSaving}>
-                            Cancel
+                            {t('common.cancel')}
                         </Button>
                         <Button onClick={handleSave} disabled={isSaving}>
                             {isSaving ? <RiLoader4Line className="w-4 h-4 mr-2 animate-spin" /> : <RiSaveLine className="w-4 h-4 mr-2" />}
-                            Create Page
+                            {t('pages.createPage')}
                         </Button>
                     </div>
                 </div>

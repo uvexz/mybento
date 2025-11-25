@@ -438,7 +438,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
     // Image Card Logic
     const isImageCard = type === 'image' || type === 'image-link';
     const isUniversalCard = type === 'universal';
-    const hasBackgroundImage = (isImageCard || (isUniversalCard && imageUrl)) && imageUrl;
+    const hasBackgroundImage = (isImageCard || (isUniversalCard && imageUrl) || (isArticleCard && imageUrl) || (isHighlightsCard && imageUrl)) && imageUrl;
     const bgStyle = hasBackgroundImage ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {};
 
     // Embed Card Logic
@@ -469,6 +469,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
             return;
         }
 
+        // Highlights card and other cards with URL
         if (url && type !== 'image' && !isEmbedCard) {
             // Open link immediately for better UX
             window.open(url, '_blank');
@@ -577,7 +578,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
             className={`
         ${spanClasses} ${heightClass} ${!isImageCard && !hasCustomColor ? colorClass : ''} ${isImageCard ? 'bg-gray-200' : ''} ${className} 
         rounded-3xl relative group transition-colors duration-300 
-        ${url || isArticleCard ? 'cursor-pointer' : ''} 
+        ${url || isArticleCard || (isHighlightsCard && url) ? 'cursor-pointer' : ''} 
         overflow-hidden flex flex-col justify-between
         border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md
         shadow-sm
@@ -642,7 +643,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
             )}
 
             {/* Dark Overlay for Image Cards to make text readable */}
-            {(isImageCard || (isUniversalCard && imageUrl)) && (
+            {(isImageCard || (isUniversalCard && imageUrl) || (isArticleCard && imageUrl) || (isHighlightsCard && imageUrl)) && (
                 <div className="absolute inset-0 bg-black/30 transition-opacity hover:bg-black/40 z-0" />
             )}
 
@@ -699,18 +700,18 @@ const BentoCard: React.FC<BentoCardProps> = ({
                         <div className="flex items-start gap-3 mb-auto">
                             {IconComponent && (
                                 <div className="flex-shrink-0">
-                                    <IconComponent size={32} className="opacity-70" style={{ color: 'inherit' }} />
+                                    <IconComponent size={32} className={`opacity-70 ${imageUrl ? 'text-white' : ''}`} style={imageUrl ? {} : { color: 'inherit' }} />
                                 </div>
                             )}
                             <div className="flex-1 min-w-0">
-                                <h3 className="font-bold text-xl leading-tight mb-1 tracking-tight">{title}</h3>
+                                <h3 className={`font-bold text-xl leading-tight mb-1 tracking-tight ${imageUrl ? 'text-white text-shadow-sm' : ''}`}>{title}</h3>
                                 {subtitle && (
-                                    <p className="text-sm opacity-70 line-clamp-3 leading-relaxed">{subtitle}</p>
+                                    <p className={`text-sm opacity-70 line-clamp-3 leading-relaxed ${imageUrl ? 'text-white/90' : ''}`}>{subtitle}</p>
                                 )}
                             </div>
                         </div>
                         <div className="mt-auto pt-3">
-                            <span className="text-xs opacity-60 font-medium">{t('article.readMore')}</span>
+                            <span className={`text-xs opacity-60 font-medium ${imageUrl ? 'text-white' : ''}`}>{t('article.readMore')}</span>
                         </div>
                     </div>
                 ) : isContactCard ? (

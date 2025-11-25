@@ -24,9 +24,11 @@ interface BentoGridPropsExtended extends BentoGridProps {
     username?: string;
     isLoggedIn?: boolean;
     isAdmin?: boolean;
+    currentPageId?: string;
+    currentPageSlug?: string;
 }
 
-export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true, userId, username, isLoggedIn = false, isAdmin = false, pages = [] }: BentoGridPropsExtended) {
+export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true, userId, username, isLoggedIn = false, isAdmin = false, pages = [], currentPageId, currentPageSlug }: BentoGridPropsExtended) {
     const [cards, setCards] = useState<BentoCardProps[]>(initialCards);
     const [profile, setProfile] = useState<UserProfile>(initialProfile);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,15 +48,23 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
     };
 
     const handleSaveCard = (cardData: BentoCardProps) => {
+        // Ensure pageId is set correctly for new cards
+        const cardWithPageId = {
+            ...cardData,
+            pageId: currentPageId || cardData.pageId || null
+        };
+
         if (editingCard) {
-            setCards(cards.map(c => c.id === cardData.id ? { ...cardData, customComponent: c.customComponent } : c));
+            // Update existing card - preserve the original ID
+            setCards(cards.map(c => c.id === editingCard.id ? { ...cardWithPageId, id: editingCard.id, customComponent: c.customComponent } : c));
         } else {
-            setCards([...cards, { ...cardData, id: crypto.randomUUID() }]);
+            // Add new card - use the ID from cardData (already generated in editor)
+            setCards([...cards, cardWithPageId]);
         }
         setIsModalOpen(false);
 
         // Persist to DB
-        saveCard(cardData).then(() => {
+        saveCard(cardWithPageId).then(() => {
             router.refresh();
         });
     };
@@ -127,6 +137,8 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                 pages={pages}
                 isLoggedIn={isLoggedIn}
                 isEditable={isEditable}
+                currentPageSlug={currentPageSlug}
+                currentPageId={currentPageId}
                 onEditCard={handleEditCard}
                 onMove={handleMove}
                 onReorder={handleDragEnd}

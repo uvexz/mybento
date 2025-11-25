@@ -16,6 +16,8 @@ interface BentoGridViewProps {
     pages?: Page[];
     isLoggedIn?: boolean;
     isEditable?: boolean;
+    currentPageSlug?: string;
+    currentPageId?: string;
     onEditCard?: (card: BentoCardProps) => void;
     onMove?: (id: string, direction: 'left' | 'right') => void;
     onReorder?: (result: DropResult) => void;
@@ -32,6 +34,8 @@ const BentoGridView: React.FC<BentoGridViewProps> = ({
     pages = [],
     isLoggedIn = false,
     isEditable = false,
+    currentPageSlug,
+    currentPageId,
     onEditCard,
     onMove,
     onReorder,
@@ -63,6 +67,8 @@ const BentoGridView: React.FC<BentoGridViewProps> = ({
                             username={username}
                             pages={pages}
                             isLoggedIn={isLoggedIn}
+                            currentPageSlug={currentPageSlug}
+                            currentPageId={currentPageId}
                         />
                     </div>
                 )}

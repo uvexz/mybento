@@ -194,8 +194,7 @@ export async function saveCard(card: any) {
                 contactInfo: card.contactInfo || null,
                 mastodonData: card.mastodonData ? JSON.stringify(card.mastodonData) : null,
                 articleContent: card.articleContent || null,
-                // pageId is usually not changed after creation, but if needed:
-                // pageId: card.pageId || null 
+                pageId: card.pageId || null, // Allow updating pageId
             }).where(eq(cards.id, card.id));
         } else {
             // New card

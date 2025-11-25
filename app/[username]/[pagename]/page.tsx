@@ -69,6 +69,10 @@ export default async function UserSubPage({ params }: PageProps) {
     const isEditable = session?.user?.username === username;
     const isAdmin = data.user.role === 'admin';
 
+    // Get all user pages for the page switcher
+    const { getUserPages } = await import('@/lib/data');
+    const userPages = await getUserPages(username);
+
     return (
         <BentoGrid
             initialCards={data.cards}
@@ -78,6 +82,9 @@ export default async function UserSubPage({ params }: PageProps) {
             username={username}
             isLoggedIn={!!session?.user}
             isAdmin={isAdmin}
+            pages={userPages}
+            currentPageId={data.page.id}
+            currentPageSlug={pagename}
         />
     );
 }

@@ -86,7 +86,7 @@ export interface MastodonData {
 
 export interface BentoCardProps {
     id: string;
-    pageId?: string; // Optional, if belongs to a specific page
+    pageId?: string | null; // Optional, if belongs to a specific page
     title: string;
     subtitle?: string;
     buttonText?: string;
@@ -133,9 +133,10 @@ export interface Page {
     userId: string;
     slug: string;
     title: string;
-    subtitle?: string;
-    avatarUrl?: string;
-    backgroundImage?: string;
-    profileColor?: string;
+    subtitle: string | null;
+    avatarUrl: string | null;
+    backgroundImage: string | null;
+    profileColor: string | null;
     createdAt: Date;
+    updatedAt: Date;
 }

@@ -309,7 +309,9 @@
     "maxCards": "每用户最大卡片数",
     "maxCardsDesc": "用户可以创建的最大卡片数量",
     "maxShortLinks": "每用户最大短链接数",
-    "maxShortLinksDesc": "用户可以创建的最大短链接数量"
+    "maxShortLinksDesc": "用户可以创建的最大短链接数量",
+    "maxPages": "每用户最大页面数",
+    "maxPagesDesc": "用户可以创建的最大页面数量"
   },
   "imageGallery": {
     "title": "图片库",
@@ -325,5 +327,20 @@
     "fileTooLarge": "文件太大，最大支持 5MB",
     "uploadFailed": "上传失败",
     "deleteFailed": "删除失败"
+  },
+  "pages": {
+    "addNewPage": "添加新页面",
+    "pageTitle": "页面标题",
+    "urlSlug": "URL 路径",
+    "mainProfile": "主页",
+    "selectPage": "选择页面",
+    "createPage": "创建页面",
+    "pageTitlePlaceholder": "我的精彩页面",
+    "urlSlugPlaceholder": "my-awesome-page",
+    "titleRequired": "标题和 URL 路径为必填项",
+    "createSuccess": "页面创建成功",
+    "createFailed": "创建页面失败",
+    "slugExists": "此 URL 的页面已存在",
+    "limitReached": "您已达到 {max} 个页面的限制"
   }
 }

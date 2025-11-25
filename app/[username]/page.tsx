@@ -79,6 +79,8 @@ export default async function UserPage({ params }: PageProps) {
             username={username}
             isLoggedIn={!!session?.user}
             isAdmin={isAdmin}
+            pages={data.pages}
+            currentPageSlug="main"
         />
     );
 }

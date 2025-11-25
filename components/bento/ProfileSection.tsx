@@ -27,9 +27,11 @@ interface ProfileSectionProps {
     username?: string;
     isLoggedIn?: boolean;
     pages?: Page[];
+    currentPageSlug?: string; // Current page slug for page switcher
+    currentPageId?: string; // Current page ID if editing a page (not main profile)
 }
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username, isLoggedIn = false, pages = [] }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username, isLoggedIn = false, pages = [], currentPageSlug, currentPageId }) => {
     const t = useTranslations();
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
@@ -66,18 +68,40 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
         setIsSaving(true);
         try {
             const formData = new FormData();
-            formData.append('name', editedProfile.name);
-            formData.append('bio', editedProfile.bio);
-            formData.append('image', editedProfile.avatarUrl);
-            formData.append('backgroundImage', editedProfile.backgroundImage || '');
-            formData.append('profileColor', editedProfile.profileColor || '');
+            
+            // Check if we're editing a page or the main profile
+            if (currentPageId) {
+                // Editing a page
+                const { updatePage } = await import('@/lib/actions');
+                formData.append('title', editedProfile.name);
+                formData.append('subtitle', editedProfile.bio);
+                formData.append('avatarUrl', editedProfile.avatarUrl);
+                formData.append('backgroundImage', editedProfile.backgroundImage || '');
+                formData.append('profileColor', editedProfile.profileColor || '');
 
-            const result = await updateProfile(formData);
-            if (result.success) {
-                setProfile?.(editedProfile);
-                setIsEditing(false);
+                const result = await updatePage(currentPageId, formData);
+                if (result.success) {
+                    setProfile?.(editedProfile);
+                    setIsEditing(false);
+                    router.refresh();
+                } else {
+                    console.error(result.error);
+                }
             } else {
-                console.error(result.error);
+                // Editing main profile
+                formData.append('name', editedProfile.name);
+                formData.append('bio', editedProfile.bio);
+                formData.append('image', editedProfile.avatarUrl);
+                formData.append('backgroundImage', editedProfile.backgroundImage || '');
+                formData.append('profileColor', editedProfile.profileColor || '');
+
+                const result = await updateProfile(formData);
+                if (result.success) {
+                    setProfile?.(editedProfile);
+                    setIsEditing(false);
+                } else {
+                    console.error(result.error);
+                }
             }
         } catch (error) {
             console.error(error);
@@ -96,10 +120,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
         }
     };
 
-    // Determine current page slug from URL
-    const currentSlug = typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '';
-    const isMainPage = currentSlug === username || currentSlug === '';
-    const selectedValue = isMainPage ? 'main' : currentSlug;
+    // Use the currentPageSlug prop, default to 'main' if not provided
+    const selectedValue = currentPageSlug || 'main';
 
     if (isEditing) {
         return (
@@ -302,15 +324,15 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 </TooltipProvider>
             )}
 
-            {/* Page Switcher */}
-            {username && (pages.length > 0 || isEditable) && (
+            {/* Page Switcher - Only show if there are pages to switch between */}
+            {username && pages.length > 0 && (
                 <div className="w-full mt-6">
-                    <Select onValueChange={handlePageChange} defaultValue={selectedValue}>
+                    <Select onValueChange={handlePageChange} value={selectedValue}>
                         <SelectTrigger className="w-full bg-white/50 backdrop-blur-sm border-gray-200">
-                            <SelectValue placeholder="Select a page" />
+                            <SelectValue placeholder={t('pages.selectPage')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="main">Main Profile</SelectItem>
+                            <SelectItem value="main">{t('pages.mainProfile')}</SelectItem>
                             {pages.map((page) => (
                                 <SelectItem key={page.id} value={page.slug}>
                                     {page.title}
@@ -320,7 +342,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                                 <>
                                     <div className="h-px bg-gray-100 my-1" />
                                     <SelectItem value="add-new" className="text-blue-600 font-medium">
-                                        + Add New Page
+                                        + {t('pages.addNewPage')}
                                     </SelectItem>
                                 </>
                             )}

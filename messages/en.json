@@ -309,7 +309,9 @@
     "maxCards": "Max Cards Per User",
     "maxCardsDesc": "Maximum number of cards a user can create",
     "maxShortLinks": "Max Short Links Per User",
-    "maxShortLinksDesc": "Maximum number of short links a user can create"
+    "maxShortLinksDesc": "Maximum number of short links a user can create",
+    "maxPages": "Max Pages Per User",
+    "maxPagesDesc": "Maximum number of pages a user can create"
   },
   "imageGallery": {
     "title": "Image Gallery",
@@ -325,5 +327,20 @@
     "fileTooLarge": "File is too large. Maximum size is 5MB",
     "uploadFailed": "Failed to upload image",
     "deleteFailed": "Failed to delete image"
+  },
+  "pages": {
+    "addNewPage": "Add New Page",
+    "pageTitle": "Page Title",
+    "urlSlug": "URL Slug",
+    "mainProfile": "Main Profile",
+    "selectPage": "Select a page",
+    "createPage": "Create Page",
+    "pageTitlePlaceholder": "My Awesome Page",
+    "urlSlugPlaceholder": "my-awesome-page",
+    "titleRequired": "Title and URL slug are required",
+    "createSuccess": "Page created successfully",
+    "createFailed": "Failed to create page",
+    "slugExists": "Page with this URL already exists",
+    "limitReached": "You have reached the limit of {max} pages"
   }
 }
