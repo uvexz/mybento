@@ -46,6 +46,7 @@ const AdminPanel: React.FC = () => {
         maxImages: 50,
         maxShortLinks: 100,
         maxCards: 50,
+        maxPages: 3,
     });
 
     useEffect(() => {
@@ -169,8 +170,8 @@ const AdminPanel: React.FC = () => {
                     <button
                         onClick={() => setActiveTab('analytics')}
                         className={`px-4 py-3 border-b-2 transition-all flex items-center gap-2 font-medium text-sm ${activeTab === 'analytics'
-                                ? 'border-blue-600 text-blue-600 bg-blue-50/50'
-                                : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            ? 'border-blue-600 text-blue-600 bg-blue-50/50'
+                            : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                             }`}
                     >
                         <RiBarChartBoxLine size={18} />
@@ -179,8 +180,8 @@ const AdminPanel: React.FC = () => {
                     <button
                         onClick={() => setActiveTab('general')}
                         className={`px-4 py-3 border-b-2 transition-all flex items-center gap-2 font-medium text-sm ${activeTab === 'general'
-                                ? 'border-blue-600 text-blue-600 bg-blue-50/50'
-                                : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            ? 'border-blue-600 text-blue-600 bg-blue-50/50'
+                            : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                             }`}
                     >
                         <RiSettings3Line size={18} />
@@ -189,8 +190,8 @@ const AdminPanel: React.FC = () => {
                     <button
                         onClick={() => setActiveTab('storage')}
                         className={`px-4 py-3 border-b-2 transition-all flex items-center gap-2 font-medium text-sm ${activeTab === 'storage'
-                                ? 'border-blue-600 text-blue-600 bg-blue-50/50'
-                                : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            ? 'border-blue-600 text-blue-600 bg-blue-50/50'
+                            : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                             }`}
                     >
                         <RiDatabase2Line size={18} />
@@ -199,8 +200,8 @@ const AdminPanel: React.FC = () => {
                     <button
                         onClick={() => setActiveTab('permissions')}
                         className={`px-4 py-3 border-b-2 transition-all flex items-center gap-2 font-medium text-sm ${activeTab === 'permissions'
-                                ? 'border-blue-600 text-blue-600 bg-blue-50/50'
-                                : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            ? 'border-blue-600 text-blue-600 bg-blue-50/50'
+                            : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                             }`}
                     >
                         <RiUserSettingsLine size={18} />

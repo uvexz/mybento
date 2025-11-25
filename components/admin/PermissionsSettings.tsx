@@ -4,7 +4,8 @@ import {
     RiImageLine,
     RiLayoutGridLine,
     RiLinkM,
-    RiSave3Line
+    RiSave3Line,
+    RiPagesLine
 } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
@@ -16,6 +17,7 @@ export interface UserPermissions {
     maxImages: number;
     maxShortLinks: number;
     maxCards: number;
+    maxPages: number;
 }
 
 interface PermissionsSettingsProps {
@@ -131,6 +133,27 @@ const PermissionsSettings: React.FC<PermissionsSettingsProps> = ({ permissions, 
                             />
                         </InputGroup>
                         <p className="text-xs text-gray-500 mt-1.5">{t('admin.maxShortLinksDesc')}</p>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="maxPages" className="text-sm font-medium text-gray-700">
+                            {t('admin.maxPages')}
+                        </Label>
+                        <InputGroup>
+                            <InputGroupAddon>
+                                <InputGroupText>
+                                    <RiPagesLine />
+                                </InputGroupText>
+                            </InputGroupAddon>
+                            <InputGroupInput
+                                id="maxPages"
+                                type="number"
+                                min="1"
+                                value={permissions.maxPages}
+                                onChange={(e) => setPermissions({ ...permissions, maxPages: parseInt(e.target.value) || 1 })}
+                            />
+                        </InputGroup>
+                        <p className="text-xs text-gray-500 mt-1.5">{t('admin.maxPagesDesc')}</p>
                     </div>
                 </div>
             </div>

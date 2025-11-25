@@ -28,7 +28,7 @@ export async function getSiteSettings() {
 
     const settings = await db.select().from(siteSettings);
     const settingsMap: Record<string, string> = {};
-    
+
     settings.forEach(setting => {
         settingsMap[setting.key] = setting.value || '';
     });
@@ -106,7 +106,7 @@ export async function updateSiteSettings(settings: {
     // Upsert settings
     for (const update of updates) {
         const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, update.key)).limit(1);
-        
+
         if (existing.length > 0) {
             await db.update(siteSettings)
                 .set({ value: update.value, updatedAt: new Date() })
@@ -129,7 +129,7 @@ export async function getDefaultUserPermissions() {
     }
 
     const settings = await db.select().from(siteSettings).where(eq(siteSettings.key, 'default_user_permissions')).limit(1);
-    
+
     if (settings.length > 0 && settings[0].value) {
         return JSON.parse(settings[0].value);
     }
@@ -139,6 +139,7 @@ export async function getDefaultUserPermissions() {
         maxImages: 50,
         maxShortLinks: 100,
         maxCards: 50,
+        maxPages: 3,
     };
 }
 
@@ -148,13 +149,14 @@ export async function updateDefaultUserPermissions(permissions: {
     maxImages: number;
     maxShortLinks: number;
     maxCards: number;
+    maxPages: number;
 }) {
     if (!await isAdmin()) {
         throw new Error('Unauthorized');
     }
 
     const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, 'default_user_permissions')).limit(1);
-    
+
     if (existing.length > 0) {
         await db.update(siteSettings)
             .set({ value: JSON.stringify(permissions), updatedAt: new Date() })
@@ -172,7 +174,7 @@ export async function updateDefaultUserPermissions(permissions: {
 // Get user permissions
 export async function getUserPermissions(userId: string) {
     const permissions = await db.select().from(userPermissions).where(eq(userPermissions.userId, userId)).limit(1);
-    
+
     if (permissions.length > 0) {
         return permissions[0];
     }
@@ -185,6 +187,7 @@ export async function getUserPermissions(userId: string) {
         maxImages: defaultPerms.maxImages,
         maxShortLinks: defaultPerms.maxShortLinks,
         maxCards: defaultPerms.maxCards,
+        maxPages: defaultPerms.maxPages,
     };
 }
 

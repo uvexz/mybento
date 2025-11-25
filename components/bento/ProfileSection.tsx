@@ -16,15 +16,20 @@ import { useRouter } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTranslations } from 'next-intl';
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import AddPageModal from '@/components/AddPageModal';
+import { Page } from '@/lib/types';
+
 interface ProfileSectionProps {
     profile: UserProfile;
     setProfile?: (profile: UserProfile) => void;
     isEditable?: boolean;
     username?: string;
     isLoggedIn?: boolean;
+    pages?: Page[];
 }
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username, isLoggedIn = false }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, isEditable = false, username, isLoggedIn = false, pages = [] }) => {
     const t = useTranslations();
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
@@ -32,6 +37,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
     const [isSaving, setIsSaving] = useState(false);
     const [showQRCode, setShowQRCode] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [showAddPage, setShowAddPage] = useState(false);
 
     const profileUrl = typeof window !== 'undefined' && username
         ? `${window.location.origin}/${username}`
@@ -79,6 +85,21 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
             setIsSaving(false);
         }
     };
+
+    const handlePageChange = (value: string) => {
+        if (value === 'add-new') {
+            setShowAddPage(true);
+        } else if (value === 'main') {
+            router.push(`/${username}`);
+        } else {
+            router.push(`/${username}/${value}`);
+        }
+    };
+
+    // Determine current page slug from URL
+    const currentSlug = typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '';
+    const isMainPage = currentSlug === username || currentSlug === '';
+    const selectedValue = isMainPage ? 'main' : currentSlug;
 
     if (isEditing) {
         return (
@@ -281,6 +302,33 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 </TooltipProvider>
             )}
 
+            {/* Page Switcher */}
+            {username && (pages.length > 0 || isEditable) && (
+                <div className="w-full mt-6">
+                    <Select onValueChange={handlePageChange} defaultValue={selectedValue}>
+                        <SelectTrigger className="w-full bg-white/50 backdrop-blur-sm border-gray-200">
+                            <SelectValue placeholder="Select a page" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="main">Main Profile</SelectItem>
+                            {pages.map((page) => (
+                                <SelectItem key={page.id} value={page.slug}>
+                                    {page.title}
+                                </SelectItem>
+                            ))}
+                            {isEditable && (
+                                <>
+                                    <div className="h-px bg-gray-100 my-1" />
+                                    <SelectItem value="add-new" className="text-blue-600 font-medium">
+                                        + Add New Page
+                                    </SelectItem>
+                                </>
+                            )}
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
+
             {/* QR Code Modal */}
             <QRCodeModal
                 isOpen={showQRCode}
@@ -289,8 +337,16 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 title={profile.name}
                 username={username}
             />
+
+            {/* Add Page Modal */}
+            {username && (
+                <AddPageModal
+                    isOpen={showAddPage}
+                    onClose={() => setShowAddPage(false)}
+                    username={username}
+                />
+            )}
         </div>
-        {/* page switcher here */ }
     );
 };
 

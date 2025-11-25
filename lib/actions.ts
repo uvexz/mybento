@@ -1,8 +1,8 @@
 'use server';
 
 import { db } from '@/lib/db';
-import { user, cards, cardClicks } from '@/lib/schema';
-import { eq, asc, sql } from 'drizzle-orm';
+import { user, cards, cardClicks, pages, userPermissions } from '@/lib/schema';
+import { eq, asc, sql, and, count } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
@@ -33,6 +33,122 @@ export async function updateProfile(formData: FormData) {
     }
 }
 
+export async function createPage(data: { slug: string; title: string }) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+    if (!session?.user?.email) return { error: 'Not authenticated' };
+
+    const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+    const userData = userResult[0];
+    if (!userData) return { error: 'User not found' };
+
+    // Check page limits
+    const permissionsResult = await db.select().from(userPermissions).where(eq(userPermissions.userId, userData.id)).limit(1);
+    const maxPages = permissionsResult[0]?.maxPages ?? 3; // Default to 3 if no permissions record
+
+    const pagesCountResult = await db.select({ count: count() }).from(pages).where(eq(pages.userId, userData.id));
+    const pagesCount = pagesCountResult[0]?.count || 0;
+
+    if (userData.role !== 'admin' && pagesCount >= maxPages) {
+        return { error: `You have reached the limit of ${maxPages} pages.` };
+    }
+
+    try {
+        // Check if slug already exists for this user
+        const existingPage = await db.select().from(pages).where(
+            and(
+                eq(pages.userId, userData.id),
+                eq(pages.slug, data.slug)
+            )
+        ).limit(1);
+
+        if (existingPage.length > 0) {
+            return { error: 'Page with this URL already exists' };
+        }
+
+        await db.insert(pages).values({
+            userId: userData.id,
+            slug: data.slug,
+            title: data.title,
+            subtitle: '',
+            avatarUrl: userData.image, // Default to user avatar
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error('Create page error:', error);
+        return { error: 'Failed to create page' };
+    }
+}
+
+export async function updatePage(id: string, data: FormData) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+    if (!session?.user?.email) return { error: 'Not authenticated' };
+
+    const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+    const userData = userResult[0];
+    if (!userData) return { error: 'User not found' };
+
+    try {
+        // Verify ownership
+        const pageResult = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
+        const page = pageResult[0];
+
+        if (!page || page.userId !== userData.id) {
+            return { error: 'Page not found or unauthorized' };
+        }
+
+        const title = data.get('title') as string;
+        const subtitle = data.get('subtitle') as string;
+        const avatarUrl = data.get('avatarUrl') as string;
+        const backgroundImage = data.get('backgroundImage') as string;
+        const profileColor = data.get('profileColor') as string;
+
+        await db.update(pages).set({
+            title,
+            subtitle,
+            avatarUrl,
+            backgroundImage,
+            profileColor
+        }).where(eq(pages.id, id));
+
+        return { success: true };
+    } catch (error) {
+        console.error('Update page error:', error);
+        return { error: 'Failed to update page' };
+    }
+}
+
+export async function deletePage(id: string) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+    if (!session?.user?.email) return { error: 'Not authenticated' };
+
+    const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
+    const userData = userResult[0];
+    if (!userData) return { error: 'User not found' };
+
+    try {
+        // Verify ownership
+        const pageResult = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
+        const page = pageResult[0];
+
+        if (!page || page.userId !== userData.id) {
+            return { error: 'Page not found or unauthorized' };
+        }
+
+        await db.delete(pages).where(eq(pages.id, id));
+        return { success: true };
+    } catch (error) {
+        console.error('Delete page error:', error);
+        return { error: 'Failed to delete page' };
+    }
+}
+
 export async function saveCard(card: any) {
     const session = await auth.api.getSession({
         headers: await headers()
@@ -53,6 +169,15 @@ export async function saveCard(card: any) {
                 return { error: 'Forbidden: You do not own this card' };
             }
 
+            // If pageId is provided, verify ownership of the page
+            if (card.pageId) {
+                const pageResult = await db.select().from(pages).where(eq(pages.id, card.pageId)).limit(1);
+                const page = pageResult[0];
+                if (!page || page.userId !== userData.id) {
+                    return { error: 'Forbidden: You do not own this page' };
+                }
+            }
+
             await db.update(cards).set({
                 title: card.title,
                 subtitle: card.subtitle,
@@ -69,14 +194,37 @@ export async function saveCard(card: any) {
                 contactInfo: card.contactInfo || null,
                 mastodonData: card.mastodonData ? JSON.stringify(card.mastodonData) : null,
                 articleContent: card.articleContent || null,
+                // pageId is usually not changed after creation, but if needed:
+                // pageId: card.pageId || null 
             }).where(eq(cards.id, card.id));
         } else {
-            const lastCard = await db.select().from(cards).where(eq(cards.userId, userData.id)).orderBy(asc(cards.order));
-            const newOrder = lastCard.length > 0 ? (lastCard[lastCard.length - 1].order || 0) + 1 : 0;
+            // New card
+            let newOrder = 0;
+
+            if (card.pageId) {
+                // Verify page ownership
+                const pageResult = await db.select().from(pages).where(eq(pages.id, card.pageId)).limit(1);
+                const page = pageResult[0];
+                if (!page || page.userId !== userData.id) {
+                    return { error: 'Forbidden: You do not own this page' };
+                }
+
+                const lastCard = await db.select().from(cards).where(eq(cards.pageId, card.pageId)).orderBy(asc(cards.order));
+                newOrder = lastCard.length > 0 ? (lastCard[lastCard.length - 1].order || 0) + 1 : 0;
+            } else {
+                const lastCard = await db.select().from(cards).where(
+                    and(
+                        eq(cards.userId, userData.id),
+                        sql`${cards.pageId} IS NULL`
+                    )
+                ).orderBy(asc(cards.order));
+                newOrder = lastCard.length > 0 ? (lastCard[lastCard.length - 1].order || 0) + 1 : 0;
+            }
 
             await db.insert(cards).values({
                 id: card.id,
                 userId: userData.id,
+                pageId: card.pageId || null,
                 title: card.title,
                 subtitle: card.subtitle,
                 type: card.type,
@@ -197,13 +345,13 @@ export async function getCardStats(userId: string) {
     try {
         const userResult = await db.select().from(user).where(eq(user.email, session.user.email)).limit(1);
         const userData = userResult[0];
-        
+
         if (!userData || userData.id !== userId) {
             return { error: 'Unauthorized' };
         }
 
         const userCards = await db.select().from(cards).where(eq(cards.userId, userId));
-        
+
         const stats = userCards.map(card => ({
             id: card.id,
             title: card.title,
@@ -234,18 +382,18 @@ export async function resendVerificationEmail(email: string) {
 export async function requestPasswordReset(email: string) {
     // 检查是否配置了邮件服务
     const emailConfigured = !!(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
-    
+
     if (!emailConfigured) {
-        return { 
-            error: 'Password reset is not available. Email service is not configured.' 
+        return {
+            error: 'Password reset is not available. Email service is not configured.'
         };
     }
 
     try {
         // Better Auth 会自动处理密码重置邮件发送
         // 这里我们只需要返回成功消息
-        return { 
-            success: 'If an account exists with this email, you will receive a password reset link.' 
+        return {
+            success: 'If an account exists with this email, you will receive a password reset link.'
         };
     } catch (error) {
         console.error('Password reset request error:', error);
@@ -258,7 +406,7 @@ export async function requestPasswordReset(email: string) {
  * 注意：此功能由 Better Auth 处理
  */
 export async function resetPassword(token: string, newPassword: string) {
-    return { 
-        success: 'Password has been reset successfully. You can now log in with your new password.' 
+    return {
+        success: 'Password has been reset successfully. You can now log in with your new password.'
     };
 }

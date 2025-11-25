@@ -13,18 +13,18 @@ export interface BlogPost {
     pubDate?: string;
 }
 
-export type CardType = 
+export type CardType =
     | 'universal'
     | 'text'
-    | 'link' 
+    | 'link'
     | 'highlights'
-    | 'social-x' 
-    | 'social-insta' 
-    | 'social-github' 
-    | 'social-mastodon' 
-    | 'social-youtube' 
+    | 'social-x'
+    | 'social-insta'
+    | 'social-github'
+    | 'social-mastodon'
+    | 'social-youtube'
     | 'social-linkedin'
-    | 'image' 
+    | 'image'
     | 'image-link'
     | 'video-youtube'
     | 'video-vimeo'
@@ -86,6 +86,7 @@ export interface MastodonData {
 
 export interface BentoCardProps {
     id: string;
+    pageId?: string; // Optional, if belongs to a specific page
     title: string;
     subtitle?: string;
     buttonText?: string;
@@ -113,7 +114,7 @@ export interface BentoCardProps {
     isFirst?: boolean;
     isLast?: boolean;
     className?: string;
-    
+
     // Drag and drop
     dragHandleProps?: any;
     isDragging?: boolean;
@@ -125,4 +126,16 @@ export interface UserProfile {
     avatarUrl: string;
     backgroundImage?: string;
     profileColor?: string;
+}
+
+export interface Page {
+    id: string;
+    userId: string;
+    slug: string;
+    title: string;
+    subtitle?: string;
+    avatarUrl?: string;
+    backgroundImage?: string;
+    profileColor?: string;
+    createdAt: Date;
 }

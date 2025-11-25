@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { BentoCardProps, UserProfile } from '@/lib/types';
+import { BentoCardProps, UserProfile, Page } from '@/lib/types';
 import BentoGridView from '@/components/bento/BentoGridView';
 import { saveCard, deleteCard } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ interface BentoGridProps {
     initialProfile: UserProfile;
     isEditable: boolean;
     showProfile?: boolean;
+    pages?: Page[];
 }
 
 interface BentoGridPropsExtended extends BentoGridProps {
@@ -25,7 +26,7 @@ interface BentoGridPropsExtended extends BentoGridProps {
     isAdmin?: boolean;
 }
 
-export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true, userId, username, isLoggedIn = false, isAdmin = false }: BentoGridPropsExtended) {
+export default function BentoGrid({ initialCards, initialProfile, isEditable, showProfile = true, userId, username, isLoggedIn = false, isAdmin = false, pages = [] }: BentoGridPropsExtended) {
     const [cards, setCards] = useState<BentoCardProps[]>(initialCards);
     const [profile, setProfile] = useState<UserProfile>(initialProfile);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,6 +124,7 @@ export default function BentoGrid({ initialCards, initialProfile, isEditable, sh
                 profile={profile}
                 showProfile={showProfile}
                 username={username}
+                pages={pages}
                 isLoggedIn={isLoggedIn}
                 isEditable={isEditable}
                 onEditCard={handleEditCard}

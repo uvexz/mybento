@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BentoCardProps, UserProfile } from '@/lib/types';
+import { BentoCardProps, UserProfile, Page } from '@/lib/types';
 import BentoCard from '@/components/bento/BentoCard';
 import ProfileSection from '@/components/bento/ProfileSection';
 import ArticleModal from '@/components/bento/ArticleModal';
@@ -13,6 +13,7 @@ interface BentoGridViewProps {
     profile: UserProfile;
     showProfile?: boolean;
     username?: string;
+    pages?: Page[];
     isLoggedIn?: boolean;
     isEditable?: boolean;
     onEditCard?: (card: BentoCardProps) => void;
@@ -28,6 +29,7 @@ const BentoGridView: React.FC<BentoGridViewProps> = ({
     profile,
     showProfile = true,
     username,
+    pages = [],
     isLoggedIn = false,
     isEditable = false,
     onEditCard,
@@ -59,6 +61,7 @@ const BentoGridView: React.FC<BentoGridViewProps> = ({
                             setProfile={onProfileUpdate}
                             isEditable={isEditable}
                             username={username}
+                            pages={pages}
                             isLoggedIn={isLoggedIn}
                         />
                     </div>
@@ -73,9 +76,8 @@ const BentoGridView: React.FC<BentoGridViewProps> = ({
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className={`grid gap-3 sm:gap-4 grid-flow-row-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 transition-colors ${
-                                            snapshot.isDraggingOver ? 'bg-blue-50/50 rounded-2xl p-2' : ''
-                                        }`}
+                                        className={`grid gap-3 sm:gap-4 grid-flow-row-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 transition-colors ${snapshot.isDraggingOver ? 'bg-blue-50/50 rounded-2xl p-2' : ''
+                                            }`}
                                     >
                                         {cards.map((card, index) => (
                                             <Draggable key={card.id} draggableId={card.id} index={index}>
