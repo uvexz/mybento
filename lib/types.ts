@@ -115,7 +115,8 @@ export interface BentoCardProps {
     isLast?: boolean;
     className?: string;
 
-    // Drag and drop
+    // Drag and drop (using unknown to accept @hello-pangea/dnd types)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dragHandleProps?: any;
     isDragging?: boolean;
 }

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
             ...result,
             requiresVerification,
         });
-    } catch (error: any) {
+    } catch (error) {
         const apiError = handleApiError(error, 'Registration');
         return NextResponse.json(
             createErrorResponse(apiError),

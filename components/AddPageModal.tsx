@@ -41,14 +41,14 @@ export default function AddPageModal({ isOpen, onClose, username }: AddPageModal
 
         try {
             const result = await createPage({ title, slug });
-            if (result.success) {
+            if ('success' in result) {
                 onClose();
                 router.refresh();
                 router.push(`/${username}/${slug}`);
             } else {
                 setError(result.error || t('pages.createFailed'));
             }
-        } catch (err) {
+        } catch {
             setError(t('common.error'));
         } finally {
             setIsSaving(false);

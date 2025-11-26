@@ -6,26 +6,34 @@ import { eq, count } from 'drizzle-orm';
 import { auth } from './auth';
 import { headers } from 'next/headers';
 
-// Check if user is admin
-export async function isAdmin(): Promise<boolean> {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
+// ============================================================================
+// Auth Helpers
+// ============================================================================
 
-    if (!session?.user) {
-        return false;
-    }
+async function getAdminUser() {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) return null;
 
     const userRecord = await db.select().from(user).where(eq(user.id, session.user.id)).limit(1);
-    return userRecord[0]?.role === 'admin';
+    return userRecord[0]?.role === 'admin' ? userRecord[0] : null;
 }
 
-// Get site settings
-export async function getSiteSettings() {
-    if (!await isAdmin()) {
-        throw new Error('Unauthorized');
-    }
+export async function isAdmin(): Promise<boolean> {
+    return (await getAdminUser()) !== null;
+}
 
+async function requireAdmin() {
+    const admin = await getAdminUser();
+    if (!admin) throw new Error('Unauthorized');
+    return admin;
+}
+
+// ============================================================================
+// Site Settings
+// ============================================================================
+
+export async function getSiteSettings() {
+    await requireAdmin();
     const settings = await db.select().from(siteSettings);
     const settingsMap: Record<string, string> = {};
 
@@ -49,8 +57,7 @@ export async function getSiteSettings() {
     };
 }
 
-// Update site settings
-export async function updateSiteSettings(settings: {
+type SiteSettingsInput = {
     siteName?: string;
     siteDescription?: string;
     communityMode?: boolean;
@@ -62,171 +69,117 @@ export async function updateSiteSettings(settings: {
     maxUploadSize?: number;
     resendApiKey?: string;
     emailFrom?: string;
-}) {
-    if (!await isAdmin()) {
-        throw new Error('Unauthorized');
-    }
+};
 
-    const updates: Array<{ key: string; value: string }> = [];
+const SETTINGS_MAP: Record<keyof SiteSettingsInput, string> = {
+    siteName: 'site_name',
+    siteDescription: 'site_description',
+    communityMode: 'community_mode',
+    r2Endpoint: 'r2_endpoint',
+    r2AccessKeyId: 'r2_access_key_id',
+    r2SecretAccessKey: 'r2_secret_access_key',
+    r2BucketName: 'r2_bucket_name',
+    r2PublicUrl: 'r2_public_url',
+    maxUploadSize: 'max_upload_size',
+    resendApiKey: 'resend_api_key',
+    emailFrom: 'email_from',
+};
 
-    if (settings.siteName !== undefined) {
-        updates.push({ key: 'site_name', value: settings.siteName });
-    }
-    if (settings.siteDescription !== undefined) {
-        updates.push({ key: 'site_description', value: settings.siteDescription });
-    }
-    if (settings.communityMode !== undefined) {
-        updates.push({ key: 'community_mode', value: settings.communityMode.toString() });
-    }
-    if (settings.r2Endpoint !== undefined) {
-        updates.push({ key: 'r2_endpoint', value: settings.r2Endpoint });
-    }
-    if (settings.r2AccessKeyId !== undefined) {
-        updates.push({ key: 'r2_access_key_id', value: settings.r2AccessKeyId });
-    }
-    if (settings.r2SecretAccessKey !== undefined && settings.r2SecretAccessKey !== '********') {
-        updates.push({ key: 'r2_secret_access_key', value: settings.r2SecretAccessKey });
-    }
-    if (settings.r2BucketName !== undefined) {
-        updates.push({ key: 'r2_bucket_name', value: settings.r2BucketName });
-    }
-    if (settings.r2PublicUrl !== undefined) {
-        updates.push({ key: 'r2_public_url', value: settings.r2PublicUrl });
-    }
-    if (settings.maxUploadSize !== undefined) {
-        updates.push({ key: 'max_upload_size', value: settings.maxUploadSize.toString() });
-    }
-    if (settings.resendApiKey !== undefined && settings.resendApiKey !== '********') {
-        updates.push({ key: 'resend_api_key', value: settings.resendApiKey });
-    }
-    if (settings.emailFrom !== undefined) {
-        updates.push({ key: 'email_from', value: settings.emailFrom });
-    }
-
-    // Upsert settings
-    for (const update of updates) {
-        const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, update.key)).limit(1);
-
-        if (existing.length > 0) {
-            await db.update(siteSettings)
-                .set({ value: update.value, updatedAt: new Date() })
-                .where(eq(siteSettings.key, update.key));
-        } else {
-            await db.insert(siteSettings).values({
-                key: update.key,
-                value: update.value,
-            });
-        }
-    }
-
-    return { success: true };
-}
-
-// Get default user permissions
-export async function getDefaultUserPermissions() {
-    if (!await isAdmin()) {
-        throw new Error('Unauthorized');
-    }
-
-    const settings = await db.select().from(siteSettings).where(eq(siteSettings.key, 'default_user_permissions')).limit(1);
-
-    if (settings.length > 0 && settings[0].value) {
-        return JSON.parse(settings[0].value);
-    }
-
-    return {
-        canUploadImages: true,
-        maxImages: 50,
-        maxShortLinks: 100,
-        maxCards: 50,
-        maxPages: 3,
-    };
-}
-
-// Update default user permissions
-export async function updateDefaultUserPermissions(permissions: {
-    canUploadImages: boolean;
-    maxImages: number;
-    maxShortLinks: number;
-    maxCards: number;
-    maxPages: number;
-}) {
-    if (!await isAdmin()) {
-        throw new Error('Unauthorized');
-    }
-
-    const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, 'default_user_permissions')).limit(1);
-
+async function upsertSetting(key: string, value: string) {
+    const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
     if (existing.length > 0) {
-        await db.update(siteSettings)
-            .set({ value: JSON.stringify(permissions), updatedAt: new Date() })
-            .where(eq(siteSettings.key, 'default_user_permissions'));
+        await db.update(siteSettings).set({ value, updatedAt: new Date() }).where(eq(siteSettings.key, key));
     } else {
-        await db.insert(siteSettings).values({
-            key: 'default_user_permissions',
-            value: JSON.stringify(permissions),
-        });
+        await db.insert(siteSettings).values({ key, value });
+    }
+}
+
+export async function updateSiteSettings(settings: SiteSettingsInput) {
+    await requireAdmin();
+
+    for (const [key, dbKey] of Object.entries(SETTINGS_MAP)) {
+        const value = settings[key as keyof SiteSettingsInput];
+        if (value === undefined) continue;
+        
+        // Skip masked password fields
+        if ((key === 'r2SecretAccessKey' || key === 'resendApiKey') && value === '********') continue;
+        
+        const strValue = typeof value === 'boolean' ? value.toString() : String(value);
+        await upsertSetting(dbKey, strValue);
     }
 
     return { success: true };
 }
 
-// Get user permissions
+// ============================================================================
+// User Permissions
+// ============================================================================
+
+const DEFAULT_PERMISSIONS = {
+    canUploadImages: true,
+    maxImages: 50,
+    maxShortLinks: 100,
+    maxCards: 50,
+    maxPages: 3,
+};
+
+export async function getDefaultUserPermissions() {
+    await requireAdmin();
+    const settings = await db.select().from(siteSettings).where(eq(siteSettings.key, 'default_user_permissions')).limit(1);
+    return settings[0]?.value ? JSON.parse(settings[0].value) : DEFAULT_PERMISSIONS;
+}
+
+export async function updateDefaultUserPermissions(permissions: typeof DEFAULT_PERMISSIONS) {
+    await requireAdmin();
+    await upsertSetting('default_user_permissions', JSON.stringify(permissions));
+    return { success: true };
+}
+
 export async function getUserPermissions(userId: string) {
     const permissions = await db.select().from(userPermissions).where(eq(userPermissions.userId, userId)).limit(1);
+    if (permissions[0]) return permissions[0];
 
-    if (permissions.length > 0) {
-        return permissions[0];
-    }
-
-    // Return default permissions
-    const defaultPerms = await getDefaultUserPermissions();
-    return {
-        userId,
-        canUploadImages: defaultPerms.canUploadImages,
-        maxImages: defaultPerms.maxImages,
-        maxShortLinks: defaultPerms.maxShortLinks,
-        maxCards: defaultPerms.maxCards,
-        maxPages: defaultPerms.maxPages,
-    };
+    // Return default permissions (no admin check needed for reading own permissions)
+    const settings = await db.select().from(siteSettings).where(eq(siteSettings.key, 'default_user_permissions')).limit(1);
+    const defaultPerms = settings[0]?.value ? JSON.parse(settings[0].value) : DEFAULT_PERMISSIONS;
+    
+    return { userId, ...defaultPerms };
 }
 
-// Check if user can perform action
-export async function canUserPerformAction(userId: string, action: 'upload' | 'create_card' | 'create_short_link'): Promise<{ allowed: boolean; reason?: string }> {
+type ActionType = 'upload' | 'create_card' | 'create_short_link';
+
+export async function canUserPerformAction(userId: string, action: ActionType): Promise<{ allowed: boolean; reason?: string }> {
     const permissions = await getUserPermissions(userId);
 
     if (action === 'upload') {
-        if (!permissions.canUploadImages) {
-            return { allowed: false, reason: 'Image upload is disabled for your account' };
-        }
-        // Check current image count (this is a simplified check)
-        return { allowed: true };
+        return permissions.canUploadImages 
+            ? { allowed: true } 
+            : { allowed: false, reason: 'Image upload is disabled for your account' };
     }
 
     if (action === 'create_card') {
         const cardCount = await db.select({ count: count() }).from(cards).where(eq(cards.userId, userId));
-        if (cardCount[0].count >= permissions.maxCards) {
-            return { allowed: false, reason: `Maximum cards limit reached (${permissions.maxCards})` };
-        }
-        return { allowed: true };
+        return cardCount[0].count >= permissions.maxCards
+            ? { allowed: false, reason: `Maximum cards limit reached (${permissions.maxCards})` }
+            : { allowed: true };
     }
 
     if (action === 'create_short_link') {
         const linkCount = await db.select({ count: count() }).from(shortLinks).where(eq(shortLinks.userId, userId));
-        if (linkCount[0].count >= permissions.maxShortLinks) {
-            return { allowed: false, reason: `Maximum short links limit reached (${permissions.maxShortLinks})` };
-        }
-        return { allowed: true };
+        return linkCount[0].count >= permissions.maxShortLinks
+            ? { allowed: false, reason: `Maximum short links limit reached (${permissions.maxShortLinks})` }
+            : { allowed: true };
     }
 
     return { allowed: false, reason: 'Unknown action' };
 }
 
-// Get admin statistics
+// ============================================================================
+// Admin Statistics
+// ============================================================================
+
 export async function getAdminStats() {
-    if (!await isAdmin()) {
-        throw new Error('Unauthorized');
-    }
+    await requireAdmin();
 
     const [userCount, cardCount, shortLinkCount] = await Promise.all([
         db.select({ count: count() }).from(user),

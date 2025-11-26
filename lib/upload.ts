@@ -20,7 +20,7 @@ async function getR2Config() {
             publicUrl: settingsMap.r2_public_url || process.env.R2_PUBLIC_URL || '',
             maxUploadSize: parseInt(settingsMap.max_upload_size || '5'),
         };
-    } catch (error) {
+    } catch {
         // Fallback to environment variables if database is not available
         return {
             endpoint: process.env.R2_ENDPOINT || '',
@@ -82,9 +82,9 @@ export async function uploadImage(
 
     try {
         await s3Client.send(command);
-    } catch (error: any) {
+    } catch (error) {
         console.error('S3 upload error:', error);
-        throw new Error(`Failed to upload to R2: ${error.message}`);
+        throw new Error(`Failed to upload to R2: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
     // Return public URL

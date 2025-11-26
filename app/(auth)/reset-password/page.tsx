@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,6 @@ export const dynamic = 'force-dynamic';
 function ResetPasswordForm() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [token, setToken] = useState<string | null>(null);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -24,18 +23,13 @@ function ResetPasswordForm() {
 
     const passwordStrength = validatePasswordStrength(password);
 
-    useEffect(() => {
-        const tokenParam = searchParams.get('token');
-        const errorParam = searchParams.get('error');
-
-        if (errorParam === 'INVALID_TOKEN') {
-            setError('Invalid or expired reset link. Please request a new one.');
-        } else if (tokenParam) {
-            setToken(tokenParam);
-        } else {
-            setError('No reset token provided.');
-        }
-    }, [searchParams]);
+    // Get token and error from URL params directly (no state needed)
+    const token = searchParams.get('token');
+    const errorParam = searchParams.get('error');
+    
+    const initialError = errorParam === 'INVALID_TOKEN' 
+        ? 'Invalid or expired reset link. Please request a new one.'
+        : !token ? 'No reset token provided.' : '';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -73,8 +67,8 @@ function ResetPasswordForm() {
                     router.push('/login');
                 }, 2000);
             }
-        } catch (err: any) {
-            setError(err.message || 'Something went wrong');
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Something went wrong');
             setIsLoading(false);
         }
     };
@@ -112,10 +106,10 @@ function ResetPasswordForm() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {!token || error ? (
+                    {!token || initialError ? (
                         <div className="space-y-4">
                             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                <p className="text-sm text-red-800">{error || 'Invalid reset link'}</p>
+                                <p className="text-sm text-red-800">{initialError || 'Invalid reset link'}</p>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <Button asChild className="w-full">

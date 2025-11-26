@@ -3,7 +3,7 @@ import { auth, type ExtendedSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { user, shortLinks } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { handleApiError, createErrorResponse, COMMON_ERRORS } from '@/lib/error-handler';
 
 // Generate random short code
@@ -72,7 +72,6 @@ export async function POST(request: NextRequest) {
         }
 
         // 速率限制检查
-        const clientId = getClientIdentifier(request);
         const rateLimit = checkRateLimit(`create-link:${session.user.email}`, RATE_LIMITS.MODERATE);
 
         if (!rateLimit.success) {

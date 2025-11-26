@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { locales, localeNames, type Locale } from '@/i18n/config';
 import { useState, useTransition } from 'react';
 

@@ -80,7 +80,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 formData.append('profileColor', editedProfile.profileColor || '');
 
                 const result = await updatePage(currentPageId, formData);
-                if (result.success) {
+                if ('success' in result) {
                     setProfile?.(editedProfile);
                     setIsEditing(false);
                     router.refresh();
@@ -96,7 +96,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, setProfile, is
                 formData.append('profileColor', editedProfile.profileColor || '');
 
                 const result = await updateProfile(formData);
-                if (result.success) {
+                if ('success' in result) {
                     setProfile?.(editedProfile);
                     setIsEditing(false);
                 } else {

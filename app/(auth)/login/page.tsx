@@ -74,8 +74,8 @@ export default function LoginPage() {
                     window.location.href = '/';
                 }
             }
-        } catch (err: any) {
-            setError(err.message || 'An unexpected error occurred');
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An unexpected error occurred');
             setIsLoading(false);
         }
     };
@@ -91,7 +91,7 @@ export default function LoginPage() {
             });
             setResendSuccess(true);
             setError('');
-        } catch (err: any) {
+        } catch {
             setError('Failed to resend verification email');
         } finally {
             setIsLoading(false);

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
         const result = await getCardStats(userId);
 
-        if (result.error) {
+        if ('error' in result) {
             return NextResponse.json({ error: result.error }, { status: 403 });
         }
 

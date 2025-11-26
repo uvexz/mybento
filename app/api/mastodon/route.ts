@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
             const mediaType = mediaMatch?.[2] || '';
 
             // Decode HTML entities and strip HTML tags from description
-            let plainText = postDescription
+            const plainText = postDescription
                 // First decode HTML entities
                 .replace(/&lt;/g, '<')
                 .replace(/&gt;/g, '>')

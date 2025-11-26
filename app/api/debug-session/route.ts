@@ -26,9 +26,9 @@ export async function GET() {
             user: session?.user || null,
             session: session || null,
         });
-    } catch (error: any) {
+    } catch (error) {
         return NextResponse.json({
-            error: error.message,
+            error: error instanceof Error ? error.message : 'Unknown error',
             hasSession: false,
         });
     }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { cards, cardClicks, user } from '@/lib/schema';
-import { eq, sql, desc, gte, and } from 'drizzle-orm';
+import { eq, sql, gte } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 

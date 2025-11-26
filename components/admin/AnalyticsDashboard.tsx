@@ -9,8 +9,6 @@ import {
     RiTrophyLine,
 } from '@remixicon/react';
 import {
-    BarChart,
-    Bar,
     LineChart,
     Line,
     PieChart,
@@ -20,7 +18,6 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
     ResponsiveContainer,
 } from 'recharts';
 

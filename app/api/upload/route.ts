@@ -35,15 +35,16 @@ export async function POST(request: NextRequest) {
         }
 
         // Get username from session
-        const username = (session.user as any).username || session.user.email?.split('@')[0] || 'user';
+        const extUser = session.user as { username?: string; email?: string };
+        const username = extUser.username || extUser.email?.split('@')[0] || 'user';
 
         // Upload to R2
         const url = await uploadImage(file, folder, username);
 
         return NextResponse.json({ url });
-    } catch (error: any) {
+    } catch (error) {
         console.error('Upload error:', error);
-        const errorMessage = error.message || 'Failed to upload image';
+        const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
         return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }

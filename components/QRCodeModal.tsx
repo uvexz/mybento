@@ -1,11 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { RiCloseLine, RiDownloadLine } from '@remixicon/react';
 import { Button } from '@/components/ui/button';
 import QRCode from 'qrcode';
 import { useTranslations } from 'next-intl';
+
+// Hook to safely check if component is mounted (client-side)
+function useIsMounted() {
+    return useSyncExternalStore(
+        () => () => {},
+        () => true,
+        () => false
+    );
+}
 
 interface QRCodeModalProps {
     isOpen: boolean;
@@ -18,12 +27,7 @@ interface QRCodeModalProps {
 export default function QRCodeModal({ isOpen, onClose, url, title, username }: QRCodeModalProps) {
     const t = useTranslations();
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        return () => setMounted(false);
-    }, []);
+    const mounted = useIsMounted();
 
     useEffect(() => {
         if (isOpen && url) {

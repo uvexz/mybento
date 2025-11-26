@@ -4,12 +4,12 @@ export async function getTranslator() {
   const locale = await getLocale();
   const messages = await getMessages(locale);
   
-  return (key: string, params?: Record<string, any>) => {
+  return (key: string, params?: Record<string, string | number>) => {
     const keys = key.split('.');
-    let value: any = messages;
+    let value: unknown = messages;
     
     for (const k of keys) {
-      value = value?.[k];
+      value = (value as Record<string, unknown>)?.[k];
     }
     
     if (typeof value !== 'string') {
@@ -18,7 +18,7 @@ export async function getTranslator() {
     
     // 简单的参数替换
     if (params) {
-      return value.replace(/\{(\w+)\}/g, (_, key) => params[key] ?? `{${key}}`);
+      return value.replace(/\{(\w+)\}/g, (_, key) => String(params[key] ?? `{${key}}`));
     }
     
     return value;

@@ -3,7 +3,7 @@ import { auth, type ExtendedSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { user, cards } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { handleApiError, createErrorResponse, COMMON_ERRORS } from '@/lib/error-handler';
 
 export async function POST(request: NextRequest) {

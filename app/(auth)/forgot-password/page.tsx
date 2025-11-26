@@ -64,8 +64,8 @@ export default function ForgotPasswordPage() {
                 });
                 setEmail('');
             }
-        } catch (err: any) {
-            setMessage({ type: 'error', text: err.message || 'Something went wrong' });
+        } catch (err) {
+            setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Something went wrong' });
         }
 
         setIsLoading(false);

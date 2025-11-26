@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { RiImageLine, RiUploadLine, RiDeleteBinLine, RiFileCopyLine, RiCheckLine, RiLoader4Line, RiCloseLine } from '@remixicon/react';
+import { RiImageLine, RiUploadLine, RiDeleteBinLine, RiFileCopyLine, RiCheckLine, RiLoader4Line } from '@remixicon/react';
 import { Button } from './ui/button';
 import { useTranslations } from 'next-intl';
 

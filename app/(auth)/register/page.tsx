@@ -111,8 +111,8 @@ export default function RegisterPage() {
                     }
                 }
             }
-        } catch (err: any) {
-            setError(err.message || 'An unexpected error occurred');
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An unexpected error occurred');
             setIsLoading(false);
         }
     };

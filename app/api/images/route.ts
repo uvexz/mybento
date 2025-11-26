@@ -6,7 +6,7 @@ import { userImages } from '@/lib/schema';
 import { eq, desc } from 'drizzle-orm';
 import { uploadImage } from '@/lib/upload';
 import { canUserPerformAction } from '@/lib/admin';
-import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { handleApiError, createErrorResponse, COMMON_ERRORS } from '@/lib/error-handler';
 
 // Get user's images
@@ -87,7 +87,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Get username from session
-        const username = (session.user as any).username || session.user.email?.split('@')[0] || 'user';
+        const extUser = session.user as { username?: string; email?: string };
+        const username = extUser.username || extUser.email?.split('@')[0] || 'user';
 
         // Upload to R2
         const url = await uploadImage(file, 'cards', username);
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
         }).returning();
 
         return NextResponse.json({ image });
-    } catch (error: any) {
+    } catch (error) {
         const apiError = handleApiError(error, 'Upload image');
         return NextResponse.json(
             createErrorResponse(apiError),

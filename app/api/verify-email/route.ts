@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * @deprecated This endpoint is deprecated. Email verification is now handled by Better Auth.
  * Better Auth provides built-in email verification functionality.
  * This endpoint is kept for backward compatibility but should not be used.
  */
-export async function POST(request: NextRequest) {
+export async function POST() {
     return NextResponse.json(
         { 
             error: 'This endpoint is deprecated. Email verification is now handled by Better Auth.',

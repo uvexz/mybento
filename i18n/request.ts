@@ -6,7 +6,7 @@ export async function getLocale(): Promise<Locale> {
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get('NEXT_LOCALE')?.value;
   
-  if (cookieLocale && locales.includes(cookieLocale as any)) {
+  if (cookieLocale && locales.includes(cookieLocale as Locale)) {
     return cookieLocale as Locale;
   }
   
@@ -22,7 +22,7 @@ export async function getLocale(): Promise<Locale> {
     
     // 找到第一个支持的语言
     const supportedLocale = languages.find(lang => 
-      locales.includes(lang as any)
+      locales.includes(lang as Locale)
     ) as Locale | undefined;
     
     if (supportedLocale) {

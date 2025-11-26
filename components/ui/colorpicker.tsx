@@ -53,9 +53,9 @@ function hslToHex({ h, s, l, a }: hsl) {
   const alpha = s * Math.min(l, 1 - l);
   const f = (n: number) =>
     l - alpha * Math.max(Math.min(k(n) - 3, 9 - k(n), 1), -1);
-  let r = Math.round(255 * f(0));
-  let g = Math.round(255 * f(8));
-  let b = Math.round(255 * f(4));
+  const r = Math.round(255 * f(0));
+  const g = Math.round(255 * f(8));
+  const b = Math.round(255 * f(4));
 
   const toHex = (x: number) => {
     const hex = x.toString(16);
@@ -107,7 +107,7 @@ function hexToHsl({ hex }: hex): hsl {
   const min = Math.min(r, g, b);
   let h = 0;
   let s: number;
-  let l = (max + min) / 2;
+  const l = (max + min) / 2;
 
   if (max === min) {
     h = s = 0; // achromatic
